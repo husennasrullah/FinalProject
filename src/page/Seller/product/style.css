@@ -1,0 +1,16 @@
+.product {
+  width: 90%;
+  margin: 5%;
+}
+
+.detailProduct1 {
+  width: 50%;
+  border: 2px solid black;
+  float: left;
+}
+
+.detailProduct2 {
+  width: 50%;
+  border: 2px solid black;
+  float: right;
+}
