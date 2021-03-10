@@ -107,25 +107,25 @@ class ProductList extends Component {
           productList: res.data,
         });
         this.getCountPagination();
+        s;
       })
       .catch((err) => {
         alert("Failed Fetching Data");
       });
   }
 
-  getCountPagination = () => {
+  getCountPagination() {
     ProductService.getCount()
       .then((res) => {
-        let page = resp.data / this.state.limit;
-        console.log("page :", page);
+        let page = res.data / this.state.limit;
         this.setState({
           count: Math.ceil(page),
         });
       })
-      .catch((err) => {
+      .catch(() => {
         alert("Failed fetching data");
       });
-  };
+  }
 
   render() {
     console.log("dataDetail :", this.state.productDetail);
