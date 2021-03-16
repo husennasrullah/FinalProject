@@ -1,8 +1,11 @@
 .sidebar {
+  float: left;
   width: 100%;
   height: 100vh;
-  position: absolute;
+  position: inherit;
   box-shadow: grey;
-  border-radius: 2%;
-  background-color: lightgreen;
+  /* background-color: #343a40; */
+  background-color: #3b395a;
+  /* background: -webkit-linear-gradient(left, #3b395a, #458799); */
+  padding-left: 5%;
 }

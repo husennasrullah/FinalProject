@@ -1,16 +1,17 @@
-import React, { Component } from "react";
-import "./style.css";
-import { Nav, Navbar } from "react-bootstrap";
 import {
-  faHome,
   faBriefcase,
-  faMoneyBill,
+  faCartArrowDown,
+  faCartPlus,
+  faHome,
   faListUl,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { Component } from "react";
+
+import { Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-class SideBar extends Component {
+class SidebarBuyer extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -35,23 +36,16 @@ class SideBar extends Component {
           </Nav.Item>
           <br />
           <Nav.Item>
-            <Link to={`${this.props.path}/product`}>
-              <FontAwesomeIcon icon={faBriefcase} className="mr-3" />
-              Product
-            </Link>
-          </Nav.Item>
-          <br />
-          <Nav.Item>
-            <Link to={`${this.props.path}/buyer`}>
+            <Link to={`${this.props.path}/orderlist`}>
               <FontAwesomeIcon icon={faListUl} className="mr-3" />
-              List of Buyer
+              OrderList
             </Link>
           </Nav.Item>
           <br />
           <Nav.Item>
-            <Link to={`${this.props.path}/salesorder`}>
-              <FontAwesomeIcon icon={faMoneyBill} className="mr-3" />
-              Sales Order
+            <Link to={`${this.props.path}/cart`}>
+              <FontAwesomeIcon icon={faCartPlus} className="mr-3" />
+              Cart
             </Link>
           </Nav.Item>
         </Nav>
@@ -60,4 +54,4 @@ class SideBar extends Component {
   }
 }
 
-export default SideBar;
+export default SidebarBuyer;

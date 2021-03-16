@@ -1,8 +1,16 @@
-import React, { Component } from "react";
-import { Row, Col, Form, FormControl, Container } from "react-bootstrap";
 import Pagination from "@material-ui/lab/Pagination";
+import React, { Component } from "react";
+import {
+  Col,
+  Form,
+  FormControl,
+  Row,
+  Button,
+  Container,
+  Table,
+} from "react-bootstrap";
 
-class SalesOrderList extends Component {
+class OrderList extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -11,7 +19,7 @@ class SalesOrderList extends Component {
     return (
       <Container fluid>
         <div className="productTittle">
-          <h2 className="text-center">Sales Order List</h2>
+          <h2 className="text-center">Order-List</h2>
         </div>
         <br />
         <div>
@@ -22,6 +30,7 @@ class SalesOrderList extends Component {
                   <option value="name">Product Name</option>
                   <option value="id">Product ID</option>
                 </Form.Control>
+
                 <FormControl
                   type="text"
                   placeholder="Search......"
@@ -39,12 +48,11 @@ class SalesOrderList extends Component {
         </div>
         <br />
         <div>
-          <table className="table table-striped table-borderes table-md ">
+          <Table responsive="sm">
             <thead className="thead-dark">
               <tr>
                 <th> No </th>
                 <th> Order ID </th>
-                <th> User ID</th>
                 <th> Order Date</th>
                 <th> Total Paid</th>
                 <th> Order Status</th>
@@ -56,22 +64,18 @@ class SalesOrderList extends Component {
               <tr>
                 <td>1</td>
                 <td> 3132123</td>
-                <td> Buyer-31231231</td>
                 <td> 2021-11-26</td>
                 <td> Rp.60.000,-</td>
                 <td> unpaid</td>
                 <td>
-                  <button className="btn btn-info">Detail</button>
-                  <button
-                    style={{ marginLeft: "10px" }}
-                    className="btn btn-success"
-                  >
-                    Approve
-                  </button>
+                  <Button variant="success">Pay</Button>
+                  <Button style={{ marginLeft: "10px" }} variant="info">
+                    View Invoice
+                  </Button>
                 </td>
               </tr>
             </tbody>
-          </table>
+          </Table>
           <div>
             <Pagination count={4} color="primary" />
           </div>
@@ -81,4 +85,4 @@ class SalesOrderList extends Component {
   }
 }
 
-export default SalesOrderList;
+export default OrderList;

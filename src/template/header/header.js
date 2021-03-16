@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { Navbar, Form, Nav } from "react-bootstrap";
+import { Navbar, Form, Nav, NavDropdown } from "react-bootstrap";
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
   constructor(props) {
@@ -8,11 +11,23 @@ class Header extends Component {
   }
   render() {
     return (
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">GROMART</Navbar.Brand>
+      <Navbar bg="light" variant="light">
         <Nav className="mr-auto">
-          <Nav.Link href="#product">LOGOUT</Nav.Link>
+          <Nav.Link href="#product">Welcome Husen Nasrullah</Nav.Link>
         </Nav>
+        <Navbar.Collapse className="justify-content-end">
+          <NavDropdown title="Husen Nasrullah" id="collasible-nav-dropdown">
+            <NavDropdown.Item>
+              <Link to={`${this.props.path}/profile`}>Profile</Link>
+            </NavDropdown.Item>
+            <NavDropdown.Item>Logout</NavDropdown.Item>
+          </NavDropdown>
+          <FontAwesomeIcon
+            icon={faUserCircle}
+            className="mr-3"
+            style={{ fontSize: "30px" }}
+          />
+        </Navbar.Collapse>
       </Navbar>
     );
   }

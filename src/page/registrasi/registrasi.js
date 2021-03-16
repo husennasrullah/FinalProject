@@ -36,6 +36,7 @@ class Registrasi extends Component {
       passValidation,
       role,
     } = this.state;
+    console.log(email);
 
     let regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     let regUname = /^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/;
@@ -54,18 +55,18 @@ class Registrasi extends Component {
     ) {
       alert(`Insert all data!`);
     } else if (password !== passValidation) {
-      alert(`password get wrong!`);
+      alert(`Wrong Password`);
     } else if (!regUname.test(userName)) {
       alert(`Username must be 6 to 8 in alphanumeric and without any symbol`);
     } else if (!regEmail.test(email)) {
-      alert(`email get wrong. ex (xxx.xxx@xxx.com)`);
+      alert(`Email Format not valid`);
     } else if (!regPass.test(password)) {
       alert(
         `Password must be 6 in alphanumeric and at least 1 uppercase letter`
       );
     } else if (!regPhone.test(phoneNumber)) {
       alert(
-        `Phone number must in Indonesia type (ex: 628113912109 or 08134455555)`
+        `Phone number must in Indonesia type (ex: 6289507952135 or 089507952135)`
       );
     } else {
       let user = {
@@ -133,7 +134,7 @@ class Registrasi extends Component {
                   size="sm"
                   type="text"
                   name="email"
-                  placeholder="Email Address"
+                  placeholder="ex : husen@gmail.com"
                   onChange={this.setValue}
                 />
               </Col>
@@ -227,8 +228,17 @@ class Registrasi extends Component {
             </Form.Row>
           </Form.Group>
 
-          <Button variant="success" type="submit" onClick={this.doRegistration}>
+          <Button
+            className="mb-2 mr-2"
+            variant="success"
+            type="submit"
+            onClick={this.doRegistration}
+          >
             Submit
+          </Button>
+
+          <Button className="mb-2 mr-2" variant="danger" type="submit">
+            Back
           </Button>
         </Form>
       </div>

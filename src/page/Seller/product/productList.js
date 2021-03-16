@@ -1,20 +1,23 @@
 import React, { Component } from "react";
-import { Col, Row, Form, FormControl } from "react-bootstrap";
+import { Col, Row, Form, FormControl, Container } from "react-bootstrap";
 import ProductService from "../../../service/ProductService";
 import ModalForm from "./detailProduct";
 import "./style.css";
 import Pagination from "@material-ui/lab/Pagination";
+import { Button } from "react-bootstrap";
 
 class ProductList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       productList: [],
+      listProduct: [],
       productDetail: {},
       isOpen: false,
-      page: 1,
+      page: "1",
       count: 0,
       limit: 5,
+      Search: "",
     };
     this.valueSelect = "name";
   }
@@ -24,6 +27,9 @@ class ProductList extends Component {
       ProductService.deleteProduct(productId).then((res) => {
         this.setState({
           productList: this.state.productList.filter(
+            (prod) => prod.productId !== productId
+          ),
+          listProduct: this.state.listProduct.filter(
             (prod) => prod.productId !== productId
           ),
         });
@@ -43,32 +49,35 @@ class ProductList extends Component {
   closeModal = () => this.setState({ isOpen: false });
 
   addProduct = () => {
-    this.props.history.push("/add-product/add");
+    this.props.history.push("/gromart/product/add");
   };
 
   editProduct = (productId) => {
-    this.props.history.push(`/add-product/${productId}`);
+    this.props.history.push(`/gromart/product/${productId}`);
   };
 
   handleChange = (event, value) => {
-    let limit = 5;
-    ProductService.getProductPaging(value, limit).then((res) => {
+    ProductService.getProductPaging(value, this.state.limit).then((res) => {
       this.setState({
+        page: value,
         productList: res.data,
       });
     });
   };
 
-  onChangeSelect = (el) => {
-    this.valueSelect = el.target.value;
-    // console.log("apa :", this.valueSelect);
+  onChangeSelect = (e) => {
+    this.valueSelect = e.target.value;
   };
 
-  onChangeSearch = (el) => {
-    const nilai = el.target.value;
+  setValueSearch = (e) => {
+    this.setState({
+      Search: e.target.value,
+    });
+  };
 
-    if (nilai === "") {
-      ProductService.getProductPaging(this.state.activePage, 5)
+  Search = () => {
+    if (this.state.Search === "") {
+      ProductService.getProductPaging(this.state.page, this.state.limit)
         .then((res) => {
           this.setState({
             productList: res.data,
@@ -77,37 +86,47 @@ class ProductList extends Component {
         .catch((err) => {
           alert("Failed Fetching Data");
         });
-    } else if (this.valueSelect === "id") {
-      ProductService.getProductById(nilai)
-        .then((res) => {
-          this.setState({
-            productList: res.data,
+    } else {
+      if (this.valueSelect === "id") {
+        ProductService.searchById(this.state.Search)
+          .then((res) => {
+            this.setState({
+              productList: res.data,
+            });
+          })
+          .catch((err) => {
+            alert("Failed Fetching Data id");
           });
-        })
-        .catch((err) => {
-          alert("Failed Fetching Data");
-        });
-    } else if (this.valueSelect === "nama") {
-      ProductService.getProductByName(nilai)
-        .then((res) => {
-          this.setState({
-            productList: res.data,
+      } else if (this.valueSelect === "name") {
+        ProductService.searchByName(this.state.Search)
+          .then((res) => {
+            this.setState({
+              productList: res.data,
+            });
+          })
+          .catch((err) => {
+            alert("Failed Fetching Data nama");
           });
-        })
-        .catch((err) => {
-          alert("Failed Fetching Data");
-        });
+      }
     }
   };
 
+  cancelSearch = (e) => {
+    e.preventDefault();
+    this.setState({
+      Search: "",
+      productList: this.state.listProduct,
+    });
+  };
+
   componentDidMount() {
+    this.getCountPagination();
     ProductService.getProductPaging(this.state.page, this.state.limit)
       .then((res) => {
         this.setState({
           productList: res.data,
+          listProduct: res.data,
         });
-        this.getCountPagination();
-        s;
       })
       .catch((err) => {
         alert("Failed Fetching Data");
@@ -128,11 +147,13 @@ class ProductList extends Component {
   }
 
   render() {
-    console.log("dataDetail :", this.state.productDetail);
-    console.log("data state :", this.state.productList);
+    // console.log("dataDetail :", this.state.productDetail);
+    // console.log("data state :", this.state.productList);
+    console.log("cari :", this.state.Search);
+    console.log("isisss :", this.state.productList);
 
     return (
-      <div className="product">
+      <Container fluid>
         {this.state.isOpen ? (
           <ModalForm
             closeModal={this.closeModal}
@@ -143,7 +164,7 @@ class ProductList extends Component {
         ) : null}
 
         <div className="productTittle">
-          <h2 className="text-center">LIST OF PRODUCTS</h2>
+          <h2 className="text-center">List of Product</h2>
         </div>
         <br />
         <div>
@@ -162,9 +183,22 @@ class ProductList extends Component {
                   type="text"
                   placeholder="Search......"
                   className="mr-sm-2"
-                  onChange={(el) => this.onChangeSearch(el)}
+                  onChange={this.setValueSearch}
+                  value={this.state.Search}
                 />
-                {/* <Button variant="outline-success">Search</Button> */}
+                <Button variant="outline-success" onClick={this.Search}>
+                  Search
+                </Button>
+                <i
+                  class="far fa-times-circle"
+                  style={{
+                    fontSize: "4vh",
+                    color: "red",
+                    cursor: "pointer",
+                    marginLeft: "10px",
+                  }}
+                  onClick={this.cancelSearch}
+                ></i>
               </Form>
             </Col>
             <Col md={{ span: 1, offset: 5 }}>
@@ -178,7 +212,7 @@ class ProductList extends Component {
         </div>
         <br />
         <div>
-          <table className="table table-striped table-borderes table-md ">
+          <table className="table table-striped table-borderes table-sm ">
             <thead className="thead-dark">
               <tr>
                 <th> Product-ID</th>
@@ -196,29 +230,29 @@ class ProductList extends Component {
                   <td> {prod.productId}</td>
                   <td> {prod.productName}</td>
                   <td> {prod.category}</td>
-                  <td> {prod.unitPrice}</td>
+                  <td> Rp.{prod.unitPrice},-</td>
                   <td> {prod.stock}</td>
                   <td>
-                    <button
-                      className="btn btn-info"
+                    <Button
+                      variant="info"
                       onClick={() => this.openModal(prod.productId)}
                     >
                       Detail
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="success"
                       style={{ marginLeft: "10px" }}
-                      className="btn btn-success"
                       onClick={() => this.editProduct(prod.productId)}
                     >
                       Update
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       style={{ marginLeft: "10px" }}
-                      className="btn btn-danger"
+                      variant="danger"
                       onClick={() => this.deleteProduct(prod.productId)}
                     >
                       Delete
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -234,7 +268,7 @@ class ProductList extends Component {
             />
           </div>
         </div>
-      </div>
+      </Container>
     );
   }
 }

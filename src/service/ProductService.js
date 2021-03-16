@@ -1,5 +1,5 @@
 import axios from "axios";
-import Product from "../page/Seller/product";
+
 
 const PRODUCT_API = "http://localhost:8080/gromart/product/";
 class ProductService {
@@ -23,8 +23,12 @@ class ProductService {
     return axios.get(PRODUCT_API + productId);
   }
 
-  getProductByName(productName) {
-    return axios.get(PRODUCT_API + "nama/" + productId);
+  searchById(productId) {
+    return axios.get(PRODUCT_API + "id/" + productId);
+  }
+
+  searchByName(productName) {
+    return axios.get(PRODUCT_API + "name/" + productName);
   }
 
   updateProduct(product, productId) {

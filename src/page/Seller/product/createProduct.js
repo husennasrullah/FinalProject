@@ -16,7 +16,7 @@ class CreateProduct extends Component {
   }
 
   cancel = () => {
-    this.props.history.push("/product");
+    this.props.history.push("/gromart/product");
   };
 
   setValue = (event) => {
@@ -27,24 +27,35 @@ class CreateProduct extends Component {
 
   saveProduct = (e) => {
     e.preventDefault();
-    let product = {
-      productName: this.state.productName,
-      category: this.state.category,
-      unitPrice: this.state.unitPrice,
-      stock: this.state.stock,
-      description: this.state.description,
-    };
 
-    if (this.state.productId === "add") {
-      ProductService.createProduct(product).then((res) => {
-        this.props.history.push("/product");
-      });
+    if (
+      (this.state.productName === "",
+      this.state.category === "",
+      this.state.unitPrice === "",
+      this.state.stock === "",
+      this.state.description === "")
+    ) {
+      alert(`Insert all data!`);
     } else {
-      ProductService.updateProduct(product, this.state.productId).then(
-        (res) => {
-          this.props.history.push("/product");
-        }
-      );
+      let product = {
+        productName: this.state.productName,
+        category: this.state.category,
+        unitPrice: this.state.unitPrice,
+        stock: this.state.stock,
+        description: this.state.description,
+      };
+
+      if (this.state.productId === "add") {
+        ProductService.createProduct(product).then((res) => {
+          this.props.history.push("/gromart/product");
+        });
+      } else {
+        ProductService.updateProduct(product, this.state.productId).then(
+          (res) => {
+            this.props.history.push("/gromart/product");
+          }
+        );
+      }
     }
   };
 
