@@ -28,11 +28,11 @@ public class ProductServiceImpl implements ProductService {
 
     public Product findById(String productId) {
 
-        return (Product) productRepository.findById(productId).get();
+        return productRepository.findById(productId);
     }
 
     public Product findByName(String name) {
-        return productRepository.findByName(name).get(0);
+        return productRepository.findByName(name);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
 
     public boolean isProductExist(Product product) {
 
-        return productRepository.findByName(product.getProductName()).size() != 0;
+        return productRepository.findByName(product.getProductName()) != null;
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.gromart.springboot.controller;
 
 
 import com.gromart.springboot.model.Cart;
-import com.gromart.springboot.model.Product;
+import com.gromart.springboot.model.CartDetail;
 import com.gromart.springboot.service.CartService;
 import com.gromart.springboot.util.CustomErrorType;
 import org.slf4j.Logger;
@@ -27,7 +27,6 @@ public class CartController {
     private CartService cartService;
 
      //-------------------Retrieve All Products--------------------------------------------
-
     @RequestMapping(value = "/cart/", method = RequestMethod.GET)
     public ResponseEntity<List<Cart>> listAllCarts() {
         List<Cart> carts = cartService.findAllCart();
@@ -35,20 +34,6 @@ public class CartController {
             return new ResponseEntity<>(carts, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(carts, HttpStatus.OK);
-    }
-
-    // -------------------Create a Product-------------------------------------------
-
-    @RequestMapping(value = "/cart/", method = RequestMethod.POST)
-    public ResponseEntity<?> createCart(@Valid @RequestBody Cart cart, Errors error) {
-        logger.info("Creating Cart : {}", cart);
-
-        if (error.hasErrors()){
-            return new ResponseEntity<>(error.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        cartService.saveCart(cart);
-        return new ResponseEntity<>(cart, HttpStatus.CREATED);
     }
 
     //-----------------------
@@ -73,7 +58,28 @@ public class CartController {
         return new ResponseEntity<>(cart, HttpStatus.OK);
     }
 
-    //--------------------------------
+    // -------------------Create Cart-------------------------------------------
+    @RequestMapping(value = "/cart/", method = RequestMethod.POST)
+    public ResponseEntity<?> createCart(@Valid @RequestBody Cart cart, Errors error) {
+        logger.info("Creating Cart : {}", cart);
+        if (error.hasErrors()){
+            return new ResponseEntity<>(error.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        }
+        cartService.saveCart(cart);
+        return new ResponseEntity<>(cart, HttpStatus.CREATED);
+    }
+    //-------------------------add items-------------------------------------------
+    @RequestMapping(value = "/cart/additem/", method = RequestMethod.POST)
+    public ResponseEntity<?> addItems(@Valid @RequestBody CartDetail cartDetail, Errors error) {
+        logger.info("Creating Cart : {}", cartDetail);
+        if (error.hasErrors()){
+            return new ResponseEntity<>(error.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        }
+        cartService.addItem(cartDetail);
+        return new ResponseEntity<>(cartDetail, HttpStatus.CREATED);
+    }
+
+    //--------------------------------delete cart-------------------
     @RequestMapping(value = "/cart/{cartId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteProduct(@PathVariable("cartId") String cartId) {
         logger.info("Fetching & Deleting cart with id {}", cartId);
@@ -85,8 +91,16 @@ public class CartController {
                     HttpStatus.NOT_FOUND);
         }
         cartService.deleteCartById(cartId);
-        return new ResponseEntity<Product>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Cart>(HttpStatus.NO_CONTENT);
     }
 
+    //----------------------------deleteItem--------------------
+    @RequestMapping(value = "/cart/detail/{detailId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteDetailItem(@PathVariable("detailId") String detailId) {
+        logger.info("Fetching & Deleting detail item with id {}", detailId);
+
+        cartService.deleteDetailItem(detailId);
+        return new ResponseEntity<Cart>(HttpStatus.NO_CONTENT);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.gromart.springboot.service;
 
 import com.gromart.springboot.model.Cart;
+import com.gromart.springboot.model.CartDetail;
 import com.gromart.springboot.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,27 @@ public class CartServiceImpl implements CartService {
         synchronized (this) {
             cartRepository.deleteCartById(cartId);
         }
+    }
 
+    @Override
+    public void deleteDetailItem(String detailID) {
+        synchronized (this) {
+            cartRepository.deleteDetailItem(detailID);
+        }
+    }
+
+    @Override
+    public void addItem(CartDetail cartDetail) {
+        synchronized (this) {
+            cartRepository.addItem(cartDetail);
+        }
+    }
+
+    @Override
+    public void updateQuantity(CartDetail cartDetail) {
+        synchronized (this) {
+            cartRepository.updateQuantity(cartDetail);
+        }
     }
 
 }

@@ -35,7 +35,6 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-
     // -------------------Retrieve Single Product------------------------------------------
 
     @RequestMapping(value = "/product/{productId}", method = RequestMethod.GET)
@@ -97,7 +96,7 @@ public class ProductController {
 
         if (productService.isProductExist(product)) {
             logger.error("Unable to create. A Product with name {} already exist", product.getProductName());
-            return new ResponseEntity<>(new CustomErrorType("Unable to create. A Product with name " +
+            return new ResponseEntity<>(new CustomErrorType("Unable to create, Product " +
                     product.getProductName() + " already exist."), HttpStatus.CONFLICT);
         }
 
@@ -116,7 +115,11 @@ public class ProductController {
             return new ResponseEntity<>(new CustomErrorType("Unable to update. Product with id " + productId + " not found."),
                     HttpStatus.NOT_FOUND);
         }
-
+        if (productService.isProductExist(product)) {
+            logger.error("Unable to update. A Product with name {} already exist", product.getProductName());
+            return new ResponseEntity<>(new CustomErrorType("Unable to update, Product " +
+                    product.getProductName() + " already exist."), HttpStatus.CONFLICT);
+        }
         currentProduct.setProductName(product.getProductName());
         currentProduct.setCategory(product.getCategory());
         currentProduct.setUnitPrice(product.getUnitPrice());

@@ -85,43 +85,56 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public Optional<Product> findById(String productId) {
-        return jdbcTemplate.queryForObject("select * from product where productId = ?",
-                new Object[]{productId},
-                (rs, rowNum) ->
-                        Optional.of(new Product(
-                                rs.getString("productID"),
-                                rs.getString("productName"),
-                                rs.getString("category"),
-                                rs.getBigDecimal("unitPrice"),
-                                rs.getInt("stock"),
-                                rs.getString("description"),
-                                rs.getString("createdBy"),
-                                rs.getDate("createdDate"),
-                                rs.getString("updatedBy"),
-                                rs.getDate("updatedDate")
-                        ))
-        );
+    public Product findById(String productId) {
+        Product product;
+        try {
+            product =jdbcTemplate.queryForObject("select * from product where productId = ?",
+                    new Object[]{productId},
+                    (rs, rowNum) ->
+                            (new Product(
+                                    rs.getString("productID"),
+                                    rs.getString("productName"),
+                                    rs.getString("category"),
+                                    rs.getBigDecimal("unitPrice"),
+                                    rs.getInt("stock"),
+                                    rs.getString("description"),
+                                    rs.getString("createdBy"),
+                                    rs.getDate("createdDate"),
+                                    rs.getString("updatedBy"),
+                                    rs.getDate("updatedDate")
+                            ))
+            );
+        } catch (Exception e){
+            product=null;
+
+        }
+        return product;
     }
 
     @Override
-    public List<Product> findByName(String productName) {
-        return jdbcTemplate.query("select * from product where productName like ?",
-                new Object[]{"%"+productName+"%"},
-                (rs, rowNum) ->
-                        (new Product(
-                                rs.getString("productID"),
-                                rs.getString("productName"),
-                                rs.getString("category"),
-                                rs.getBigDecimal("unitPrice"),
-                                rs.getInt("stock"),
-                                rs.getString("description"),
-                                rs.getString("createdBy"),
-                                rs.getDate("createdDate"),
-                                rs.getString("updatedBy"),
-                                rs.getDate("updatedDate")
-                        ))
-        );
+    public Product findByName(String productName) {
+        Product product;
+        try {
+            product = jdbcTemplate.queryForObject("select * from product where productName = ?",
+                    new Object[]{productName},
+                    (rs, rowNum) ->
+                            (new Product(
+                                    rs.getString("productID"),
+                                    rs.getString("productName"),
+                                    rs.getString("category"),
+                                    rs.getBigDecimal("unitPrice"),
+                                    rs.getInt("stock"),
+                                    rs.getString("description"),
+                                    rs.getString("createdBy"),
+                                    rs.getDate("createdDate"),
+                                    rs.getString("updatedBy"),
+                                    rs.getDate("updatedDate")
+                            ))
+            );
+        } catch (Exception e) {
+            product=null;
+        }
+        return product;
     }
 
     @Override
@@ -175,6 +188,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                 product.getProductId()
         );
     }
+
     @Override
     public void deleteProductById(String productId) {
         jdbcTemplate.update("delete from product where productId = ?", productId);
@@ -209,3 +223,24 @@ public class ProductRepositoryImpl implements ProductRepository {
 
 
 }
+
+/*Map<String, Object> map = new HashMap<>();
+
+        map.put("qty", countProductByStatus(" "));
+
+        map.put("product", jdbcTemplate.query(
+                "select * from product p join user u on p.userCode = u.userCode limit 6 offset "+offset,
+                (rs, i) -> new Product(
+                        rs.getString("productCode"),
+                        rs.getString("productName"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getString("createdDate"),
+                        new User(
+                                rs.getString("userCode"),
+                                rs.getString("userName")
+                        )
+                )
+        ));
+* */

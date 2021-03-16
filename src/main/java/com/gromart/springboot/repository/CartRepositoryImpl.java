@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -211,6 +212,32 @@ public class CartRepositoryImpl implements CartRepository {
     public void deleteCartById(String cartId) {
         jdbcTemplate.update("delete from cart where cartID = ?", cartId);
         jdbcTemplate.update("delete from cartdetail where cartID = ?", cartId);
+    }
+
+    @Override
+    public void deleteDetailItem(String detailID) {
+        jdbcTemplate.update("delete from cartdetail where cartdetailID = ?", detailID);
+    }
+
+    @Override
+    public void addItem(CartDetail cartDetail) {
+        UUID detail = UUID.randomUUID();
+        String detailId = "Detail-" + detail;
+        jdbcTemplate.update("insert into cartdetail (cartdetailID, cartID, productID, quantity, subTotal) values (?,?,?,?,?)",
+                detailId,
+                cartDetail.getCartId(),
+                cartDetail.getProduct().getProductId(),
+                cartDetail.getQuantity(),
+                cartDetail.getProduct().getUnitPrice().multiply(new BigDecimal(cartDetail.getQuantity()))
+                );
+    }
+
+    @Override
+    public void updateQuantity(CartDetail cartDetail) {
+        jdbcTemplate.update("update cartdetail set quantity=? where cartdetailID=?",
+                cartDetail.getQuantity(),
+                cartDetail.getDetailId()
+        );
     }
 
 

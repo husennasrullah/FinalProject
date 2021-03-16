@@ -13,9 +13,9 @@ public interface ProductRepository {
 
     void saveProduct(Product product);
 
-    Optional<Product> findById(String productId);
+    Product findById(String productId);
 
-    List <Product> findByName(String productName);
+    Product findByName(String productName);
 
     List<Product> searchId(String productId);
 
