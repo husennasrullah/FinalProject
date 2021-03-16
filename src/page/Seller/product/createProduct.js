@@ -46,15 +46,21 @@ class CreateProduct extends Component {
       };
 
       if (this.state.productId === "add") {
-        ProductService.createProduct(product).then((res) => {
-          this.props.history.push("/gromart/product");
-        });
-      } else {
-        ProductService.updateProduct(product, this.state.productId).then(
-          (res) => {
+        ProductService.createProduct(product)
+          .then((res) => {
             this.props.history.push("/gromart/product");
-          }
-        );
+          })
+          .catch((err) => {
+            alert(err.response.data.errorMessage);
+          });
+      } else {
+        ProductService.updateProduct(product, this.state.productId)
+          .then((res) => {
+            this.props.history.push("/gromart/product");
+          })
+          .catch((err) => {
+            alert(err.response.data.errorMessage);
+          });
       }
     }
   };

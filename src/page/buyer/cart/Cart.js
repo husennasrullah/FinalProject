@@ -91,15 +91,15 @@ class Cart extends Component {
                       {currentCart.map((cart, idx) => (
                         <tr key={idx}>
                           <td>
-                            {/* <img
+                            <img
                               src="https://i.ibb.co/8PXKYMK/sepatu.jpg"
                               alt="sepatu"
                               style={{ width: "120px" }}
-                            ></img> */}
-                            <i
+                            ></img>
+                            {/* <i
                               class="far fa-image"
                               style={{ fontSize: "10vh" }}
-                            ></i>
+                            ></i> */}
                             <p>{cart.product.productName}</p>
                           </td>
                           <td>

@@ -46,6 +46,7 @@ class BuyerList extends Component {
         page: value,
         buyers: res.data,
       });
+      
     });
   };
 
