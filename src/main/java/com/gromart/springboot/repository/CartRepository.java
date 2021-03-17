@@ -20,7 +20,7 @@ public interface CartRepository {
 
     void deleteDetailItem (String detailID);
 
-    void addItem(CartDetail cartDetail);
+    void addItem(Cart cart);
 
     void updateQuantity (CartDetail cartDetail);
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -71,15 +72,51 @@ public class ProductController {
     }
 
 
-    //------------------------get with paging---------------------------------
+//    //------------------------get with paging---------------------------------
+//    @RequestMapping(value = "/product/paging/", method = RequestMethod.GET)
+//    public ResponseEntity<?>getProductWithPaging(@RequestParam int page, @RequestParam int limit){
+//        List<Product> products = productService.findAllWithPaging(page, limit);
+//        if(products.isEmpty()){
+//            return new ResponseEntity<>(products,HttpStatus.NOT_FOUND);
+//        }
+//        else{
+//            return new ResponseEntity<>(products,HttpStatus.OK);
+//        }
+//    }
+
+    //------------------------get with paging neww---------------------------------
     @RequestMapping(value = "/product/paging/", method = RequestMethod.GET)
     public ResponseEntity<?>getProductWithPaging(@RequestParam int page, @RequestParam int limit){
-        List<Product> products = productService.findAllWithPaging(page, limit);
-        if(products.isEmpty()){
-            return new ResponseEntity<>(products,HttpStatus.NOT_FOUND);
+        Map<String, Object> map = productService.findProduct(page, limit);
+        if(map.isEmpty()){
+            return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
         }
         else{
-            return new ResponseEntity<>(products,HttpStatus.OK);
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
+
+    //------------------------get name with paging ---------------------------------
+    @RequestMapping(value = "/product/findname/{productName}/", method = RequestMethod.GET)
+    public ResponseEntity<?>getNameWithPaging(@PathVariable("productName") String productName, @RequestParam int page, @RequestParam int limit){
+        Map<String, Object> map = productService.findNameWithPaging(productName, page, limit);
+        if(map.isEmpty()){
+            return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
+
+    //------------------------get Id with paging ---------------------------------
+    @RequestMapping(value = "/product/findid/{productId}/", method = RequestMethod.GET)
+    public ResponseEntity<?>getIdWithPaging(@PathVariable("productId") String productId, @RequestParam int page, @RequestParam int limit){
+        Map<String, Object> map = productService.findIdWithPaging(productId, page, limit);
+        if(map.isEmpty()){
+            return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(map,HttpStatus.OK);
         }
     }
 

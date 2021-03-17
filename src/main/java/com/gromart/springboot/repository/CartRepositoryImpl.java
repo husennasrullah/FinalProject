@@ -103,55 +103,58 @@ public class CartRepositoryImpl implements CartRepository {
     @Override
     public Cart findByUserId(String userId) {
         Cart carts;
-        carts = jdbcTemplate.queryForObject(
-                "select * from cart where userID = ?",
-                new Object[]{userId},
-                (rs, rowNum) ->
-                        new Cart(
-                                rs.getString("cartID"),
-                                rs.getDate("orderDate"),
-                                rs.getBigDecimal("totalAmount")
-                        )
-        );
-
-        carts.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
-                        "b.invoiceLimit FROM cart a JOIN user b ON a.userID = b.userID WHERE a.cartID=?",
-                new Object[]{carts.getCartId()},
-                (rs, rowNum) ->
-                        (new User(
-                                rs.getString("userID"),
-                                rs.getString("firstname"),
-                                rs.getString("lastName"),
-                                rs.getBigDecimal("creditLimit"),
-                                rs.getInt("invoiceLimit")
-                        ))
-                )
-        );
-
-        List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity, b.subTotal " +
-                        "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + carts.getCartId() + "'",
-                (rs, rowNum) -> new CartDetail(
-                        rs.getString("cartdetailID"),
-                        rs.getString("cartID"),
-                        rs.getString("quantity"),
-                        rs.getBigDecimal("subTotal")
-                )
-        ));
-        carts.setDetail(detail);
-        for (CartDetail details : detail) {
-            details.setProduct(jdbcTemplate.queryForObject("select p.productID, p.productName, p.category, p.unitPrice, " +
-                            "p.stock from cartdetail cd join product p on cd.productID = p.productID " +
-                            "where cd.cartdetailID='" + details.getDetailId() + "'",
-                    (rs, rowNum) -> new Product(
-                            rs.getString("productID"),
-                            rs.getString("productName"),
-                            rs.getString("category"),
-                            rs.getBigDecimal("unitPrice"),
-                            rs.getInt("stock")
-                    ))
+        try {
+            carts = jdbcTemplate.queryForObject(
+                    "select * from cart where userID = ?",
+                    new Object[]{userId},
+                    (rs, rowNum) ->
+                            new Cart(
+                                    rs.getString("cartID"),
+                                    rs.getDate("orderDate"),
+                                    rs.getBigDecimal("totalAmount")
+                            )
             );
-        }
-        return carts;
+
+            carts.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
+                            "b.invoiceLimit FROM cart a JOIN user b ON a.userID = b.userID WHERE a.cartID=?",
+                    new Object[]{carts.getCartId()},
+                    (rs, rowNum) ->
+                            (new User(
+                                    rs.getString("userID"),
+                                    rs.getString("firstname"),
+                                    rs.getString("lastName"),
+                                    rs.getBigDecimal("creditLimit"),
+                                    rs.getInt("invoiceLimit")
+                            ))
+                    )
+            );
+
+            List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity, b.subTotal " +
+                            "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + carts.getCartId() + "'",
+                    (rs, rowNum) -> new CartDetail(
+                            rs.getString("cartdetailID"),
+                            rs.getString("cartID"),
+                            rs.getString("quantity"),
+                            rs.getBigDecimal("subTotal")
+                    )
+            ));
+            carts.setDetail(detail);
+            for (CartDetail details : detail) {
+                details.setProduct(jdbcTemplate.queryForObject("select p.productID, p.productName, p.category, p.unitPrice, " +
+                                "p.stock from cartdetail cd join product p on cd.productID = p.productID " +
+                                "where cd.cartdetailID='" + details.getDetailId() + "'",
+                        (rs, rowNum) -> new Product(
+                                rs.getString("productID"),
+                                rs.getString("productName"),
+                                rs.getString("category"),
+                                rs.getBigDecimal("unitPrice"),
+                                rs.getInt("stock")
+                        ))
+                );
+            }
+        }catch (Exception e){
+            carts= null;
+        }return carts;
     }
 
     @Override
@@ -220,17 +223,35 @@ public class CartRepositoryImpl implements CartRepository {
     }
 
     @Override
-    public void addItem(CartDetail cartDetail) {
-        UUID detail = UUID.randomUUID();
-        String detailId = "Detail-" + detail;
-        jdbcTemplate.update("insert into cartdetail (cartdetailID, cartID, productID, quantity, subTotal) values (?,?,?,?,?)",
-                detailId,
-                cartDetail.getCartId(),
-                cartDetail.getProduct().getProductId(),
-                cartDetail.getQuantity(),
-                cartDetail.getProduct().getUnitPrice().multiply(new BigDecimal(cartDetail.getQuantity()))
-                );
+    public void addItem(Cart cart) {
+        List<CartDetail> details = cart.getDetail();
+        for (int i = 0; i < details.size(); i++) {
+            UUID detail = UUID.randomUUID();
+            String detailId = "Detail-" + detail;
+            jdbcTemplate.update(
+                    "INSERT INTO cartdetail(cartDetailID, cartID, productID, quantity, subTotal) VALUES (?,?,?,?,?)",
+                    detailId,
+                    cart.getCartId(),
+                    details.get(i).getProduct().getProductId(),
+                    details.get(i).getQuantity(),
+                    details.get(i).getSubTotal()
+            );
+        }
+
     }
+
+//    @Override
+//    public void addItem(CartDetail cartDetail) {
+//        UUID detail = UUID.randomUUID();
+//        String detailId = "Detail-" + detail;
+//        jdbcTemplate.update("insert into cartdetail (cartdetailID, cartID, productID, quantity, subTotal) values (?,?,?,?,?)",
+//                detailId,
+//                cartDetail.getCartId(),
+//                cartDetail.getProduct().getProductId(),
+//                cartDetail.getQuantity(),
+//                cartDetail.getProduct().getUnitPrice().multiply(new BigDecimal(cartDetail.getQuantity()))
+//                );
+//    }
 
     @Override
     public void updateQuantity(CartDetail cartDetail) {

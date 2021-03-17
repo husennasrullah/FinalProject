@@ -68,16 +68,33 @@ public class CartController {
         cartService.saveCart(cart);
         return new ResponseEntity<>(cart, HttpStatus.CREATED);
     }
-    //-------------------------add items-------------------------------------------
-    @RequestMapping(value = "/cart/additem/", method = RequestMethod.POST)
-    public ResponseEntity<?> addItems(@Valid @RequestBody CartDetail cartDetail, Errors error) {
-        logger.info("Creating Cart : {}", cartDetail);
-        if (error.hasErrors()){
-            return new ResponseEntity<>(error.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+
+    // -------------------Create Cart with validation-------------------------------------------
+    @RequestMapping(value = "/cart/add/{userId}", method = RequestMethod.POST)
+    public ResponseEntity<?> createCarts(@RequestBody Cart cart, @PathVariable("userId") String userId) {
+        logger.info("Creating Cart : {}", cart);
+
+        Cart existCart = cartService.findByUserId(userId);
+
+        if (existCart == null) {
+            cartService.saveCart(cart);
+            return new ResponseEntity<>(cart, HttpStatus.CREATED);
+        } else {
+            cartService.addItem(cart);
+            return new ResponseEntity<>("Item successfully added to cart", HttpStatus.CREATED);
         }
-        cartService.addItem(cartDetail);
-        return new ResponseEntity<>(cartDetail, HttpStatus.CREATED);
     }
+
+//    //-------------------------add items-------------------------------------------
+//    @RequestMapping(value = "/cart/additem/", method = RequestMethod.POST)
+//    public ResponseEntity<?> addItems(@Valid @RequestBody CartDetail cartDetail, Errors error) {
+//        logger.info("Creating Cart : {}", cartDetail);
+//        if (error.hasErrors()){
+//            return new ResponseEntity<>(error.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+//        }
+////        cartService.addItem(cart);
+//        return new ResponseEntity<>(cartDetail, HttpStatus.CREATED);
+//    }
 
     //--------------------------------delete cart-------------------
     @RequestMapping(value = "/cart/{cartId}", method = RequestMethod.DELETE)

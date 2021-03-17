@@ -52,9 +52,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addItem(CartDetail cartDetail) {
+    public void addItem(Cart cart) {
         synchronized (this) {
-            cartRepository.addItem(cartDetail);
+            cartRepository.addItem(cart);
         }
     }
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -26,6 +27,11 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    @Override
+    public Map<String, Object> findProduct(int page, int limit) {
+        return productRepository.findProduct(page, limit);
+    }
+
     public Product findById(String productId) {
 
         return productRepository.findById(productId);
@@ -43,6 +49,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> searchName(String productName) {
         return productRepository.searchName(productName);
+    }
+
+    @Override
+    public Map<String, Object> findNameWithPaging(String productName, int page, int limit) {
+        return productRepository.findNameWithPaging(productName, page, limit);
+    }
+
+    @Override
+    public Map<String, Object> findIdWithPaging(String productId, int page, int limit) {
+        return productRepository.findIdWithPaging(productId, page, limit);
     }
 
     public void saveProduct(Product product) {
