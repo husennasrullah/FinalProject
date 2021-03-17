@@ -22,11 +22,9 @@ class App extends Component {
     } else {
       RegistrasiService.loginCheck(user, pass)
         .then((res) => {
-          this.setState({
-            users: res.data,
-          });
-          alert("success");
-          this.props.changeLogin();
+          let payload = res.data;
+          alert("Successfully logged-in");
+          this.props.changeLogin(payload);
         })
         .catch((err) => {
           alert(err.response.data.errorMessage);
@@ -58,7 +56,7 @@ class App extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  changeLogin: () => dispatch({ type: "LOGIN_SUCCESS" }),
+  changeLogin: (payload) => dispatch({ type: "LOGIN_SUCCESS", payload }),
 });
 
 export default connect(null, mapDispatchToProps)(App);

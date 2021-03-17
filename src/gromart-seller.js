@@ -8,6 +8,7 @@ import HomeSeller from "./page/Seller/homepage/HomeSeller";
 import SideBar from "./template/sidebar/sidebar";
 import "./App.css";
 import Profile from "./page/profile/profile";
+import { connect } from "react-redux";
 
 class GromartSeller extends Component {
   constructor(props) {
@@ -16,8 +17,8 @@ class GromartSeller extends Component {
       path: this.props.match.path,
     };
   }
+
   render() {
-    console.log("path :", this.state.path);
     return (
       <div>
         <Row noGutters>
@@ -56,5 +57,14 @@ class GromartSeller extends Component {
     );
   }
 }
+
+// const mapStateToProps = (state) => {
+//   return {
+//     statusLogin: state.Auth.statusLogin,
+//     dataUser: state.Auth.users,
+//   };
+// };
+
+// export default connect(mapStateToProps)(GromartSeller);
 
 export default GromartSeller;

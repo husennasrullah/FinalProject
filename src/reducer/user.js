@@ -1,15 +1,10 @@
 const defaultState = {
-  statusLogin: false,
-  users: "",
+  dataUsers: {},
 };
 const authReducer = (state = defaultState, action) => {
   switch (action.type) {
     case "LOGIN_SUCCESS":
-      return {
-        ...state,
-        statusLogin: true,
-        users: action.payload,
-      };
+      return {};
 
     case "LOGOUT":
       return defaultState;

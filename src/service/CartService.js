@@ -6,5 +6,17 @@ class CartService {
   getCartByUserID(userId) {
     return axios.get(CART_API + "id/" + userId);
   }
+
+  deleteItem(detailId) {
+    return axios.delete(CART_API + "detail/" + detailId);
+  }
+
+  addToCart(userId, addToCart) {
+    return axios.post(CART_API + "add/" + userId, addToCart);
+  }
+
+  deleteCart() {}
+
+  addItem() {}
 }
 export default new CartService();

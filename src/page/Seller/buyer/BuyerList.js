@@ -23,6 +23,7 @@ class BuyerList extends Component {
       count: 0,
       limit: 5,
       Search: "",
+      isSearch: false,
     };
     this.valueSelect = "name";
   }
@@ -38,6 +39,7 @@ class BuyerList extends Component {
     this.setState({
       isOpen: false,
     });
+    this.getBuyerPaging();
   };
 
   handleChange = (event, value) => {
@@ -46,7 +48,6 @@ class BuyerList extends Component {
         page: value,
         buyers: res.data,
       });
-      
     });
   };
 
@@ -91,6 +92,7 @@ class BuyerList extends Component {
           .then((res) => {
             this.setState({
               buyers: res.data,
+              isSearch: true,
             });
           })
           .catch((err) => {
@@ -101,6 +103,7 @@ class BuyerList extends Component {
           .then((res) => {
             this.setState({
               buyers: res.data,
+              isSearch: true,
             });
           })
           .catch((err) => {
@@ -115,11 +118,16 @@ class BuyerList extends Component {
     this.setState({
       Search: "",
       buyers: this.state.buyerList,
+      isSearch: false,
     });
   };
   //--------------------------------------------------------------
 
   componentDidMount() {
+    this.getBuyerPaging();
+  }
+
+  getBuyerPaging() {
     RegistrasiService.getBuyerPaging(this.state.page, this.state.limit)
       .then((res) => {
         this.setState({
@@ -143,6 +151,7 @@ class BuyerList extends Component {
             updateLimit={this.state.updateLimit}
           />
         ) : null}
+        <br />
 
         <div className="productTittle">
           <h2 className="text-center">List of Buyer</h2>
@@ -170,16 +179,18 @@ class BuyerList extends Component {
                 <Button variant="outline-success" onClick={this.Search}>
                   Search
                 </Button>
-                <i
-                  class="far fa-times-circle"
-                  style={{
-                    fontSize: "4vh",
-                    color: "red",
-                    cursor: "pointer",
-                    marginLeft: "10px",
-                  }}
-                  onClick={this.cancelSearch}
-                ></i>
+                {this.state.isSearch ? (
+                  <i
+                    class="far fa-times-circle"
+                    style={{
+                      fontSize: "4vh",
+                      color: "red",
+                      cursor: "pointer",
+                      marginLeft: "10px",
+                    }}
+                    onClick={this.cancelSearch}
+                  ></i>
+                ) : null}
               </Form>
             </Col>
           </Row>

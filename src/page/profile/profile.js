@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Container, Form, Col, Button } from "react-bootstrap";
+import { connect } from "react-redux";
 
 class Profile extends Component {
   constructor(props) {
@@ -31,7 +32,9 @@ class Profile extends Component {
               style={{ fontSize: "8vh", marginRight: "15px" }}
             ></i>
             <Form.Label style={{ fontSize: "6vh", fontFamily: "cambria" }}>
-              Husen Nasrullah
+              {this.props.dataUser.firstName +
+                " " +
+                this.props.dataUser.lastName}
             </Form.Label>
           </Form.Group>
           <Form.Group>
@@ -40,7 +43,13 @@ class Profile extends Component {
                 Role
               </Form.Label>
               <Col>
-                <Form.Control name="role" size="md" type="text" disabled />
+                <Form.Control
+                  name="role"
+                  size="md"
+                  type="text"
+                  value={this.props.dataUser.role}
+                  disabled
+                />
               </Col>
             </Form.Row>
           </Form.Group>
@@ -51,7 +60,13 @@ class Profile extends Component {
                 First Name
               </Form.Label>
               <Col>
-                <Form.Control name="firstName" size="md" type="text" disabled />
+                <Form.Control
+                  name="firstName"
+                  size="md"
+                  type="text"
+                  value={this.props.dataUser.firstName}
+                  disabled
+                />
               </Col>
             </Form.Row>
           </Form.Group>
@@ -62,7 +77,13 @@ class Profile extends Component {
                 Last Name
               </Form.Label>
               <Col>
-                <Form.Control name="lastName" size="md" type="text" disabled />
+                <Form.Control
+                  name="lastName"
+                  size="md"
+                  type="text"
+                  value={this.props.dataUser.lastName}
+                  disabled
+                />
               </Col>
             </Form.Row>
           </Form.Group>
@@ -72,7 +93,13 @@ class Profile extends Component {
                 Email Address
               </Form.Label>
               <Col>
-                <Form.Control name="email" size="md" type="text" disabled />
+                <Form.Control
+                  name="email"
+                  size="md"
+                  type="text"
+                  value={this.props.dataUser.email}
+                  disabled
+                />
               </Col>
             </Form.Row>
           </Form.Group>
@@ -87,6 +114,7 @@ class Profile extends Component {
                   name="phoneNumber"
                   size="md"
                   type="text"
+                  value={this.props.dataUser.phoneNumber}
                   disabled
                 />
               </Col>
@@ -116,4 +144,13 @@ class Profile extends Component {
   }
 }
 
-export default Profile;
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(Profile);
+
+//export default Profile;

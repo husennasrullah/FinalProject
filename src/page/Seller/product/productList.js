@@ -18,6 +18,7 @@ class ProductList extends Component {
       count: 0,
       limit: 5,
       Search: "",
+      isSearch: false,
     };
     this.valueSelect = "name";
   }
@@ -60,7 +61,7 @@ class ProductList extends Component {
     ProductService.getProductPaging(value, this.state.limit).then((res) => {
       this.setState({
         page: value,
-        productList: res.data,
+        productList: res.data.product,
       });
     });
   };
@@ -77,31 +78,37 @@ class ProductList extends Component {
 
   Search = () => {
     if (this.state.Search === "") {
-      ProductService.getProductPaging(this.state.page, this.state.limit)
-        .then((res) => {
-          this.setState({
-            productList: res.data,
-          });
-        })
-        .catch((err) => {
-          alert("Failed Fetching Data");
-        });
+      this.getProductPaging();
     } else {
       if (this.valueSelect === "id") {
-        ProductService.searchById(this.state.Search)
+        ProductService.searchById(
+          this.state.Search,
+          this.state.page,
+          this.state.limit
+        )
           .then((res) => {
+            let page = res.data.qty / this.state.limit;
             this.setState({
-              productList: res.data,
+              productList: res.data.product,
+              count: Math.ceil(page),
+              isSearch: true,
             });
           })
           .catch((err) => {
-            alert("Failed Fetching Data id");
+            alert("Failed Fetching Data nama");
           });
       } else if (this.valueSelect === "name") {
-        ProductService.searchByName(this.state.Search)
+        ProductService.searchByName(
+          this.state.Search,
+          this.state.page,
+          this.state.limit
+        )
           .then((res) => {
+            let page = res.data.qty / this.state.limit;
             this.setState({
-              productList: res.data,
+              productList: res.data.product,
+              count: Math.ceil(page),
+              isSearch: true,
             });
           })
           .catch((err) => {
@@ -112,20 +119,27 @@ class ProductList extends Component {
   };
 
   cancelSearch = (e) => {
-    e.preventDefault();
     this.setState({
       Search: "",
       productList: this.state.listProduct,
+      isSearch: false,
     });
+    this.getProductPaging();
   };
 
   componentDidMount() {
-    this.getCountPagination();
+    this.getProductPaging();
+  }
+
+  getProductPaging() {
     ProductService.getProductPaging(this.state.page, this.state.limit)
       .then((res) => {
+        let page = res.data.qty / this.state.limit;
+
         this.setState({
-          productList: res.data,
-          listProduct: res.data,
+          productList: res.data.product,
+          listProduct: res.data.product,
+          count: Math.ceil(page),
         });
       })
       .catch((err) => {
@@ -133,25 +147,7 @@ class ProductList extends Component {
       });
   }
 
-  getCountPagination() {
-    ProductService.getCount()
-      .then((res) => {
-        let page = res.data / this.state.limit;
-        this.setState({
-          count: Math.ceil(page),
-        });
-      })
-      .catch(() => {
-        alert("Failed fetching data");
-      });
-  }
-
   render() {
-    // console.log("dataDetail :", this.state.productDetail);
-    // console.log("data state :", this.state.productList);
-    console.log("cari :", this.state.Search);
-    console.log("isisss :", this.state.productList);
-
     return (
       <Container fluid>
         {this.state.isOpen ? (
@@ -162,6 +158,7 @@ class ProductList extends Component {
             productDetail={this.state.productDetail}
           />
         ) : null}
+        <br />
 
         <div className="productTittle">
           <h2 className="text-center">List of Product</h2>
@@ -189,16 +186,18 @@ class ProductList extends Component {
                 <Button variant="outline-success" onClick={this.Search}>
                   Search
                 </Button>
-                <i
-                  class="far fa-times-circle"
-                  style={{
-                    fontSize: "4vh",
-                    color: "red",
-                    cursor: "pointer",
-                    marginLeft: "10px",
-                  }}
-                  onClick={this.cancelSearch}
-                ></i>
+                {this.state.isSearch ? (
+                  <i
+                    class="far fa-times-circle"
+                    style={{
+                      fontSize: "4vh",
+                      color: "red",
+                      cursor: "pointer",
+                      marginLeft: "10px",
+                    }}
+                    onClick={this.cancelSearch}
+                  ></i>
+                ) : null}
               </Form>
             </Col>
             <Col md={{ span: 1, offset: 5 }}>

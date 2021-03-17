@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { Component } from "react";
 
-import { Nav, Navbar } from "react-bootstrap";
+import { Nav, Navbar, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 class SidebarBuyer extends Component {
@@ -30,22 +30,34 @@ class SidebarBuyer extends Component {
 
           <Nav.Item className="active">
             <Link to={this.props.path}>
-              <FontAwesomeIcon icon={faHome} className="mr-3" />
-              Home
+              <Form.Label
+                style={{ color: "white", fontSize: "18px", cursor: "pointer" }}
+              >
+                <FontAwesomeIcon icon={faHome} className="mr-3" />
+                Home
+              </Form.Label>
             </Link>
           </Nav.Item>
           <br />
           <Nav.Item>
             <Link to={`${this.props.path}/orderlist`}>
-              <FontAwesomeIcon icon={faListUl} className="mr-3" />
-              OrderList
+              <Form.Label
+                style={{ color: "white", fontSize: "18px", cursor: "pointer" }}
+              >
+                <FontAwesomeIcon icon={faListUl} className="mr-3" />
+                OrderList
+              </Form.Label>
             </Link>
           </Nav.Item>
           <br />
           <Nav.Item>
             <Link to={`${this.props.path}/cart`}>
-              <FontAwesomeIcon icon={faCartPlus} className="mr-3" />
-              Cart
+              <Form.Label
+                style={{ color: "white", fontSize: "18px", cursor: "pointer" }}
+              >
+                <FontAwesomeIcon icon={faCartPlus} className="mr-3" />
+                Cart
+              </Form.Label>
             </Link>
           </Nav.Item>
         </Nav>

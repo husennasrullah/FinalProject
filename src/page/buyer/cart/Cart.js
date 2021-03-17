@@ -9,6 +9,7 @@ import {
   InputGroup,
   FormControl,
 } from "react-bootstrap";
+import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
 import ShippingService from "../../../service/ShippingService";
 
@@ -20,11 +21,23 @@ class Cart extends Component {
       shippingFee: 0,
       cart: [],
       currentCart: [],
-      userid: "Buyer-4cf2f03d-404a-44f2-810f-b143d4a9f8c0",
+      userid: this.props.dataUser.userId,
     };
   }
 
   checkout = () => {};
+
+  deleteItem = (detailId) => {
+    if (confirm("are you sure to delete item ?")) {
+      CartService.deleteItem(detailId).then((res) => {
+        this.setState({
+          currentCart: this.state.currentCart.filter(
+            (car) => car.detailId !== detailId
+          ),
+        });
+      });
+    }
+  };
 
   setShipping = (e) => {
     this.setState({
@@ -56,16 +69,15 @@ class Cart extends Component {
   }
   render() {
     const { currentCart, cart } = this.state;
-    console.log(this.state.currentCart);
-    console.log(this.state.shippingFee);
+    console.log("ini user :", this.props.dataUser);
     return (
       <Container fluid>
         <div>
           <h2>Shopping Cart</h2>
         </div>
         <br />
-        <Container style={{ width: "90%" }}>
-          <Card>
+        <Container fluid>
+          <Card border="success">
             <Card.Header as="h5">
               <Row sm>
                 <Col sm={9}>
@@ -91,15 +103,10 @@ class Cart extends Component {
                       {currentCart.map((cart, idx) => (
                         <tr key={idx}>
                           <td>
-                            <img
-                              src="https://i.ibb.co/8PXKYMK/sepatu.jpg"
-                              alt="sepatu"
-                              style={{ width: "120px" }}
-                            ></img>
-                            {/* <i
+                            <i
                               class="far fa-image"
                               style={{ fontSize: "10vh" }}
-                            ></i> */}
+                            ></i>
                             <p>{cart.product.productName}</p>
                           </td>
                           <td>
@@ -117,11 +124,17 @@ class Cart extends Component {
                             </InputGroup>
                           </td>
                           <td>Rp.{cart.product.unitPrice},-</td>
-                          <td>Rp.{cart.subTotal},-</td>
+                          <td>
+                            Rp.
+                            {parseInt(cart.product.unitPrice) *
+                              parseInt(cart.quantity)}
+                            ,-
+                          </td>
                           <td>
                             <i
                               class="fas fa-trash-alt"
                               style={{ cursor: "pointer" }}
+                              onClick={() => this.deleteItem(cart.detailId)}
                             ></i>
                           </td>
                         </tr>
@@ -184,7 +197,9 @@ class Cart extends Component {
                           <Form.Label as="h6">Shipping Fee</Form.Label>
                         </Col>
                         <Col md={{ span: 3, offset: 3 }}>
-                          <Form.Label>Rp.{this.state.shippingFee},-</Form.Label>
+                          <Form.Label as="h6">
+                            Rp.{this.state.shippingFee},-
+                          </Form.Label>
                         </Col>
                       </Form.Row>
                     </Form.Group>
@@ -195,7 +210,7 @@ class Cart extends Component {
                           <Form.Label as="h6">Total Payment</Form.Label>
                         </Col>
                         <Col md={{ span: 3, offset: 3 }}>
-                          <Form.Label>Rp.80.000,-</Form.Label>
+                          <Form.Label as="h6">Rp.80.000,-</Form.Label>
                         </Col>
                       </Form.Row>
                     </Form.Group>
@@ -217,4 +232,13 @@ class Cart extends Component {
   }
 }
 
-export default Cart;
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(Cart);
+
+//export default Cart;

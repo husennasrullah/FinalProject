@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./style.css";
-import { Nav, Navbar } from "react-bootstrap";
+import { Form, Nav, Navbar } from "react-bootstrap";
 import {
   faHome,
   faBriefcase,
@@ -29,29 +29,46 @@ class SideBar extends Component {
 
           <Nav.Item className="active">
             <Link to={this.props.path}>
-              <FontAwesomeIcon icon={faHome} className="mr-3" />
-              Home
+              <Form.Label
+                style={{ color: "white", fontSize: "18px", cursor: "pointer" }}
+              >
+                <FontAwesomeIcon icon={faHome} className="mr-3" />
+                Home
+              </Form.Label>
             </Link>
           </Nav.Item>
           <br />
           <Nav.Item>
             <Link to={`${this.props.path}/product`}>
-              <FontAwesomeIcon icon={faBriefcase} className="mr-3" />
-              Product
+              <Form.Label
+                style={{ color: "white", fontSize: "18px", cursor: "pointer" }}
+              >
+                {" "}
+                <FontAwesomeIcon icon={faBriefcase} className="mr-3" />
+                Product
+              </Form.Label>
             </Link>
           </Nav.Item>
           <br />
           <Nav.Item>
             <Link to={`${this.props.path}/buyer`}>
-              <FontAwesomeIcon icon={faListUl} className="mr-3" />
-              List of Buyer
+              <Form.Label
+                style={{ color: "white", fontSize: "18px", cursor: "pointer" }}
+              >
+                <FontAwesomeIcon icon={faListUl} className="mr-3" />
+                List of Buyer
+              </Form.Label>
             </Link>
           </Nav.Item>
           <br />
           <Nav.Item>
             <Link to={`${this.props.path}/salesorder`}>
-              <FontAwesomeIcon icon={faMoneyBill} className="mr-3" />
-              Sales Order
+              <Form.Label
+                style={{ color: "white", fontSize: "18px", cursor: "pointer" }}
+              >
+                <FontAwesomeIcon icon={faMoneyBill} className="mr-3" />
+                Sales Order
+              </Form.Label>
             </Link>
           </Nav.Item>
         </Nav>

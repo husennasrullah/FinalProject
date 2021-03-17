@@ -68,7 +68,6 @@ class OrderList extends Component {
                 <td> Rp.60.000,-</td>
                 <td> unpaid</td>
                 <td>
-                  <Button variant="success">Pay</Button>
                   <Button style={{ marginLeft: "10px" }} variant="info">
                     View Invoice
                   </Button>

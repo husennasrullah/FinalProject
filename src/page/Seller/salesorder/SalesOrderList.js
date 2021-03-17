@@ -10,6 +10,7 @@ class SalesOrderList extends Component {
   render() {
     return (
       <Container fluid>
+        <br />
         <div className="productTittle">
           <h2 className="text-center">Sales Order List</h2>
         </div>

@@ -13,7 +13,7 @@ class HomeSeller extends Component {
     return (
       <>
         <Container fluid>
-          {/* <br />
+          <br />
           <Carousel fade>
             <Carousel.Item style={{ height: "200px" }}>
               <img
@@ -22,10 +22,8 @@ class HomeSeller extends Component {
                 alt="First slide"
               />
               <Carousel.Caption>
-                <h3>First slide label</h3>
-                <p>
-                  Nulla vitae elit libero, a pharetra augue mollis interdum.
-                </p>
+                <h3>Choose your Product</h3>
+                <p>choose any kind of product that match to your desire</p>
               </Carousel.Caption>
             </Carousel.Item>
             <Carousel.Item style={{ height: "200px" }}>
@@ -36,8 +34,8 @@ class HomeSeller extends Component {
               />
 
               <Carousel.Caption>
-                <h3>Second slide label</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                <h3>Checkout yor Cart</h3>
+                <p>Edit your Shopping cart and checkout</p>
               </Carousel.Caption>
             </Carousel.Item>
             <Carousel.Item style={{ height: "200px" }}>
@@ -48,14 +46,13 @@ class HomeSeller extends Component {
               />
 
               <Carousel.Caption>
-                <h3>Third slide label</h3>
+                <h3>Waiting for Approval</h3>
                 <p>
-                  Praesent commodo cursus magna, vel scelerisque nisl
-                  consectetur.
+                  the Seller will approve your transaction as soon as possible
                 </p>
               </Carousel.Caption>
             </Carousel.Item>
-          </Carousel> */}
+          </Carousel>
           <br />
           <CardDeck>
             <Card border="info" style={{ width: "18rem" }}>

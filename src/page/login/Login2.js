@@ -60,7 +60,6 @@ class LoginBaru extends Component {
                     onChange={this.setValue}
                   />
                 </FormGroup>
-
                 <input
                   type="button"
                   className="btnRegister2"

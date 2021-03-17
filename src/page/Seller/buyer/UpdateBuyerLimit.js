@@ -44,7 +44,7 @@ class ModalLimit extends Component {
       })
       .catch((err) => {
         console.log(err.response);
-        alert("Failed Fetching Data nama");
+        alert("Failed Update limit");
       });
   };
 

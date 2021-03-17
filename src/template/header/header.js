@@ -3,6 +3,7 @@ import { Navbar, Form, Nav, NavDropdown } from "react-bootstrap";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 class Header extends Component {
   constructor(props) {
@@ -10,13 +11,23 @@ class Header extends Component {
     this.state = {};
   }
   render() {
+    console.log("header :", this.props.dataUser.firstName);
+
     return (
       <Navbar bg="light" variant="light">
         <Nav className="mr-auto">
-          <Nav.Link href="#product">Welcome Husen Nasrullah</Nav.Link>
+          <Nav.Link href="#product">
+            WELCOME -{" "}
+            {this.props.dataUser.firstName + " " + this.props.dataUser.lastName}
+          </Nav.Link>
         </Nav>
         <Navbar.Collapse className="justify-content-end">
-          <NavDropdown title="Husen Nasrullah" id="collasible-nav-dropdown">
+          <NavDropdown
+            title={
+              this.props.dataUser.firstName + " " + this.props.dataUser.lastName
+            }
+            id="collasible-nav-dropdown"
+          >
             <NavDropdown.Item>
               <Link to={`${this.props.path}/profile`}>Profile</Link>
             </NavDropdown.Item>
@@ -33,4 +44,13 @@ class Header extends Component {
   }
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(Header);
+
+//export default Header;
