@@ -84,7 +84,7 @@ public class CartController {
             cartService.saveCart(cart);
             return new ResponseEntity<>(cart, HttpStatus.CREATED);
         } else {
-            CartDetail detailProduct = cartService.findProductExist(productId);
+            CartDetail detailProduct = cartService.findProductExist(productId, cart.getCartId());
 
             if (detailProduct == null) {
                 cartService.addItem(cart);

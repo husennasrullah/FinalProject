@@ -16,7 +16,7 @@ public interface CartRepository {
 
     Cart findById (String cartId);
 
-    CartDetail findProductExist (String productId);
+    CartDetail findProductExist (String productId, String cartId);
 
     void deleteCartById(String cartId);
 

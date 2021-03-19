@@ -211,11 +211,11 @@ public class CartRepositoryImpl implements CartRepository {
     }
 
     @Override
-    public CartDetail findProductExist(String productId) {
+    public CartDetail findProductExist(String productId, String cartId) {
         CartDetail cartDetail;
         try {
-            cartDetail = jdbcTemplate.queryForObject("select * from cartdetail where productId=?",
-                    new Object[]{productId},
+            cartDetail = jdbcTemplate.queryForObject("select * from cartdetail where productId=? and cartID=?",
+                    new Object[]{productId, cartId},
                     (rs, rowNum) ->
                             (new CartDetail(
                                     rs.getString("cartdetailID"),

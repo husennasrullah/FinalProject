@@ -38,8 +38,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDetail findProductExist(String productId) {
-        return cartRepository.findProductExist(productId);
+    public CartDetail findProductExist(String productId, String cartId) {
+        return cartRepository.findProductExist(productId, cartId);
     }
 
     @Override
