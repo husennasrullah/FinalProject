@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import Pagination from "@material-ui/lab/Pagination";
+
 import {
   Container,
   Card,
@@ -15,6 +16,7 @@ import {
 import ProductService from "../../../service/ProductService";
 import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
+import DetailShop from "./DetailShop";
 
 class HomeBuyer extends Component {
   constructor(props) {
@@ -29,10 +31,12 @@ class HomeBuyer extends Component {
       isSearch: true,
       userid: this.props.dataUser.userId,
       cartId: "",
+      isOpen: false,
+      detailShop: "",
     };
   }
 
-  addToCart = (productId) => {
+  addToCart = (productId, stock, qty) => {
     let addToCart = {
       cartId: this.state.cartId, //coba
       user: {
@@ -44,22 +48,35 @@ class HomeBuyer extends Component {
         {
           product: {
             productId: productId,
+            stock: stock,
           },
-          quantity: 1,
+          quantity: qty,
           subTotal: 20000,
         },
       ],
     };
 
-    CartService.addToCart(this.props.dataUser.userId, addToCart)
+    CartService.addToCart(this.props.dataUser.userId, productId, addToCart)
       .then((res) => {
         alert("berhasil ");
         this.getCurrentCart();
       })
       .catch((err) => {
-        alert(err.response.data.errorMessage);
+        console.log("error :", err.response.data);
+        alert(err.response.data);
       });
   };
+
+  detailShop = (productId) => {
+    this.setState({
+      detailShop: this.state.product.filter(
+        (prod) => prod.productId === productId
+      ),
+      isOpen: true,
+    });
+  };
+
+  closeModal = () => this.setState({ isOpen: false });
 
   searchProduct = () => {
     if (this.state.isSearch) {
@@ -124,17 +141,15 @@ class HomeBuyer extends Component {
   }
 
   getCurrentCart() {
-    CartService.getCartByUserID(this.state.userid)
-      .then((res) => {
+    CartService.getCartByUserID(this.state.userid).then((res) => {
+      console.log("pesan :", res.data.errorMessage);
+      if (res.data.errorMessage === "No-Cart") {
+      } else {
         this.setState({
           cartId: res.data.cartId,
         });
-      })
-      .catch((err) => {
-        this.setState({
-          cartId: "null",
-        });
-      });
+      }
+    });
   }
 
   componentDidMount() {
@@ -145,7 +160,16 @@ class HomeBuyer extends Component {
   render() {
     console.log("CARTID :", this.state.cartId);
     return (
-      <Container fluid>
+      <Container fluid style={{ backgroundColor: "#f2f4f7" }}>
+        {this.state.isOpen ? (
+          <DetailShop
+            closeModal={this.closeModal}
+            isOpen={this.state.isOpen}
+            detailShop={this.state.detailShop}
+            addToCart={this.addToCart}
+          />
+        ) : null}
+
         <br />
         <Row>
           <Col md={3}>
@@ -244,28 +268,31 @@ class HomeBuyer extends Component {
                   {this.state.product.map((prod, idx) => (
                     <Col key={idx} xs={3}>
                       <Card>
-                        <i
-                          class="fas fa-camera-retro"
-                          style={{ fontSize: "11vh" }}
-                        ></i>
-                        <Card.Body>
+                        <Card.Body
+                          style={{ cursor: "pointer" }}
+                          onClick={() => this.detailShop(prod.productId)}
+                        >
+                          <i
+                            class="fas fa-camera-retro"
+                            style={{ fontSize: "11vh" }}
+                          ></i>
                           <Card.Title>{prod.productName}</Card.Title>
-                          <Card.Text>Rp.{prod.unitPrice},-</Card.Text>
+                          <Card.Text>
+                            <p>Stock Available : {prod.stock} items</p>
+                            <p>Rp.{prod.unitPrice},-</p>
+                          </Card.Text>
                         </Card.Body>
                         <Card.Footer>
                           <Button
                             variant="primary"
-                            size="sm"
-                            onClick={() => this.addToCart(prod.productId)}
+                            size="md"
+                            style={{ width: "80%" }}
+                            onClick={() =>
+                              this.addToCart(prod.productId, prod.stock, 1)
+                            }
+                            disabled={prod.stock === 0}
                           >
                             add to cart
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            style={{ marginLeft: "5px" }}
-                          >
-                            view
                           </Button>
                         </Card.Footer>
                       </Card>

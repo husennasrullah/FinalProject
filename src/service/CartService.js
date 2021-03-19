@@ -7,13 +7,22 @@ class CartService {
     return axios.get(CART_API + "id/" + userId);
   }
 
-  deleteItem(detailId) {
-    return axios.delete(CART_API + "detail/" + detailId);
+  deleteItem(cartId, detailId) {
+    return axios.delete(
+      CART_API + "item/?cartId=" + cartId + "&detailId=" + detailId
+    );
   }
 
-  addToCart(userId, addToCart) {
-    return axios.post(CART_API + "add/" + userId, addToCart);
+  addToCart(userId, productId, addToCart) {
+    return axios.post(
+      CART_API + "add/?userId=" + userId + "&productId=" + productId,
+      addToCart
+    );
   }
+
+  // addToCart(userId, addToCart) {
+  //   return axios.post(CART_API + "add/" + userId, addToCart);
+  // }
 
   deleteCart() {}
 
