@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -212,6 +211,26 @@ public class CartRepositoryImpl implements CartRepository {
     }
 
     @Override
+    public CartDetail findProductExist(String productId) {
+        CartDetail cartDetail;
+        try {
+            cartDetail = jdbcTemplate.queryForObject("select * from cartdetail where productId=?",
+                    new Object[]{productId},
+                    (rs, rowNum) ->
+                            (new CartDetail(
+                                    rs.getString("cartdetailID"),
+                                    rs.getString("cartID"),
+                                    rs.getString("quantity"),
+                                    rs.getBigDecimal("subTotal")
+                            ))
+            );
+        } catch (Exception e) {
+            cartDetail = null;
+        }
+     return cartDetail;
+    }
+
+    @Override
     public void deleteCartById(String cartId) {
         jdbcTemplate.update("delete from cart where cartID = ?", cartId);
         jdbcTemplate.update("delete from cartdetail where cartID = ?", cartId);
@@ -237,7 +256,6 @@ public class CartRepositoryImpl implements CartRepository {
                     details.get(i).getSubTotal()
             );
         }
-
     }
 
 //    @Override
@@ -259,6 +277,13 @@ public class CartRepositoryImpl implements CartRepository {
                 cartDetail.getQuantity(),
                 cartDetail.getDetailId()
         );
+    }
+
+    @Override
+    public int countDetail(String cartId) {
+        int itemCount;
+        itemCount = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM cartdetail where cartID='"+cartId+"'", Integer.class);
+        return itemCount;
     }
 
 

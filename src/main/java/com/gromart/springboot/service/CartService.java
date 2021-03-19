@@ -15,6 +15,8 @@ public interface CartService {
 
     Cart findById (String cartId);
 
+    CartDetail findProductExist (String productId);
+
     void deleteCartById(String cartId);
 
     void deleteDetailItem(String detailID);
@@ -22,4 +24,6 @@ public interface CartService {
     void addItem(Cart cart);
 
     void updateQuantity (CartDetail cartDetail);
+
+    int countDetail (String cartId);
 }

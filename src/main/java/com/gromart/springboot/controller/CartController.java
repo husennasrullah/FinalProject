@@ -4,6 +4,7 @@ package com.gromart.springboot.controller;
 import com.gromart.springboot.model.Cart;
 import com.gromart.springboot.model.CartDetail;
 import com.gromart.springboot.service.CartService;
+import com.gromart.springboot.service.ProductService;
 import com.gromart.springboot.util.CustomErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,10 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-     //-------------------Retrieve All Products--------------------------------------------
+    @Autowired
+    private ProductService productService;
+
+    //-------------------Retrieve All Products--------------------------------------------
     @RequestMapping(value = "/cart/", method = RequestMethod.GET)
     public ResponseEntity<List<Cart>> listAllCarts() {
         List<Cart> carts = cartService.findAllCart();
@@ -42,7 +46,7 @@ public class CartController {
         Cart cart = cartService.findByUserId(userId);
         if (cart == null) {
             logger.error("Cart not found.");
-            return new ResponseEntity<>(new CustomErrorType("Cart not found"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new CustomErrorType("No-Cart"), HttpStatus.OK);
         }
         return new ResponseEntity<>(cart, HttpStatus.OK);
     }
@@ -62,7 +66,7 @@ public class CartController {
     @RequestMapping(value = "/cart/", method = RequestMethod.POST)
     public ResponseEntity<?> createCart(@Valid @RequestBody Cart cart, Errors error) {
         logger.info("Creating Cart : {}", cart);
-        if (error.hasErrors()){
+        if (error.hasErrors()) {
             return new ResponseEntity<>(error.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
         cartService.saveCart(cart);
@@ -70,8 +74,8 @@ public class CartController {
     }
 
     // -------------------Create Cart with validation-------------------------------------------
-    @RequestMapping(value = "/cart/add/{userId}", method = RequestMethod.POST)
-    public ResponseEntity<?> createCarts(@RequestBody Cart cart, @PathVariable("userId") String userId) {
+    @RequestMapping(value = "/cart/add/", method = RequestMethod.POST)
+    public ResponseEntity<?> createCarts(@RequestBody Cart cart, @RequestParam String userId, @RequestParam String productId) {
         logger.info("Creating Cart : {}", cart);
 
         Cart existCart = cartService.findByUserId(userId);
@@ -80,10 +84,34 @@ public class CartController {
             cartService.saveCart(cart);
             return new ResponseEntity<>(cart, HttpStatus.CREATED);
         } else {
-            cartService.addItem(cart);
-            return new ResponseEntity<>("Item successfully added to cart", HttpStatus.CREATED);
+            CartDetail detailProduct = cartService.findProductExist(productId);
+
+            if (detailProduct == null) {
+                cartService.addItem(cart);
+                return new ResponseEntity<>("Item successfully added to cart", HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("Item Already exist in Cart - please only update quantity in the cart",
+                        HttpStatus.CONFLICT);
+            }
         }
     }
+
+
+//    // -------------------Create Cart with validation-------------------------------------------
+//    @RequestMapping(value = "/cart/add/{userId}", method = RequestMethod.POST)
+//    public ResponseEntity<?> createCarts(@RequestBody Cart cart, @PathVariable("userId") String userId) {
+//        logger.info("Creating Cart : {}", cart);
+//
+//        Cart existCart = cartService.findByUserId(userId);
+//
+//        if (existCart == null) {
+//            cartService.saveCart(cart);
+//            return new ResponseEntity<>(cart, HttpStatus.CREATED);
+//        } else {
+//            cartService.addItem(cart);
+//            return new ResponseEntity<>("Item successfully added to cart", HttpStatus.CREATED);
+//        }
+//    }
 
 //    //-------------------------add items-------------------------------------------
 //    @RequestMapping(value = "/cart/additem/", method = RequestMethod.POST)
@@ -118,6 +146,22 @@ public class CartController {
 
         cartService.deleteDetailItem(detailId);
         return new ResponseEntity<Cart>(HttpStatus.NO_CONTENT);
+    }
+
+    //----------------------------deleteItem with validation--------------------
+    @RequestMapping(value = "/cart/item/", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteItem(@RequestParam String cartId, @RequestParam String detailId) {
+        Integer countDetail = cartService.countDetail(cartId);
+        if (countDetail == 1) {
+            cartService.deleteCartById(cartId);
+//            productService.changeStock();
+            return new ResponseEntity<Cart>(HttpStatus.NO_CONTENT);
+        } else {
+            cartService.deleteDetailItem(detailId);
+            return new ResponseEntity<Cart>(HttpStatus.NO_CONTENT);
+        }
+
+
     }
 
 }

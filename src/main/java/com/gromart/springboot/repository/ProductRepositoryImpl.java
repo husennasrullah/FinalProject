@@ -300,35 +300,13 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public int findAllCountId() {
-        return 0;
-    }
-
-    @Override
-    public int findAllCountName() {
-        return 0;
+    public void changeStock(String productId, int stock) {
+        jdbcTemplate.update("update product set  stock=? where productId=?",
+                stock,
+                productId
+        );
     }
 
 
 }
 
-/*Map<String, Object> map = new HashMap<>();
-
-        map.put("qty", countProductByStatus(" "));
-
-        map.put("product", jdbcTemplate.query(
-                "select * from product p join user u on p.userCode = u.userCode limit 6 offset "+offset,
-                (rs, i) -> new Product(
-                        rs.getString("productCode"),
-                        rs.getString("productName"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("description"),
-                        rs.getString("createdDate"),
-                        new User(
-                                rs.getString("userCode"),
-                                rs.getString("userName")
-                        )
-                )
-        ));
-* */

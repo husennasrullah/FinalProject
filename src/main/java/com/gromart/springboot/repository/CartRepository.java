@@ -16,6 +16,8 @@ public interface CartRepository {
 
     Cart findById (String cartId);
 
+    CartDetail findProductExist (String productId);
+
     void deleteCartById(String cartId);
 
     void deleteDetailItem (String detailID);
@@ -23,4 +25,6 @@ public interface CartRepository {
     void addItem(Cart cart);
 
     void updateQuantity (CartDetail cartDetail);
+
+    int countDetail (String cartId);
 }

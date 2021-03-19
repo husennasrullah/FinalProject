@@ -37,9 +37,8 @@ public interface ProductService {
 
     int findAllCount ();
 
-    int findAllCountId ();
+    void changeStock (String productId, int stock);
 
-    int findAllCountName ();
 
 
 

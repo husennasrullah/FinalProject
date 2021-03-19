@@ -38,8 +38,6 @@ public interface ProductRepository {
 
     int findAllCount ();
 
-    int findAllCountId ();
-
-    int findAllCountName ();
+    void changeStock (String productId, int stock);
 
 }

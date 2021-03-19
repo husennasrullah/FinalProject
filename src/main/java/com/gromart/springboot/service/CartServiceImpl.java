@@ -38,6 +38,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public CartDetail findProductExist(String productId) {
+        return cartRepository.findProductExist(productId);
+    }
+
+    @Override
     public void deleteCartById(String cartId) {
         synchronized (this) {
             cartRepository.deleteCartById(cartId);
@@ -63,6 +68,11 @@ public class CartServiceImpl implements CartService {
         synchronized (this) {
             cartRepository.updateQuantity(cartDetail);
         }
+    }
+
+    @Override
+    public int countDetail(String cartId) {
+        return cartRepository.countDetail(cartId);
     }
 
 }

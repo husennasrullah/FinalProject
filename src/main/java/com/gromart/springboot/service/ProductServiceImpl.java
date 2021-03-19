@@ -91,14 +91,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public int findAllCountId() {
-        return 0;
+    public void changeStock(String productId, int stock) {
+        synchronized (this) {    //  Critical section synchronized
+            productRepository.changeStock (productId, stock);
+        }
     }
 
-    @Override
-    public int findAllCountName() {
-        return 0;
-    }
 
     public void deleteAllProducts() {
         productRepository.deleteAllProducts();
