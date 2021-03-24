@@ -6,12 +6,13 @@ import com.gromart.springboot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository{
+public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -38,7 +39,7 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public List<User> findAllWithPaging(int page, int limit) {
-        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM user",
+        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM user where role='Buyer'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
         // validate page
         if (page < 1) page = 1;
@@ -46,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository{
 
         int start = (page - 1) * limit;
         List<User> users =
-                jdbcTemplate.query("SELECT * FROM user LIMIT " + start + "," + limit + ";",
+                jdbcTemplate.query("SELECT * FROM user where role='Buyer'LIMIT " + start + "," + limit + ";",
                         (rs, rowNum) ->
                                 new User(
                                         rs.getString("userID"),
@@ -77,17 +78,11 @@ public class UserRepositoryImpl implements UserRepository{
                                     rs.getString("userID"),
                                     rs.getString("firstname"),
                                     rs.getString("lastName"),
-                                    rs.getString("userName"),
                                     rs.getString("email"),
                                     rs.getString("phoneNumber"),
-                                    rs.getString("password"),
                                     rs.getString("role"),
                                     rs.getBigDecimal("creditLimit"),
-                                    rs.getInt("invoiceLimit"),
-                                    rs.getString("createdBy"),
-                                    rs.getDate("createdDate"),
-                                    rs.getString("updatedBy"),
-                                    rs.getDate("updatedDate")
+                                    rs.getInt("invoiceLimit")
                             ));
         } catch (Exception e) {
             user = null;
@@ -95,11 +90,11 @@ public class UserRepositoryImpl implements UserRepository{
         return user;
     }
 
+
     @Override
     public void saveUser(User user) {
-        int count =0;
-        String prefix = String.format("%02d", count+1);
-        String idUser = user.getRole() + " - "+ java.time.LocalDate.now() +" - "+ prefix;
+        String id = generateId();
+        String idUser = user.getRole() + "-" + id;
         jdbcTemplate.update("INSERT INTO user VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 idUser,
                 user.getFirstName(),
@@ -180,7 +175,7 @@ public class UserRepositoryImpl implements UserRepository{
                                     rs.getDate("updatedDate")
                             ))
             );
-        }catch (Exception e) {
+        } catch (Exception e) {
             user = null;
         }
         return user;
@@ -221,7 +216,7 @@ public class UserRepositoryImpl implements UserRepository{
         List<User> users;
         try {
             users = jdbcTemplate.query("select * from user where userID like ?",
-                    new Object[]{"%"+userId+"%"},
+                    new Object[]{"%" + userId + "%"},
                     (rs, rowNum) ->
                             (new User(
                                     rs.getString("userID"),
@@ -251,7 +246,7 @@ public class UserRepositoryImpl implements UserRepository{
         List<User> users;
         try {
             users = jdbcTemplate.query("select * from user where firstName like ?",
-                    new Object[]{"%"+firstName+"%"},
+                    new Object[]{"%" + firstName + "%"},
                     (rs, rowNum) ->
                             (new User(
                                     rs.getString("userID"),
@@ -279,7 +274,7 @@ public class UserRepositoryImpl implements UserRepository{
     @Override
     public User loginAccount(String userName, String password) {
         User user;
-        try{
+        try {
             user = jdbcTemplate.queryForObject("SELECT * FROM user WHERE username=? AND password =?",
                     new Object[]{userName, password},
                     (rs, rowNum) ->
@@ -294,7 +289,7 @@ public class UserRepositoryImpl implements UserRepository{
                                     rs.getInt("invoiceLimit")
                             ))
             );
-        }catch (Exception e){
+        } catch (Exception e) {
             user = null;
         }
         return user;
@@ -335,6 +330,15 @@ public class UserRepositoryImpl implements UserRepository{
         int itemCount;
         itemCount = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM user", Integer.class);
         return itemCount;
+    }
+
+    @Override
+    public String generateId() {
+        int count = jdbcTemplate.queryForObject(
+                "select count(*) from user ", Integer.class);
+        String prefix = String.format("%02d", count + 1);
+        String id = java.time.LocalDate.now() + "-" + prefix;
+        return id;
     }
 
 

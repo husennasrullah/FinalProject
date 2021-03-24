@@ -5,9 +5,16 @@ import java.math.BigDecimal;
 public class OrderDetail {
     private String detailId;
     private String OrderId;
-    private String productId;
+    private Product product;
     private String quantity;
     private BigDecimal subTotal;
+
+    public OrderDetail(String detailId, String orderId, String quantity, BigDecimal subTotal) {
+        this.detailId = detailId;
+        OrderId = orderId;
+        this.quantity = quantity;
+        this.subTotal = subTotal;
+    }
 
     public String getDetailId() {
         return detailId;
@@ -25,12 +32,12 @@ public class OrderDetail {
         OrderId = orderId;
     }
 
-    public String getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public String getQuantity() {

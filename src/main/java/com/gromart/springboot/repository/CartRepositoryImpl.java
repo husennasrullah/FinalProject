@@ -44,13 +44,13 @@ public class CartRepositoryImpl implements CartRepository {
                     )
             );
 
-            List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity, b.subTotal " +
+            List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity " +
                             "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + cart.getCartId() + "'",
                     (rs, rowNum) -> new CartDetail(
                             rs.getString("cartdetailID"),
                             rs.getString("cartID"),
-                            rs.getString("quantity"),
-                            rs.getBigDecimal("subTotal")
+                            rs.getString("quantity")
+
                     )
             ));
             cart.setDetail(detail);
@@ -80,7 +80,7 @@ public class CartRepositoryImpl implements CartRepository {
         jdbcTemplate.update("INSERT INTO cart (cartID, userID, orderDate, totalAmount) VALUES  (?,?,?,?)",
                 cartid,
                 user.getUserId(),
-                cart.getOrderDate(),
+                java.time.LocalDate.now(),
                 cart.getTotalAmount()
         );
 
@@ -89,12 +89,11 @@ public class CartRepositoryImpl implements CartRepository {
             UUID detail = UUID.randomUUID();
             String detailId = "Detail-" + detail;
             jdbcTemplate.update(
-                    "INSERT INTO cartdetail(cartDetailID, cartID, productID, quantity, subTotal) VALUES (?,?,?,?,?)",
+                    "INSERT INTO cartdetail(cartdetailID, cartID, productID, quantity) VALUES (?,?,?,?)",
                     detailId,
                     cartid,
                     details.get(i).getProduct().getProductId(),
-                    details.get(i).getQuantity(),
-                    details.get(i).getSubTotal()
+                    details.get(i).getQuantity()
             );
         }
     }
@@ -128,13 +127,12 @@ public class CartRepositoryImpl implements CartRepository {
                     )
             );
 
-            List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity, b.subTotal " +
+            List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity " +
                             "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + carts.getCartId() + "'",
                     (rs, rowNum) -> new CartDetail(
                             rs.getString("cartdetailID"),
                             rs.getString("cartID"),
-                            rs.getString("quantity"),
-                            rs.getBigDecimal("subTotal")
+                            rs.getString("quantity")
                     )
             ));
             carts.setDetail(detail);
@@ -184,13 +182,13 @@ public class CartRepositoryImpl implements CartRepository {
                 )
         );
 
-        List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity, b.subTotal " +
+        List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity " +
                         "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + cartId + "'",
                 (rs, rowNum) -> new CartDetail(
                         rs.getString("cartdetailID"),
                         rs.getString("cartID"),
-                        rs.getString("quantity"),
-                        rs.getBigDecimal("subTotal")
+                        rs.getString("quantity")
+
                 )
         ));
         carts.setDetail(detail);
@@ -220,8 +218,7 @@ public class CartRepositoryImpl implements CartRepository {
                             (new CartDetail(
                                     rs.getString("cartdetailID"),
                                     rs.getString("cartID"),
-                                    rs.getString("quantity"),
-                                    rs.getBigDecimal("subTotal")
+                                    rs.getString("quantity")
                             ))
             );
         } catch (Exception e) {
@@ -248,12 +245,11 @@ public class CartRepositoryImpl implements CartRepository {
             UUID detail = UUID.randomUUID();
             String detailId = "Detail-" + detail;
             jdbcTemplate.update(
-                    "INSERT INTO cartdetail(cartDetailID, cartID, productID, quantity, subTotal) VALUES (?,?,?,?,?)",
+                    "INSERT INTO cartdetail(cartDetailID, cartID, productID, quantity) VALUES (?,?,?,?)",
                     detailId,
                     cart.getCartId(),
                     details.get(i).getProduct().getProductId(),
-                    details.get(i).getQuantity(),
-                    details.get(i).getSubTotal()
+                    details.get(i).getQuantity()
             );
         }
     }

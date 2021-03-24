@@ -1,29 +1,40 @@
 package com.gromart.springboot.service;
 
+import com.gromart.springboot.model.Cart;
 import com.gromart.springboot.model.Order;
+import com.gromart.springboot.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OrderServiceImpl implements OrderService {
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Override
     public List<Order> findAllOrders() {
-        return null;
+        List<Order> orders = orderRepository.findAllOrders();
+        return orders;
     }
 
     @Override
     public void saveOrder(Order order) {
-
+        synchronized (this) {
+            orderRepository.saveOrder(order);
+        }
     }
 
     @Override
-    public Order findByUserId(String userId) {
-        return null;
+    public List<Order> findByUserId(String userId) {
+        return orderRepository.findByUserId(userId);
     }
 
     @Override
     public Order findById(String orderId) {
-        return null;
+        return orderRepository.findById(orderId);
     }
 
     @Override
@@ -38,6 +49,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void updateStatus(Order order) {
+        synchronized (this) {
+            orderRepository.updateStatus(order);
+        }
 
+    }
+
+    @Override
+    public int countTransaction() {
+        return orderRepository.countTransaction ();
     }
 }

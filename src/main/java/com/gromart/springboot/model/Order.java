@@ -10,8 +10,17 @@ public class Order {
     private Date orderDate;
     private String shippingAddress;
     private BigDecimal totalAmount;
-    private String status;
+    private Boolean status;
     List<OrderDetail> details;
+
+    public Order(String orderId, String userId, Date orderDate, String shippingAddress, BigDecimal totalAmount, Boolean status) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.orderDate = orderDate;
+        this.shippingAddress = shippingAddress;
+        this.totalAmount = totalAmount;
+        this.status = status;
+    }
 
     public String getOrderId() {
         return orderId;
@@ -53,11 +62,11 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-    public String getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 

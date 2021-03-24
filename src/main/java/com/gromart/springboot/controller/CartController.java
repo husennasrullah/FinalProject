@@ -3,6 +3,7 @@ package com.gromart.springboot.controller;
 
 import com.gromart.springboot.model.Cart;
 import com.gromart.springboot.model.CartDetail;
+import com.gromart.springboot.model.Product;
 import com.gromart.springboot.service.CartService;
 import com.gromart.springboot.service.ProductService;
 import com.gromart.springboot.util.CustomErrorType;
@@ -40,13 +41,13 @@ public class CartController {
         return new ResponseEntity<>(carts, HttpStatus.OK);
     }
 
-    //-----------------------
+    //-----------------------s
     @RequestMapping(value = "/cart/id/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getBuyerCart(@PathVariable("userId") String userId) {
         Cart cart = cartService.findByUserId(userId);
         if (cart == null) {
             logger.error("Cart not found.");
-            return new ResponseEntity<>(new CustomErrorType("No-Cart"), HttpStatus.OK);
+            return new ResponseEntity<>(new CustomErrorType("No-Cart"), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(cart, HttpStatus.OK);
     }
@@ -160,8 +161,15 @@ public class CartController {
             cartService.deleteDetailItem(detailId);
             return new ResponseEntity<Cart>(HttpStatus.NO_CONTENT);
         }
+    }
 
-
+    @RequestMapping(value = "/cart/qty/{detailId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateQuantity(@PathVariable("detailId") String detailId, @Valid @RequestBody CartDetail cartDetail) {
+        logger.info("Updating detail Item with id {}", detailId);
+        cartDetail.setQuantity(cartDetail.getQuantity());
+        cartDetail.setDetailId(detailId);
+        cartService.updateQuantity(cartDetail);
+        return new ResponseEntity<>(cartDetail, HttpStatus.OK);
     }
 
 }

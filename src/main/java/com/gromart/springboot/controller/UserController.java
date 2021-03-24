@@ -33,6 +33,17 @@ public class UserController {
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+    //-----------------------------find-------------------------------------------
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    public ResponseEntity<?> findUserById(@PathVariable("userId") String userId) {
+        logger.info("Fetching Product with id {}", userId);
+        User user = userService.findById(userId);
+        if (user == null) {
+            logger.error("User with id {} not found.", userId);
+            return new ResponseEntity<>(new CustomErrorType("User with id " + userId + " not found"), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
     //----------------------------------Search-------------------------------------
     @RequestMapping(value = "/user/id/{userId}", method = RequestMethod.GET)

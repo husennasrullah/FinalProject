@@ -1,7 +1,5 @@
 package com.gromart.springboot.service;
 
-import com.gromart.springboot.model.Cart;
-import com.gromart.springboot.model.CartDetail;
 import com.gromart.springboot.model.Order;
 
 import java.util.List;
@@ -11,7 +9,7 @@ public interface OrderService {
 
     void saveOrder (Order order);
 
-    Order findByUserId (String userId);
+    List<Order> findByUserId (String userId);
 
     Order findById (String orderId);
 
@@ -20,4 +18,8 @@ public interface OrderService {
     int countDetail (String cartId);
 
     void updateStatus (Order order);
+
+    int countTransaction ();
+
+
 }

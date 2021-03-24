@@ -7,13 +7,13 @@ public class CartDetail {
     private String cartId;
     private Product product;
     private String quantity;
-    private BigDecimal subTotal;
 
-    public CartDetail(String detailId, String cartId, String quantity, BigDecimal subTotal) {
+
+    public CartDetail(String detailId, String cartId, String quantity) {
         this.detailId = detailId;
         this.cartId = cartId;
         this.quantity = quantity;
-        this.subTotal = subTotal;
+
     }
 
     public String getDetailId() {
@@ -46,13 +46,5 @@ public class CartDetail {
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;
-    }
-
-    public BigDecimal getSubTotal() {
-        return subTotal;
-    }
-
-    public void setSubTotal(BigDecimal subTotal) {
-        this.subTotal = subTotal;
     }
 }

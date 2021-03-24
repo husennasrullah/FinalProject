@@ -34,5 +34,7 @@ public interface UserRepository {
 
     int findAllCount ();
 
+    String generateId ();
+
 
 }
