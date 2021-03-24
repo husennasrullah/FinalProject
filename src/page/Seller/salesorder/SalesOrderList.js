@@ -1,13 +1,68 @@
 import React, { Component } from "react";
-import { Row, Col, Form, FormControl, Container } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Form,
+  FormControl,
+  Container,
+  Button,
+  Badge,
+} from "react-bootstrap";
 import Pagination from "@material-ui/lab/Pagination";
+import OrderService from "../../../service/OrderService";
 
 class SalesOrderList extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      order: [],
+      detailOrder: [],
+    };
+  }
+
+  approveOrder = (orderId) => {
+    let update = {
+      orderId: orderId,
+      status: true,
+    };
+    let newData = this.state.order.map((el) => {
+      if (el.orderId === orderId)
+        return Object.assign({}, el, {
+          status: true,
+        });
+      return el;
+    });
+
+    OrderService.updateStatus(update)
+      .then((res) => {
+        console.log("newData :", newData);
+        this.setState({
+          order: newData,
+        });
+      })
+      .catch((err) => {
+        alert("Failed update Data");
+      });
+  };
+
+  getAllOrder() {
+    OrderService.getAllOrder()
+      .then((res) => {
+        this.setState({
+          order: res.data,
+        });
+      })
+      .catch((err) => {
+        alert("failed fetching data");
+      });
+  }
+
+  componentDidMount() {
+    this.getAllOrder();
   }
   render() {
+    console.log("tesssss : ", this.state.order);
+    const { order } = this.state;
     return (
       <Container fluid>
         <br />
@@ -30,12 +85,6 @@ class SalesOrderList extends Component {
                 />
               </Form>
             </Col>
-            <Col md={{ span: 1, offset: 5 }}>
-              <i
-                class="fas fa-plus-circle"
-                style={{ fontSize: "4vh", color: "green", cursor: "pointer" }}
-              ></i>
-            </Col>
           </Row>
         </div>
         <br />
@@ -43,7 +92,6 @@ class SalesOrderList extends Component {
           <table className="table table-striped table-borderes table-md ">
             <thead className="thead-dark">
               <tr>
-                <th> No </th>
                 <th> Order ID </th>
                 <th> User ID</th>
                 <th> Order Date</th>
@@ -54,23 +102,48 @@ class SalesOrderList extends Component {
             </thead>
 
             <tbody>
-              <tr>
-                <td>1</td>
-                <td> 3132123</td>
-                <td> Buyer-31231231</td>
-                <td> 2021-11-26</td>
-                <td> Rp.60.000,-</td>
-                <td> unpaid</td>
-                <td>
-                  <button className="btn btn-info">Detail</button>
-                  <button
-                    style={{ marginLeft: "10px" }}
-                    className="btn btn-success"
-                  >
-                    Approve
-                  </button>
-                </td>
-              </tr>
+              {order.map((item, idx) => (
+                <tr key={idx}>
+                  <td> {item.orderId}</td>
+                  <td> {item.userId}</td>
+                  <td> {item.orderDate}</td>
+                  <td>
+                    Rp.
+                    {item.totalAmount
+                      .toString()
+                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
+                  </td>
+                  <td>
+                    {item.status ? (
+                      <Badge
+                        pill
+                        variant="success"
+                        style={{ fontSize: "2vh", fontFamily: "cambria" }}
+                      >
+                        Paid
+                      </Badge>
+                    ) : (
+                      <Badge
+                        pill
+                        variant="warning"
+                        style={{ fontSize: "2vh", fontFamily: "cambria" }}
+                      >
+                        Unpaid
+                      </Badge>
+                    )}
+                  </td>
+                  <td>
+                    <button className="btn btn-info">Detail</button>
+                    <button
+                      style={{ marginLeft: "10px" }}
+                      className="btn btn-success"
+                      onClick={() => this.approveOrder(item.orderId)}
+                    >
+                      Approve
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
           <div>

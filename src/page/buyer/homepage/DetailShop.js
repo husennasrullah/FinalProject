@@ -1,7 +1,6 @@
 import {
   Button,
   Modal,
-  Container,
   Row,
   Col,
   FormControl,
@@ -49,7 +48,6 @@ class DetailShop extends Component {
             {this.props.detailShop[0].productName}
           </Modal.Title>
         </Modal.Header>
-
         <Modal.Body
           className="show-grid"
           style={{ backgroundColor: "#faf9f9" }}
@@ -99,7 +97,6 @@ class DetailShop extends Component {
                   onClick={() => {
                     this.props.addToCart(
                       this.props.detailShop[0].productId,
-                      this.props.detailShop[0].stock,
                       this.state.quantity
                     );
                     this.props.closeModal();

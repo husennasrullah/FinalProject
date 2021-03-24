@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
 import Pagination from "@material-ui/lab/Pagination";
-
 import {
   Container,
   Card,
@@ -11,12 +10,16 @@ import {
   InputGroup,
   FormControl,
   Form,
+  Carousel,
+  CarouselItem,
 } from "react-bootstrap";
 
 import ProductService from "../../../service/ProductService";
 import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
 import DetailShop from "./DetailShop";
+import { Redirect } from "react-router";
+import RegistrasiService from "../../../service/RegistrasiService";
 
 class HomeBuyer extends Component {
   constructor(props) {
@@ -36,29 +39,26 @@ class HomeBuyer extends Component {
     };
   }
 
-  addToCart = (productId, stock, qty) => {
+  addToCart = (productId, qty) => {
     let addToCart = {
       cartId: this.state.cartId, //coba
       user: {
         userId: this.props.dataUser.userId,
       },
-      orderDate: "2021-03-10",
       totalAmount: 100000,
       detail: [
         {
           product: {
             productId: productId,
-            stock: stock,
           },
           quantity: qty,
-          subTotal: 20000,
         },
       ],
     };
 
     CartService.addToCart(this.props.dataUser.userId, productId, addToCart)
       .then((res) => {
-        alert("berhasil ");
+        alert("Successfully added item to cart");
         this.getCurrentCart();
       })
       .catch((err) => {
@@ -152,13 +152,26 @@ class HomeBuyer extends Component {
     });
   }
 
+  getNewDataUser() {
+    RegistrasiService.searchID(this.state.userid)
+      .then((res) => {
+        this.props.changeLogin(res.data);
+      })
+      .catch((err) => {
+        alert("Failed Fetch Data");
+      });
+  }
+
   componentDidMount() {
     this.getProductPaging();
     this.getCurrentCart();
+    this.getNewDataUser();
   }
 
   render() {
-    console.log("CARTID :", this.state.cartId);
+    // console.log("CARTID :", this.state.cartId);
+    console.log("datauser :", this.props.dataUser);
+
     return (
       <Container fluid style={{ backgroundColor: "#f2f4f7" }}>
         {this.state.isOpen ? (
@@ -191,7 +204,13 @@ class HomeBuyer extends Component {
                     ></i>
                   </Col>
                   <Col md={8}>
-                    <h2>Rp.100.000,-</h2>
+                    <h2>
+                      Rp.
+                      {this.props.dataUser.creditLimit
+                        .toString()
+                        .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
+                      ,-
+                    </h2>
                   </Col>
                 </Row>
               </Card.Body>
@@ -215,11 +234,35 @@ class HomeBuyer extends Component {
                     ></i>
                   </Col>
                   <Col md={8}>
-                    <h2>5 Items</h2>
+                    <h2>{this.props.dataUser.invoiceLimit} Transaction</h2>
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
+            <br />
+            <Carousel fade>
+              <Carousel.Item style={{ height: "400px" }}>
+                <img
+                  className="d-block w-100"
+                  src="https://i.ibb.co/F6qy0wj/img1.png"
+                  alt="First slide"
+                />
+              </Carousel.Item>
+              <Carousel.Item style={{ height: "400px" }}>
+                <img
+                  className="d-block w-100"
+                  src="https://i.ibb.co/sb8999b/img2.png"
+                  alt="Second slide"
+                />
+              </Carousel.Item>
+              <Carousel.Item style={{ height: "400px" }}>
+                <img
+                  className="d-block w-100"
+                  src="https://i.ibb.co/K99ScDT/img3.png"
+                  alt="Third slide"
+                />
+              </Carousel.Item>
+            </Carousel>
           </Col>
 
           <Col md={9}>
@@ -278,8 +321,23 @@ class HomeBuyer extends Component {
                           ></i>
                           <Card.Title>{prod.productName}</Card.Title>
                           <Card.Text>
-                            <p>Stock Available : {prod.stock} items</p>
-                            <p>Rp.{prod.unitPrice},-</p>
+                            {prod.stock == 0 ? (
+                              <Button variant="danger" disabled>
+                                Out of Stock
+                              </Button>
+                            ) : (
+                              <p>Stock Available : {prod.stock} items</p>
+                            )}
+                            <p>
+                              Rp.
+                              {prod.unitPrice
+                                .toString()
+                                .replace(
+                                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                  "."
+                                )}
+                              ,-
+                            </p>
                           </Card.Text>
                         </Card.Body>
                         <Card.Footer>
@@ -287,9 +345,7 @@ class HomeBuyer extends Component {
                             variant="primary"
                             size="md"
                             style={{ width: "80%" }}
-                            onClick={() =>
-                              this.addToCart(prod.productId, prod.stock, 1)
-                            }
+                            onClick={() => this.addToCart(prod.productId, 1)}
                             disabled={prod.stock === 0}
                           >
                             add to cart
@@ -322,6 +378,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(HomeBuyer);
+const mapDispatchToProps = (dispatch) => ({
+  changeLogin: (payload) => dispatch({ type: "LOGIN_SUCCESS", payload }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeBuyer);
 
 //export default HomeBuyer;

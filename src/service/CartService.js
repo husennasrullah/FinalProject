@@ -13,6 +13,10 @@ class CartService {
     );
   }
 
+  deleteAllCart(cartId) {
+    return axios.delete(CART_API + cartId);
+  }
+
   addToCart(userId, productId, addToCart) {
     return axios.post(
       CART_API + "add/?userId=" + userId + "&productId=" + productId,
@@ -20,12 +24,8 @@ class CartService {
     );
   }
 
-  // addToCart(userId, addToCart) {
-  //   return axios.post(CART_API + "add/" + userId, addToCart);
-  // }
-
-  deleteCart() {}
-
-  addItem() {}
+  updateQuantity(detailId, update) {
+    return axios.put(CART_API + "qty/" + detailId, update);
+  }
 }
 export default new CartService();

@@ -1,7 +1,27 @@
 import axios from "axios";
 
-const CART_API = "http://localhost:8080/gromart/order/";
+const ORDER_API = "http://localhost:8080/gromart/order/";
 
-class OrderService {}
+class OrderService {
+  getOrderByUserID(userId) {
+    return axios.get(ORDER_API + "id/" + userId);
+  }
 
-export default OrderService();
+  getAllOrder() {
+    return axios.get(ORDER_API);
+  }
+
+  checkoutOrder(checkout) {
+    return axios.post(ORDER_API, checkout);
+  }
+
+  getOrderById(orderId) {
+    return axios.get(ORDER_API + orderId);
+  }
+
+  updateStatus(update) {
+    return axios.put(ORDER_API + "status/", update);
+  }
+}
+
+export default new OrderService();

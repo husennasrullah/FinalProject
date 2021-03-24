@@ -217,7 +217,12 @@ class BuyerList extends Component {
                   <td> {buyer.firstName + " " + buyer.lastName}</td>
                   <td> {buyer.email}</td>
                   <td> {buyer.phoneNumber}</td>
-                  <td> Rp.{buyer.creditLimit},-</td>
+                  <td>
+                    Rp.
+                    {buyer.creditLimit
+                      .toString()
+                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
+                  </td>
                   <td> {buyer.invoiceLimit}</td>
                   <td>
                     <button

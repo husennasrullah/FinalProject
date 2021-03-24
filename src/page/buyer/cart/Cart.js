@@ -1,26 +1,10 @@
 import React, { Component } from "react";
-import {
-  Col,
-  Container,
-  Row,
-  Card,
-  Button,
-  Form,
-  InputGroup,
-  FormControl,
-} from "react-bootstrap";
+import { Col, Container, Row, Card, Button, Form } from "react-bootstrap";
 import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
+import OrderService from "../../../service/OrderService";
 import ShippingService from "../../../service/ShippingService";
-import ItemCounter from "./ItemCounter";
-
-const CounterBtn = (props) => {
-  return (
-    <Button variant="primary" onClick={props.onClick}>
-      {props.children}
-    </Button>
-  );
-};
+import Item from "./Item";
 
 class Cart extends Component {
   constructor(props) {
@@ -34,25 +18,81 @@ class Cart extends Component {
       userid: this.props.dataUser.userId,
       isThereCart: false,
       qty: 0,
+      totalAmount: 0,
+      address: "",
     };
   }
 
-  incrementCounter = () => {
-    this.setState(({ qty }) => ({
-      qty:
-        qty < this.props.detailShop[0].stock
-          ? qty + 1
-          : this.props.detailShop[0].stock,
-    }));
+  updateQty = (detailId, qty) => {
+    var newData = this.state.detailCart.map((el) => {
+      if (el.detailId === detailId)
+        return Object.assign({}, el, {
+          quantity: qty,
+          subTotal: qty * el.product.unitPrice,
+        });
+      return el;
+    });
+    this.setState({ detailCart: newData });
+
+    let update = {
+      quantity: qty,
+    };
+    CartService.updateQuantity(detailId, update).catch((err) => {
+      alert("Failed Update data");
+    });
   };
 
-  decrementCounter = () => {
-    this.setState(({ qty }) => ({
-      qty: qty > 0 ? qty - 1 : 0,
-    }));
+  countTotal = () => {
+    let total = this.state.detailCart.reduce(
+      (acc, item) => acc + item.product.unitPrice * item.quantity,
+      0
+    );
+    return total;
   };
 
-  checkout = () => {};
+  setAddress = (e) => {
+    this.setState({
+      address: e.target.value,
+    });
+  };
+
+  updatateCreditLimit = (totalAmount) => {
+    let dataUser = this.props.dataUser;
+    dataUser["creditLimit"] = dataUser.creditLimit - totalAmount;
+    this.props.changeLogin(dataUser);
+  };
+
+  checkout = (e) => {
+    e.preventDefault();
+    let detail = this.state.detailCart;
+    let checkout = {
+      orderDate: "2021-03-16",
+      userId: this.state.userid,
+      shippingAddress: this.state.address,
+      totalAmount: this.countTotal(),
+      status: false,
+      details: detail,
+    };
+
+    OrderService.checkoutOrder(checkout)
+      .then((res) => {
+        alert("Checkout Success");
+        this.deleteAllCart();
+        this.updatateCreditLimit(this.countTotal());
+      })
+      .catch((err) => {
+        alert("Failed Post Data");
+      });
+  };
+
+  deleteAllCart = () => {
+    CartService.deleteAllCart(this.state.cartId).then((res) => {
+      this.setState({
+        detailcart: [],
+        isThereCart: false,
+      });
+    });
+  };
 
   deleteItem = (detailId) => {
     if (confirm("are you sure to delete item ?")) {
@@ -62,7 +102,6 @@ class Cart extends Component {
             (car) => car.detailId !== detailId
           ),
         });
-
         if (this.state.detailCart.length === 0) {
           this.setState({
             isThereCart: false,
@@ -82,7 +121,7 @@ class Cart extends Component {
     this.props.history.push("/gromart-buyer/");
   };
 
-  componentDidMount() {
+  getCart = () => {
     CartService.getCartByUserID(this.state.userid).then((res) => {
       console.log("pesan :", res.data.errorMessage);
       if (res.data.errorMessage === "No-Cart") {
@@ -98,7 +137,9 @@ class Cart extends Component {
         });
       }
     });
+  };
 
+  getShipping = () => {
     ShippingService.getShipping()
       .then((res) => {
         this.setState({
@@ -108,15 +149,22 @@ class Cart extends Component {
       .catch((err) => {
         alert("Failed Fetching Data Shipper");
       });
+  };
+
+  componentDidMount() {
+    this.getCart();
+    this.getShipping();
   }
+
   render() {
-    const { detailCart, cart } = this.state;
-    console.log("detailCart :", detailCart);
-    console.log("cart:", cart);
+    const { detailCart } = this.state;
     return (
       <Container fluid>
+        <br />
         <div>
-          <h2>Shopping Cart</h2>
+          <center>
+            <h2>Shopping Cart</h2>
+          </center>
         </div>
         <br />
         <Container fluid>
@@ -132,9 +180,9 @@ class Cart extends Component {
               </Row>
             </Card.Header>
             <Card.Body>
-              <Row>
-                <Col sm={8}>
-                  {this.state.isThereCart ? (
+              {this.state.isThereCart ? (
+                <Row>
+                  <Col sm={8}>
                     <div className="overflow-auto" style={{ height: "400px" }}>
                       <table className="table table-sm ">
                         <thead className="thead-dark">
@@ -146,153 +194,136 @@ class Cart extends Component {
                         </thead>
                         <tbody>
                           {detailCart.map((cart, idx) => (
-                            <tr key={idx}>
-                              <td>
-                                <i
-                                  class="far fa-image"
-                                  style={{ fontSize: "10vh" }}
-                                ></i>
-                                <p>{cart.product.productName}</p>
-                              </td>
-                              <td>
-                                <ItemCounter
-                                  qty={cart.quantity}
-                                  stock={cart.product.stock}
-                                />
-
-                                {/* <InputGroup
-                                  className="mb-3"
-                                  style={{ width: "130px" }}
-                                >
-                                  <InputGroup.Prepend
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    <InputGroup.Text>-</InputGroup.Text>
-                                  </InputGroup.Prepend>
-                                  <FormControl value={cart.quantity} />
-                                  <InputGroup.Append
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    <InputGroup.Text>+</InputGroup.Text>
-                                  </InputGroup.Append>
-                                </InputGroup> */}
-                              </td>
-                              <td>Rp.{cart.product.unitPrice},-</td>
-                              <td>
-                                Rp.
-                                {parseInt(cart.product.unitPrice) *
-                                  parseInt(cart.quantity)}
-                                ,-
-                              </td>
-                              <td>
-                                <i
-                                  class="fas fa-trash-alt"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => this.deleteItem(cart.detailId)}
-                                ></i>
-                              </td>
-                            </tr>
+                            <Item
+                              key={idx}
+                              productName={cart.product.productName}
+                              quantity={cart.quantity}
+                              unitPrice={cart.product.unitPrice}
+                              stock={cart.product.stock}
+                              deleteItem={this.deleteItem}
+                              detailId={cart.detailId}
+                              updateQty={this.updateQty}
+                            />
                           ))}
                         </tbody>
                       </table>
                     </div>
-                  ) : (
-                    <div>
-                      <center>
-                        <div className="art">
-                          <img src="https://i.ibb.co/805bstz/emptycart.png" />
-                        </div>
-                        <h4>Add Some Product In The Cart :(</h4>
-                        <br />
-                        <Button variant="success" onClick={this.startShopping}>
-                          Start Shopping
-                        </Button>
-                      </center>
-                    </div>
-                  )}
-                </Col>
-                <Col sm={4}>
-                  <Form>
-                    <Form.Group>
-                      <Form.Row>
-                        <Col md={5}>
-                          <Form.Label as="h6">
-                            {detailCart.length} items
-                          </Form.Label>
-                        </Col>
-                        <Col md={{ span: 3, offset: 3 }}>
-                          <Form.Label>Rp.{cart.totalAmount},-</Form.Label>
-                        </Col>
-                      </Form.Row>
-                    </Form.Group>
+                  </Col>
+                  <Col sm={4}>
+                    <Form>
+                      <Form.Group>
+                        <Form.Row>
+                          <Col md={5}>
+                            <Form.Label as="h6">
+                              {detailCart.length} items
+                            </Form.Label>
+                          </Col>
+                          <Col md={{ span: 3, offset: 3 }}>
+                            <Form.Label>
+                              Rp.
+                              {this.countTotal()
+                                .toString()
+                                .replace(
+                                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                  "."
+                                )}
+                            </Form.Label>
+                          </Col>
+                        </Form.Row>
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label as="h6">Shipping Address</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          type="text"
+                          style={{ height: "130px" }}
+                          onChange={this.setAddress}
+                          placeholder="your address....."
+                        />
+                      </Form.Group>
 
-                    <Form.Group>
-                      <Form.Label as="h6">Shipping Address</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        type="text"
-                        style={{ height: "130px" }}
-                        placeholder="your address....."
-                      />
-                    </Form.Group>
-
-                    <Form.Group>
-                      <Form.Row>
-                        <Col md={3}>
-                          <Form.Label as="h6">Shipping</Form.Label>
-                        </Col>
-                        <Col>
-                          <Form.Control
-                            as="select"
-                            name="shippingFee"
-                            onChange={this.setShipping}
-                          >
-                            <option disabled selected value>
-                              --select an option--
-                            </option>
-                            {this.state.shipping.map((ship, idx) => (
-                              <option key={idx} value={ship.fee}>
-                                {ship.shippingCompany}
+                      <Form.Group>
+                        <Form.Row>
+                          <Col md={3}>
+                            <Form.Label as="h6">Shipping</Form.Label>
+                          </Col>
+                          <Col>
+                            <Form.Control
+                              as="select"
+                              name="shippingFee"
+                              onChange={this.setShipping}
+                            >
+                              <option disabled selected value>
+                                --select an option--
                               </option>
-                            ))}
-                          </Form.Control>
-                        </Col>
-                      </Form.Row>
-                    </Form.Group>
+                              {this.state.shipping.map((ship, idx) => (
+                                <option key={idx} value={ship.fee}>
+                                  {ship.shippingCompany}
+                                </option>
+                              ))}
+                            </Form.Control>
+                          </Col>
+                        </Form.Row>
+                      </Form.Group>
 
-                    <Form.Group>
-                      <Form.Row>
-                        <Col md={5}>
-                          <Form.Label as="h6">Shipping Fee</Form.Label>
-                        </Col>
-                        <Col md={{ span: 3, offset: 3 }}>
-                          <Form.Label as="h6">
-                            Rp.{this.state.shippingFee},-
-                          </Form.Label>
-                        </Col>
-                      </Form.Row>
-                    </Form.Group>
+                      <Form.Group>
+                        <Form.Row>
+                          <Col md={5}>
+                            <Form.Label as="h6">Shipping Fee</Form.Label>
+                          </Col>
+                          <Col md={{ span: 3, offset: 3 }}>
+                            <Form.Label as="h6">
+                              Rp.{this.state.shippingFee},-
+                            </Form.Label>
+                          </Col>
+                        </Form.Row>
+                      </Form.Group>
 
-                    <Form.Group>
-                      <Form.Row>
-                        <Col md={5}>
-                          <Form.Label as="h6">Total Payment</Form.Label>
-                        </Col>
-                        <Col md={{ span: 3, offset: 3 }}>
-                          <Form.Label as="h6">Rp.80.000,-</Form.Label>
-                        </Col>
-                      </Form.Row>
-                    </Form.Group>
-                  </Form>
-                  <Button
-                    variant="success"
-                    onClick={this.checkout}
-                    style={{ width: "100%" }}
-                  >
-                    Checkout
-                  </Button>
-                </Col>
-              </Row>
+                      <Form.Group>
+                        <Form.Row>
+                          <Col md={5}>
+                            <Form.Label as="h6">Total Payment</Form.Label>
+                          </Col>
+                          <Col md={{ span: 3, offset: 3 }}>
+                            <Form.Label as="h6">
+                              Rp.
+                              {(
+                                this.countTotal() +
+                                parseInt(this.state.shippingFee)
+                              )
+                                .toString()
+                                .replace(
+                                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                  "."
+                                )}
+                            </Form.Label>
+                          </Col>
+                        </Form.Row>
+                      </Form.Group>
+                    </Form>
+                    <Button
+                      variant="success"
+                      onClick={this.checkout}
+                      style={{ width: "100%" }}
+                    >
+                      Checkout
+                    </Button>
+                  </Col>
+                </Row>
+              ) : (
+                <div>
+                  <center>
+                    <div className="art">
+                      <img src="https://i.ibb.co/805bstz/emptycart.png" />
+                    </div>
+                    <h4>Add Some Product In The Cart :(</h4>
+                    <br />
+                    <Button variant="success" onClick={this.startShopping}>
+                      Start Shopping
+                    </Button>
+                  </center>
+                </div>
+              )}
             </Card.Body>
           </Card>
         </Container>
@@ -308,6 +339,75 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Cart);
+const mapDispatchToProps = (dispatch) => ({
+  changeLogin: (payload) => dispatch({ type: "LOGIN_SUCCESS", payload }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);
 
 //export default Cart;
+
+// {detailCart.map((cart, idx) => (
+//   <Item
+//     key={idx}
+//     productName={cart.product.productName}
+//     quantity={cart.quantity}
+//     unitPrice={cart.product.unitPrice}
+//     stock={cart.product.stock}
+//     deleteItem={this.deleteItem}
+//     detailId={cart.detailId}
+//   />
+// ))}
+
+// var totalYears = pilots.reduce(function (accumulator, pilot) {
+//   return accumulator + pilot.years;
+// }, 0);
+
+{
+  /* <tr key={idx}>
+<td>
+  <i
+    class="far fa-image"
+    style={{ fontSize: "10vh" }}
+  ></i>
+  <p>{cart.product.productName}</p>
+</td>
+<td>
+  <ItemCounter
+    qty={cart.quantity}
+    stock={cart.product.stock}
+    setPrice={this.setPrice}
+  />
+</td>
+<td>
+  Rp.
+  {cart.product.unitPrice
+    .toString()
+    .replace(
+      /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+      "."
+    )}
+  ,-
+</td>
+<td>
+  Rp.
+  {(
+    parseInt(cart.product.unitPrice) *
+    parseInt(cart.quantity)
+  )
+    .toString()
+    .replace(
+      /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+      "."
+    )}
+  ,-
+</td>
+<td>
+  <i
+    class="fas fa-trash-alt"
+    style={{ cursor: "pointer" }}
+    onClick={() => this.deleteItem(cart.detailId)}
+  ></i>
+</td>
+</tr> */
+}

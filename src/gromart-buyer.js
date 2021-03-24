@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 
 import { Row, Col } from "react-bootstrap";
-import { Route, Switch } from "react-router";
+import { connect } from "react-redux";
+import { Redirect, Route, Switch } from "react-router";
 import Cart from "./page/buyer/cart/Cart";
 import HomeBuyer from "./page/buyer/homepage/homebuyer";
+import Invoice from "./page/buyer/orderlist/Invoice";
+import Order from "./page/buyer/orderlist/order";
 import OrderList from "./page/buyer/orderlist/orderlist";
 import Header from "./template/header/header";
 import SideBar from "./template/sidebar/sidebar";
@@ -17,6 +20,13 @@ class GromartBuyer extends Component {
     };
   }
   render() {
+    if (!this.props.statusLogin) {
+      return <Redirect to="/login" />;
+    } else {
+      if (this.props.dataUser.userId.includes("Seller")) {
+        return <Redirect to="/gromart" />;
+      }
+    }
     return (
       <div>
         <Row noGutters>
@@ -29,7 +39,7 @@ class GromartBuyer extends Component {
               <Route exact path={this.props.match.path} component={HomeBuyer} />
               <Route
                 path={`${this.props.match.path}/orderlist`}
-                component={OrderList}
+                component={Order}
               />
               <Route
                 path={`${this.props.match.path}/cart`}
@@ -43,4 +53,13 @@ class GromartBuyer extends Component {
   }
 }
 
-export default GromartBuyer;
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(GromartBuyer);
+
+//export default GromartBuyer;

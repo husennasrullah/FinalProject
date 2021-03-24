@@ -3,6 +3,8 @@ import { Card, CardDeck, Col, Container, Row, Carousel } from "react-bootstrap";
 import "./style.css";
 import { faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { connect } from "react-redux";
+import { Redirect } from "react-router";
 
 class HomeSeller extends Component {
   constructor(props) {
@@ -10,6 +12,7 @@ class HomeSeller extends Component {
     this.state = {};
   }
   render() {
+   
     return (
       <>
         <Container fluid>
@@ -132,4 +135,12 @@ class HomeSeller extends Component {
   }
 }
 
-export default HomeSeller;
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(HomeSeller);
+//export default HomeSeller;

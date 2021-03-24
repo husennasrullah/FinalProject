@@ -16,13 +16,13 @@ class RegistrasiService {
     return axios.get(REGISTRASI_API + "buyer/");
   }
 
-  searchID(productId) {
-    return axios.get(REGISTRASI_API + "id/" + productId);
+  searchID(userId) {
+    return axios.get(REGISTRASI_API + userId);
   }
 
-  searchName(productName) {
-    return axios.get(REGISTRASI_API + "name/" + productName);
-  }
+  // searchName(productName) {
+  //   return axios.get(REGISTRASI_API + "name/" + productName);
+  // }
 
   getCount() {
     return axios.get(REGISTRASI_API + "count/");

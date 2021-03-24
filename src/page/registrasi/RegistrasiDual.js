@@ -179,8 +179,8 @@ class DualRegistration extends Component {
                         name="role"
                         onChange={this.setValue}
                       >
-                        <option value="seller">Apply as Seller</option>
-                        <option value="buyer">Apply as Buyer</option>
+                        <option value="Seller">Apply as Seller</option>
+                        <option value="Buyer">Apply as Buyer</option>
                       </FormControl>
                     </FormGroup>
                     <FormGroup>

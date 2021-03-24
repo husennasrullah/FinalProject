@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Header from "./template/header/header";
 import { Col, Row } from "react-bootstrap";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import { BuyerList, SalesOrderList } from "./page/Seller";
 import Product from "./page/Seller/product";
 import HomeSeller from "./page/Seller/homepage/HomeSeller";
@@ -19,6 +19,13 @@ class GromartSeller extends Component {
   }
 
   render() {
+    if (!this.props.statusLogin) {
+      return <Redirect to="/login" />;
+    } else {
+      if (this.props.dataUser.userId.includes("Buyer")) {
+        return <Redirect to="/gromart-buyer" />;
+      }
+    }
     return (
       <div>
         <Row noGutters>
@@ -58,13 +65,13 @@ class GromartSeller extends Component {
   }
 }
 
-// const mapStateToProps = (state) => {
-//   return {
-//     statusLogin: state.Auth.statusLogin,
-//     dataUser: state.Auth.users,
-//   };
-// };
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
 
-// export default connect(mapStateToProps)(GromartSeller);
+export default connect(mapStateToProps)(GromartSeller);
 
-export default GromartSeller;
+//export default GromartSeller;

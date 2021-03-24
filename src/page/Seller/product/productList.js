@@ -81,11 +81,7 @@ class ProductList extends Component {
       this.getProductPaging();
     } else {
       if (this.valueSelect === "id") {
-        ProductService.searchById(
-          this.state.Search,
-          this.state.page,
-          this.state.limit
-        )
+        ProductService.searchById(this.state.Search, 1, this.state.limit)
           .then((res) => {
             let page = res.data.qty / this.state.limit;
             this.setState({
@@ -98,11 +94,7 @@ class ProductList extends Component {
             alert("Failed Fetching Data nama");
           });
       } else if (this.valueSelect === "name") {
-        ProductService.searchByName(
-          this.state.Search,
-          this.state.page,
-          this.state.limit
-        )
+        ProductService.searchByName(this.state.Search, 1, this.state.limit)
           .then((res) => {
             let page = res.data.qty / this.state.limit;
             this.setState({
@@ -229,7 +221,12 @@ class ProductList extends Component {
                   <td> {prod.productId}</td>
                   <td> {prod.productName}</td>
                   <td> {prod.category}</td>
-                  <td> Rp.{prod.unitPrice},-</td>
+                  <td>
+                    Rp.
+                    {prod.unitPrice
+                      .toString()
+                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
+                  </td>
                   <td> {prod.stock}</td>
                   <td>
                     <Button

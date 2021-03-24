@@ -12,25 +12,31 @@ class ItemCounter extends Component {
   incrementCounter = () => {
     this.setState(({ qty }) => ({
       qty: qty < this.props.stock ? qty + 1 : this.props.stock,
-    }));
+    }))
+    this.props.setPrice(this.state.qty);
   };
 
   decrementCounter = () => {
     this.setState(({ qty }) => ({
       qty: qty > 1 ? qty - 1 : 1,
     }));
+    this.props.setPrice(this.state.qty);
   };
 
   render() {
-    const { qty } = this.state;
-
+    console.log("ini qty :", this.state.qty);
     return (
       <>
         <InputGroup className="mb-3" style={{ width: "130px" }}>
           <InputGroup.Prepend>
             <Button onClick={this.decrementCounter}>-</Button>
           </InputGroup.Prepend>
-          <FormControl style={{ width: "60px" }} value={qty}></FormControl>
+          <FormControl
+            name="qty"
+            style={{ width: "60px" }}
+            onChange={() => this.props.setPrice(this.state.qty)}
+            value={this.state.qty}
+          ></FormControl>
           <InputGroup.Append>
             <Button onClick={this.incrementCounter}>+</Button>
           </InputGroup.Append>

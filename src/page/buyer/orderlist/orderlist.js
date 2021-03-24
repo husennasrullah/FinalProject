@@ -8,16 +8,40 @@ import {
   Button,
   Container,
   Table,
+  Badge,
 } from "react-bootstrap";
+import { connect } from "react-redux";
+import OrderService from "../../../service/OrderService";
 
 class OrderList extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      userId: this.props.dataUser.userId,
+      orders: [],
+    };
+  }
+
+  viewInvoice = (orderId) => {
+    this.props.history.push(`${this.props.match.path}/` + orderId);
+  };
+
+  componentDidMount() {
+    OrderService.getOrderByUserID(this.state.userId)
+      .then((res) => {
+        this.setState({
+          orders: res.data,
+        });
+      })
+      .catch((err) => {
+        alert("failed fetching data");
+      });
   }
   render() {
+    const { orders } = this.state;
     return (
       <Container fluid>
+        <br />
         <div className="productTittle">
           <h2 className="text-center">Order-List</h2>
         </div>
@@ -38,12 +62,6 @@ class OrderList extends Component {
                 />
               </Form>
             </Col>
-            <Col md={{ span: 1, offset: 5 }}>
-              <i
-                class="fas fa-plus-circle"
-                style={{ fontSize: "4vh", color: "green", cursor: "pointer" }}
-              ></i>
-            </Col>
           </Row>
         </div>
         <br />
@@ -51,7 +69,6 @@ class OrderList extends Component {
           <Table responsive="sm">
             <thead className="thead-dark">
               <tr>
-                <th> No </th>
                 <th> Order ID </th>
                 <th> Order Date</th>
                 <th> Total Paid</th>
@@ -61,18 +78,47 @@ class OrderList extends Component {
             </thead>
 
             <tbody>
-              <tr>
-                <td>1</td>
-                <td> 3132123</td>
-                <td> 2021-11-26</td>
-                <td> Rp.60.000,-</td>
-                <td> unpaid</td>
-                <td>
-                  <Button style={{ marginLeft: "10px" }} variant="info">
-                    View Invoice
-                  </Button>
-                </td>
-              </tr>
+              {orders.map((item, idx) => (
+                <tr key={idx}>
+                  <td>{item.orderId}</td>
+                  <td>{item.orderDate}</td>
+                  <td>
+                    Rp.
+                    {item.totalAmount
+                      .toString()
+                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
+                    ,-
+                  </td>
+                  <td>
+                    {item.status === false ? (
+                      <Badge
+                        pill
+                        variant="warning"
+                        style={{ fontSize: "2vh", fontFamily: "cambria" }}
+                      >
+                        Requested
+                      </Badge>
+                    ) : (
+                      <Badge
+                        pill
+                        variant="success"
+                        style={{ fontSize: "2vh", fontFamily: "cambria" }}
+                      >
+                        Paid
+                      </Badge>
+                    )}
+                  </td>
+                  <td>
+                    <Button
+                      style={{ marginLeft: "10px" }}
+                      variant="info"
+                      onClick={() => this.viewInvoice(item.orderId)}
+                    >
+                      View Invoice
+                    </Button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
           <div>
@@ -84,4 +130,13 @@ class OrderList extends Component {
   }
 }
 
-export default OrderList;
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(OrderList);
+
+//export default OrderList;

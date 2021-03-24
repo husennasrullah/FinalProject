@@ -21,7 +21,11 @@ class LoginBaru extends Component {
 
   render() {
     if (this.props.isLogin) {
-      return <Redirect to="/gromart" />;
+      if (this.props.dataUser.userId.includes("Seller")) {
+        return <Redirect to="/gromart" />;
+      } else {
+        return <Redirect to="/gromart-buyer" />;
+      }
     }
     const { user, pass } = this.state;
     return (
@@ -76,9 +80,9 @@ class LoginBaru extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log("state redux", state);
   return {
     isLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
   };
 };
 

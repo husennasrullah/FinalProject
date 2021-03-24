@@ -10,6 +10,11 @@ class Header extends Component {
     super(props);
     this.state = {};
   }
+
+  logout = () => {
+    alert("Successfully Logged-out");
+    this.props.doLogout();
+  };
   render() {
     console.log("header :", this.props.dataUser.firstName);
 
@@ -31,7 +36,7 @@ class Header extends Component {
             <NavDropdown.Item>
               <Link to={`${this.props.path}/profile`}>Profile</Link>
             </NavDropdown.Item>
-            <NavDropdown.Item>Logout</NavDropdown.Item>
+            <NavDropdown.Item onClick={this.logout}>Logout</NavDropdown.Item>
           </NavDropdown>
           <FontAwesomeIcon
             icon={faUserCircle}
@@ -51,6 +56,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    doLogout: () => dispatch({ type: "LOGOUT" }),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
 //export default Header;
