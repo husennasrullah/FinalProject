@@ -16,13 +16,17 @@ class RegistrasiService {
     return axios.get(REGISTRASI_API + "buyer/");
   }
 
-  searchID(userId) {
-    return axios.get(REGISTRASI_API + userId);
+  searchID(userId, page, limit) {
+    return axios.get(
+      REGISTRASI_API + "findid/" + userId + "/?page=" + page + "&limit=" + limit
+    );
   }
 
-  // searchName(productName) {
-  //   return axios.get(REGISTRASI_API + "name/" + productName);
-  // }
+  searchName(name, page, limit) {
+    return axios.get(
+      REGISTRASI_API + "findname/" + name + "/?page=" + page + "&limit=" + limit
+    );
+  }
 
   getCount() {
     return axios.get(REGISTRASI_API + "count/");
@@ -37,12 +41,9 @@ class RegistrasiService {
   }
 
   loginCheck(user, pass) {
+    // return axios.get(REGISTRASI_API +"login/?userName=" +`${encodeURIComponent(user)} ` +"&password=" +`${encodeURIComponent(pass)}`);
     return axios.get(
-      REGISTRASI_API +
-        "login/?userName=" +
-        `${encodeURIComponent(user)} ` +
-        "&password=" +
-        `${encodeURIComponent(pass)}`
+      REGISTRASI_API + "login/?userName=" + user + "&password=" + pass
     );
   }
 }

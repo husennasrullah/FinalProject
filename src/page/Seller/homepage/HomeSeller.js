@@ -1,18 +1,57 @@
 import React, { Component } from "react";
-import { Card, CardDeck, Col, Container, Row, Carousel } from "react-bootstrap";
+import {
+  Card,
+  CardDeck,
+  Col,
+  Container,
+  Row,
+  Carousel,
+  CardColumns,
+} from "react-bootstrap";
 import "./style.css";
 import { faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { connect } from "react-redux";
 import { Redirect } from "react-router";
+import OrderService from "../../../service/OrderService";
 
 class HomeSeller extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      topSales: [{}, {}, {}],
+      transaction: 0,
+    };
+  }
+
+  componentDidMount() {
+    OrderService.getTopSales()
+      .then((res) => {
+        let data = res.data;
+        let topThree = data.slice(0, 3);
+        this.setState({
+          topSales: topThree,
+        });
+      })
+      .catch((err) => {
+        alert("failed");
+      });
+
+    OrderService.getTotalTransaction()
+      .then((res) => {
+        this.setState({
+          transaction: res.data,
+        });
+      })
+      .catch((err) => {
+        alert("failed");
+      });
   }
   render() {
-   
+    console.log("trans :", this.state.transaction);
+    console.log("top :", this.state.topSales[0].total !== undefined);
+    const { transaction, topSales } = this.state;
+
     return (
       <>
         <Container fluid>
@@ -65,10 +104,9 @@ class HomeSeller extends Component {
                   className="mr-3"
                   style={{ fontSize: "3vh" }}
                 />
-                DASHBOARD
+                WELCOME TO GROMART APPLICATION
               </Card.Header>
               <Card.Body>
-                <Card.Title>Welcome To Gromart Application</Card.Title>
                 <Card.Text>
                   As a Seller, your Dashboard Containt of three main
                   information:
@@ -91,44 +129,114 @@ class HomeSeller extends Component {
             </Card>
           </CardDeck>
           <br />
-          <CardDeck>
-            <Card border="warning" style={{ width: "18rem" }}>
-              <Card.Header as="h5">TOTAL TRANSACTION</Card.Header>
-              <Card.Body>
-                <Row>
-                  <Col md={2}>
-                    <i
-                      class="fab fa-sellsy"
-                      style={{ fontSize: "5vh", color: "orange" }}
-                    ></i>
-                  </Col>
-                  <Col md={10}>
-                    <h3>100 Items</h3>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            <Card border="success" style={{ width: "18rem" }}>
-              <Card.Header as="h5">TOTAL AMOUNT</Card.Header>
-              <Card.Body>
-                <Row>
-                  <Col md={2}>
-                    <i
-                      class="fas fa-wallet"
-                      style={{ fontSize: "5vh", color: "greenyellow" }}
-                    ></i>
-                  </Col>
-                  <Col md={10}>
-                    <h3>Rp.1.000.000,-</h3>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            <Card border="info" style={{ width: "18rem" }}>
-              <Card.Header as="h5">TOP 3 BEST SELLER PRODUCTS</Card.Header>
-              <Row></Row>
-            </Card>
-          </CardDeck>
+
+          <Row style={{ textAlign: "center", fontFamily: "cambria" }}>
+            <Col md={4}>
+              <Card>
+                <Card.Header
+                  as="h5"
+                  style={{
+                    backgroundColor: "#435560",
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  TOTAL TRANSACTION
+                </Card.Header>
+                <Card.Body>
+                  <Row>
+                    <Col md={2}>
+                      <i
+                        class="fab fa-sellsy"
+                        style={{ fontSize: "5vh", color: "orange" }}
+                      ></i>
+                    </Col>
+                    <Col md={10}>
+                      <h3>{transaction.totalSellingItem} Items</h3>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+              <br />
+              <Card>
+                <Card.Header
+                  as="h5"
+                  style={{
+                    backgroundColor: "#435560",
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  TOTAL AMOUNT
+                </Card.Header>
+                <Card.Body>
+                  <Row>
+                    <Col md={2}>
+                      <i
+                        class="fas fa-wallet"
+                        style={{ fontSize: "5vh", color: "greenyellow" }}
+                      ></i>
+                    </Col>
+                    <Col md={10}>
+                      <h3>
+                        Rp.
+                        {parseInt(transaction.totalSellingMoney)
+                          .toString()
+                          .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
+                        ,-
+                      </h3>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            <Col md={8}>
+              <Card>
+                <Card.Header
+                  as="h5"
+                  style={{
+                    backgroundColor: "#435560",
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  TOP 3 BEST SELLER PRODUCTS
+                </Card.Header>
+                <Card.Body>
+                  <Row>
+                    <Col>
+                      <img
+                        src="https://i.ibb.co/ZfDmDF1/1.png"
+                        style={{ width: "30%" }}
+                      />
+                      <hr />
+                      <h3>{topSales[0].productName}</h3>
+                      <h5>Total Selling : {topSales[0].total} items</h5>
+                    </Col>
+                    <Col>
+                      <img
+                        src="https://i.ibb.co/dj3xmmy/2.png"
+                        style={{ width: "30%" }}
+                      />
+                      <hr />
+                      <h3>{topSales[1].productName}</h3>
+                      <h5>Total Selling : {topSales[1].total} items</h5>
+                    </Col>
+                    <Col>
+                      <img
+                        src="https://i.ibb.co/zHw91TQ/3.png"
+                        style={{ width: "30%" }}
+                      />
+                      <hr />
+                      <h3>{topSales[2].productName}</h3>
+                      <h5>Total Selling : {topSales[2].total} items </h5>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
         </Container>
       </>
     );

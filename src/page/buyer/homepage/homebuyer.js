@@ -134,6 +134,7 @@ class HomeBuyer extends Component {
           listProduct: res.data.product,
           count: Math.ceil(page),
         });
+        this.state.product.sort((a, b) => (a.unitPrice > b.unitPrice ? 1 : -1));
       })
       .catch((err) => {
         alert("Failed Fetching Data");
@@ -173,7 +174,7 @@ class HomeBuyer extends Component {
     console.log("datauser :", this.props.dataUser);
 
     return (
-      <Container fluid style={{ backgroundColor: "#f2f4f7" }}>
+      <Container fluid style={{ backgroundColor: "#f8f4e1" }}>
         {this.state.isOpen ? (
           <DetailShop
             closeModal={this.closeModal}

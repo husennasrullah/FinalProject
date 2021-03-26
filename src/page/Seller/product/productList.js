@@ -14,11 +14,15 @@ class ProductList extends Component {
       listProduct: [],
       productDetail: {},
       isOpen: false,
-      page: "1",
+
+      //---pagination and search---
+      page: 1,
+      pagenow: 1,
       count: 0,
       limit: 5,
       Search: "",
       isSearch: false,
+      //------------
     };
     this.valueSelect = "name";
   }
@@ -57,13 +61,21 @@ class ProductList extends Component {
     this.props.history.push(`/gromart/product/${productId}`);
   };
 
-  handleChange = (event, value) => {
-    ProductService.getProductPaging(value, this.state.limit).then((res) => {
-      this.setState({
-        page: value,
-        productList: res.data.product,
-      });
+  handleChange = (e, value) => {
+    e.preventDefault();
+    this.setState({
+      page: value,
     });
+
+    if (!this.state.isSearch) {
+      this.getProductPaging(value, this.state.limit);
+    } else {
+      if (this.valueSelect === "id") {
+        this.searchById(this.state.Search, value, this.state.limit);
+      } else if (this.valueSelect === "name") {
+        this.searchByName(this.state.Search, value, this.state.limit);
+      }
+    }
   };
 
   onChangeSelect = (e) => {
@@ -78,36 +90,54 @@ class ProductList extends Component {
 
   Search = () => {
     if (this.state.Search === "") {
-      this.getProductPaging();
+      this.getProductPaging(this.state.pagenow, this.state.limit);
     } else {
       if (this.valueSelect === "id") {
-        ProductService.searchById(this.state.Search, 1, this.state.limit)
-          .then((res) => {
-            let page = res.data.qty / this.state.limit;
-            this.setState({
-              productList: res.data.product,
-              count: Math.ceil(page),
-              isSearch: true,
-            });
-          })
-          .catch((err) => {
-            alert("Failed Fetching Data nama");
-          });
+        this.searchById(
+          this.state.Search,
+          this.state.pagenow,
+          this.state.limit
+        );
       } else if (this.valueSelect === "name") {
-        ProductService.searchByName(this.state.Search, 1, this.state.limit)
-          .then((res) => {
-            let page = res.data.qty / this.state.limit;
-            this.setState({
-              productList: res.data.product,
-              count: Math.ceil(page),
-              isSearch: true,
-            });
-          })
-          .catch((err) => {
-            alert("Failed Fetching Data nama");
-          });
+        this.searchByName(
+          this.state.Search,
+          this.state.pagenow,
+          this.state.limit
+        );
       }
     }
+  };
+
+  searchById = (search, page, limit) => {
+    ProductService.searchById(search, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          productList: res.data.product,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      })
+      .catch((err) => {
+        alert("Failed Fetching Data nama");
+      });
+  };
+
+  searchByName = (search, page, limit) => {
+    ProductService.searchByName(search, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          productList: res.data.product,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      })
+      .catch((err) => {
+        alert("Failed Fetching Data nama");
+      });
   };
 
   cancelSearch = (e) => {
@@ -116,27 +146,27 @@ class ProductList extends Component {
       productList: this.state.listProduct,
       isSearch: false,
     });
-    this.getProductPaging();
+    this.getProductPaging(this.state.pagenow, this.state.limit);
   };
 
-  componentDidMount() {
-    this.getProductPaging();
-  }
-
-  getProductPaging() {
-    ProductService.getProductPaging(this.state.page, this.state.limit)
+  getProductPaging(page, limit) {
+    ProductService.getProductPaging(page, limit)
       .then((res) => {
         let page = res.data.qty / this.state.limit;
-
         this.setState({
           productList: res.data.product,
           listProduct: res.data.product,
           count: Math.ceil(page),
+          isSearch: false,
         });
       })
       .catch((err) => {
         alert("Failed Fetching Data");
       });
+  }
+
+  componentDidMount() {
+    this.getProductPaging(this.state.page, this.state.limit);
   }
 
   render() {
@@ -203,7 +233,10 @@ class ProductList extends Component {
         </div>
         <br />
         <div>
-          <table className="table table-striped table-borderes table-sm ">
+          <table
+            className="table table-striped table-borderes table-sm "
+            style={{ textAlign: "center" }}
+          >
             <thead className="thead-dark">
               <tr>
                 <th> Product-ID</th>

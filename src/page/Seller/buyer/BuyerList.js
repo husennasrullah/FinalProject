@@ -19,11 +19,15 @@ class BuyerList extends Component {
       buyers: [],
       buyerList: [],
       updateLimit: {},
+
+      //---pagination and search---
       page: 1,
+      pagenow: 1,
       count: 0,
       limit: 5,
       Search: "",
       isSearch: false,
+      //------------
     };
     this.valueSelect = "name";
   }
@@ -43,26 +47,21 @@ class BuyerList extends Component {
   };
 
   handleChange = (event, value) => {
-    RegistrasiService.getBuyerPaging(value, this.state.limit).then((res) => {
-      this.setState({
-        page: value,
-        buyers: res.data,
-      });
+    e.preventDefault();
+    this.setState({
+      page: value,
     });
-  };
 
-  getCountPagination() {
-    RegistrasiService.getCount()
-      .then((res) => {
-        let page = res.data / this.state.limit;
-        this.setState({
-          count: Math.ceil(page),
-        });
-      })
-      .catch(() => {
-        alert("Failed fetching data");
-      });
-  }
+    if (!this.state.isSearch) {
+      this.getBuyerPaging(value, this.state.limit);
+    } else {
+      if (this.valueSelect === "id") {
+        this.searchID(this.state.Search, value, this.state.limit);
+      } else if (this.valueSelect === "name") {
+        this.searchName(this.state.Search, value, this.state.limit);
+      }
+    }
+  };
 
   //--------------------------------------------------------------
   onChangeSelect = (e) => {
@@ -77,38 +76,16 @@ class BuyerList extends Component {
 
   Search = () => {
     if (this.state.Search === "") {
-      RegistrasiService.getBuyerPaging(this.state.page, this.state.limit)
-        .then((res) => {
-          this.setState({
-            buyers: res.data,
-          });
-        })
-        .catch((err) => {
-          alert("Failed Fetching Data");
-        });
+      this.getBuyerPaging(this.state.pagenow, this.state.limit);
     } else {
       if (this.valueSelect === "id") {
-        RegistrasiService.searchID(this.state.Search)
-          .then((res) => {
-            this.setState({
-              buyers: res.data,
-              isSearch: true,
-            });
-          })
-          .catch((err) => {
-            alert("Failed Fetching Data id");
-          });
+        this.searchID(this.state.Search, this.state.pagenow, this.state.limit);
       } else if (this.valueSelect === "name") {
-        RegistrasiService.searchName(this.state.Search)
-          .then((res) => {
-            this.setState({
-              buyers: res.data,
-              isSearch: true,
-            });
-          })
-          .catch((err) => {
-            alert("Failed Fetching Data nama");
-          });
+        this.searchName(
+          this.state.Search,
+          this.state.pagenow,
+          this.state.limit
+        );
       }
     }
   };
@@ -123,22 +100,55 @@ class BuyerList extends Component {
   };
   //--------------------------------------------------------------
 
-  componentDidMount() {
-    this.getBuyerPaging();
-  }
-
-  getBuyerPaging() {
-    RegistrasiService.getBuyerPaging(this.state.page, this.state.limit)
+  searchID = (search, page, limit) => {
+    RegistrasiService.searchID(search, page, limit)
       .then((res) => {
         this.setState({
-          buyers: res.data,
-          buyerList: res.data,
+          buyers: res.data.user,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
         });
-        this.getCountPagination();
+      })
+      .catch((err) => {
+        alert("Failed Fetching Data id");
+      });
+  };
+
+  searchName = (search, page, limit) => {
+    RegistrasiService.searchName(search, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          buyers: res.data.user,
+          ount: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      })
+      .catch((err) => {
+        alert("Failed Fetching Data nama");
+      });
+  };
+
+  getBuyerPaging(page, limit) {
+    RegistrasiService.getBuyerPaging(page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          buyers: res.data.user,
+          buyerList: res.data.user,
+          count: Math.ceil(page),
+          isSearch: false,
+        });
       })
       .catch((err) => {
         alert("Failed Fetching Data");
       });
+  }
+
+  componentDidMount() {
+    this.getBuyerPaging(this.state.page, this.state.limit);
   }
 
   render() {

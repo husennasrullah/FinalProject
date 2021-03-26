@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Col, Container, Row, Card, Button, Form } from "react-bootstrap";
+import {
+  Col,
+  Container,
+  Row,
+  Card,
+  Button,
+  Form,
+  Table,
+} from "react-bootstrap";
 import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
 import OrderService from "../../../service/OrderService";
@@ -67,7 +75,9 @@ class Cart extends Component {
     let detail = this.state.detailCart;
     let checkout = {
       orderDate: "2021-03-16",
-      userId: this.state.userid,
+      user: {
+        userId: this.state.userid,
+      },
       shippingAddress: this.state.address,
       totalAmount: this.countTotal(),
       status: false,
@@ -81,7 +91,8 @@ class Cart extends Component {
         this.updatateCreditLimit(this.countTotal());
       })
       .catch((err) => {
-        alert("Failed Post Data");
+        console.log(err.response);
+        alert(err.response.data.errorMessage);
       });
   };
 
@@ -158,24 +169,32 @@ class Cart extends Component {
 
   render() {
     const { detailCart } = this.state;
+    console.log("detaillllllll:", detailCart);
     return (
       <Container fluid>
-        <br />
         <div>
           <center>
             <h2>Shopping Cart</h2>
           </center>
         </div>
-        <br />
+        <hr />
         <Container fluid>
-          <Card border="success">
-            <Card.Header as="h5">
+          <Card>
+            <Card.Header
+              as="h5"
+              style={{
+                backgroundColor: "#435560",
+                color: "white",
+                fontFamily: "cambria",
+                textAlign: "center",
+              }}
+            >
               <Row sm>
-                <Col sm={9}>
-                  <h4>Item Detail</h4>
+                <Col sm={8}>
+                  <h4>ITEM DETAIL</h4>
                 </Col>
-                <Col sm={3}>
-                  <h4>Summary</h4>
+                <Col sm={4}>
+                  <h4>SUMMARY</h4>
                 </Col>
               </Row>
             </Card.Header>
@@ -183,8 +202,17 @@ class Cart extends Component {
               {this.state.isThereCart ? (
                 <Row>
                   <Col sm={8}>
-                    <div className="overflow-auto" style={{ height: "400px" }}>
-                      <table className="table table-sm ">
+                    <div className="overflow-auto" style={{ height: "550px" }}>
+                      <Table
+                        striped
+                        hover
+                        responsive="lg"
+                        style={{
+                          fontFamily: "cambria",
+                          textAlign: "center",
+                          fontSize: "2vh",
+                        }}
+                      >
                         <thead className="thead-dark">
                           <th> Product </th>
                           <th> Quantity </th>
@@ -206,108 +234,115 @@ class Cart extends Component {
                             />
                           ))}
                         </tbody>
-                      </table>
+                      </Table>
                     </div>
                   </Col>
                   <Col sm={4}>
-                    <Form>
-                      <Form.Group>
-                        <Form.Row>
-                          <Col md={5}>
-                            <Form.Label as="h6">
-                              {detailCart.length} items
-                            </Form.Label>
-                          </Col>
-                          <Col md={{ span: 3, offset: 3 }}>
-                            <Form.Label>
-                              Rp.
-                              {this.countTotal()
-                                .toString()
-                                .replace(
-                                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                                  "."
-                                )}
-                            </Form.Label>
-                          </Col>
-                        </Form.Row>
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label as="h6">Shipping Address</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          type="text"
-                          style={{ height: "130px" }}
-                          onChange={this.setAddress}
-                          placeholder="your address....."
-                        />
-                      </Form.Group>
-
-                      <Form.Group>
-                        <Form.Row>
-                          <Col md={3}>
-                            <Form.Label as="h6">Shipping</Form.Label>
-                          </Col>
-                          <Col>
-                            <Form.Control
-                              as="select"
-                              name="shippingFee"
-                              onChange={this.setShipping}
-                            >
-                              <option disabled selected value>
-                                --select an option--
-                              </option>
-                              {this.state.shipping.map((ship, idx) => (
-                                <option key={idx} value={ship.fee}>
-                                  {ship.shippingCompany}
+                    <div style={{ fontFamily: "cambria" }}>
+                      <Form>
+                        <Form.Group>
+                          <Form.Row>
+                            <Col md={5}>
+                              <Form.Label as="h5">
+                                {detailCart.length} items
+                              </Form.Label>
+                            </Col>
+                            <Col md={{ span: 3, offset: 3 }}>
+                              <Form.Label as="h5">
+                                Rp.
+                                {this.countTotal()
+                                  .toString()
+                                  .replace(
+                                    /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                    "."
+                                  )}
+                              </Form.Label>
+                            </Col>
+                          </Form.Row>
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label as="h5">Shipping Address</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            type="text"
+                            style={{ height: "130px" }}
+                            onChange={this.setAddress}
+                            placeholder="your address....."
+                          />
+                        </Form.Group>
+                        <br />
+                        <Form.Group>
+                          <Form.Row>
+                            <Col md={3}>
+                              <Form.Label as="h5">Shipping</Form.Label>
+                            </Col>
+                            <Col>
+                              <Form.Control
+                                as="select"
+                                name="shippingFee"
+                                onChange={this.setShipping}
+                              >
+                                <option disabled selected value>
+                                  --select an option--
                                 </option>
-                              ))}
-                            </Form.Control>
-                          </Col>
-                        </Form.Row>
-                      </Form.Group>
+                                {this.state.shipping.map((ship, idx) => (
+                                  <option key={idx} value={ship.fee}>
+                                    {ship.shippingCompany}
+                                  </option>
+                                ))}
+                              </Form.Control>
+                            </Col>
+                          </Form.Row>
+                        </Form.Group>
+                        <br />
 
-                      <Form.Group>
-                        <Form.Row>
-                          <Col md={5}>
-                            <Form.Label as="h6">Shipping Fee</Form.Label>
-                          </Col>
-                          <Col md={{ span: 3, offset: 3 }}>
-                            <Form.Label as="h6">
-                              Rp.{this.state.shippingFee},-
-                            </Form.Label>
-                          </Col>
-                        </Form.Row>
-                      </Form.Group>
-
-                      <Form.Group>
-                        <Form.Row>
-                          <Col md={5}>
-                            <Form.Label as="h6">Total Payment</Form.Label>
-                          </Col>
-                          <Col md={{ span: 3, offset: 3 }}>
-                            <Form.Label as="h6">
-                              Rp.
-                              {(
-                                this.countTotal() +
-                                parseInt(this.state.shippingFee)
-                              )
-                                .toString()
-                                .replace(
-                                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                                  "."
-                                )}
-                            </Form.Label>
-                          </Col>
-                        </Form.Row>
-                      </Form.Group>
-                    </Form>
-                    <Button
-                      variant="success"
-                      onClick={this.checkout}
-                      style={{ width: "100%" }}
-                    >
-                      Checkout
-                    </Button>
+                        <Form.Group>
+                          <Form.Row>
+                            <Col md={5}>
+                              <Form.Label as="h5">Shipping Fee</Form.Label>
+                            </Col>
+                            <Col md={{ span: 3, offset: 3 }}>
+                              <Form.Label as="h5">
+                                Rp.{this.state.shippingFee},-
+                              </Form.Label>
+                            </Col>
+                          </Form.Row>
+                        </Form.Group>
+                        <br />
+                        <Form.Group>
+                          <Form.Row>
+                            <Col md={5}>
+                              <Form.Label as="h5">Total Payment</Form.Label>
+                            </Col>
+                            <Col md={{ span: 3, offset: 3 }}>
+                              <Form.Label as="h5">
+                                Rp.
+                                {(
+                                  this.countTotal() +
+                                  parseInt(this.state.shippingFee)
+                                )
+                                  .toString()
+                                  .replace(
+                                    /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                    "."
+                                  )}
+                              </Form.Label>
+                            </Col>
+                          </Form.Row>
+                        </Form.Group>
+                      </Form>
+                      <br />
+                      <br />
+                      <Button
+                        variant="success"
+                        size="lg"
+                        block
+                        onClick={this.checkout}
+                        style={{ width: "100%" }}
+                      >
+                        Checkout
+                      </Button>
+                    </div>
                   </Col>
                 </Row>
               ) : (
@@ -344,70 +379,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cart);
-
-//export default Cart;
-
-// {detailCart.map((cart, idx) => (
-//   <Item
-//     key={idx}
-//     productName={cart.product.productName}
-//     quantity={cart.quantity}
-//     unitPrice={cart.product.unitPrice}
-//     stock={cart.product.stock}
-//     deleteItem={this.deleteItem}
-//     detailId={cart.detailId}
-//   />
-// ))}
-
-// var totalYears = pilots.reduce(function (accumulator, pilot) {
-//   return accumulator + pilot.years;
-// }, 0);
-
-{
-  /* <tr key={idx}>
-<td>
-  <i
-    class="far fa-image"
-    style={{ fontSize: "10vh" }}
-  ></i>
-  <p>{cart.product.productName}</p>
-</td>
-<td>
-  <ItemCounter
-    qty={cart.quantity}
-    stock={cart.product.stock}
-    setPrice={this.setPrice}
-  />
-</td>
-<td>
-  Rp.
-  {cart.product.unitPrice
-    .toString()
-    .replace(
-      /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-      "."
-    )}
-  ,-
-</td>
-<td>
-  Rp.
-  {(
-    parseInt(cart.product.unitPrice) *
-    parseInt(cart.quantity)
-  )
-    .toString()
-    .replace(
-      /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-      "."
-    )}
-  ,-
-</td>
-<td>
-  <i
-    class="fas fa-trash-alt"
-    style={{ cursor: "pointer" }}
-    onClick={() => this.deleteItem(cart.detailId)}
-  ></i>
-</td>
-</tr> */
-}

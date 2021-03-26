@@ -45,7 +45,7 @@ class OrderList extends Component {
         <div className="productTittle">
           <h2 className="text-center">Order-List</h2>
         </div>
-        <br />
+        <hr />
         <div>
           <Row>
             <Col md={6}>

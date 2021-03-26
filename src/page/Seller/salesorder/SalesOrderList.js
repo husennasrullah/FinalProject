@@ -20,9 +20,12 @@ class SalesOrderList extends Component {
     };
   }
 
-  approveOrder = (orderId) => {
+  approveOrder = (orderId, userId) => {
     let update = {
       orderId: orderId,
+      user: {
+        userId: userId,
+      },
       status: true,
     };
     let newData = this.state.order.map((el) => {
@@ -105,7 +108,7 @@ class SalesOrderList extends Component {
               {order.map((item, idx) => (
                 <tr key={idx}>
                   <td> {item.orderId}</td>
-                  <td> {item.userId}</td>
+                  <td> {item.user.userId}</td>
                   <td> {item.orderDate}</td>
                   <td>
                     Rp.
@@ -137,7 +140,9 @@ class SalesOrderList extends Component {
                     <button
                       style={{ marginLeft: "10px" }}
                       className="btn btn-success"
-                      onClick={() => this.approveOrder(item.orderId)}
+                      onClick={() =>
+                        this.approveOrder(item.orderId, item.user.userId)
+                      }
                     >
                       Approve
                     </button>

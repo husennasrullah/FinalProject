@@ -27,7 +27,8 @@ class App extends Component {
           this.props.changeLogin(payload);
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.response);
+          alert(err.response.data.errorMessage);
         });
     }
   };

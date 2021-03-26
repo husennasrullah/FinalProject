@@ -19,6 +19,14 @@ class OrderService {
     return axios.get(ORDER_API + orderId);
   }
 
+  getTopSales() {
+    return axios.get(ORDER_API + "topsales/");
+  }
+
+  getTotalTransaction() {
+    return axios.get(ORDER_API + "count/");
+  }
+
   updateStatus(update) {
     return axios.put(ORDER_API + "status/", update);
   }

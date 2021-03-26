@@ -35,7 +35,10 @@ class Item extends Component {
           <p>{productName}</p>
         </td>
         <td>
-          <InputGroup className="mb-3" style={{ width: "130px" }}>
+          <InputGroup
+            className="mb-3"
+            style={{ width: "130px", marginLeft: "120px" }}
+          >
             <InputGroup.Prepend>
               <Button onClick={this.decrementCounter}>-</Button>
             </InputGroup.Prepend>
