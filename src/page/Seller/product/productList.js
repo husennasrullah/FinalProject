@@ -5,6 +5,7 @@ import ModalForm from "./detailProduct";
 import "./style.css";
 import Pagination from "@material-ui/lab/Pagination";
 import { Button } from "react-bootstrap";
+import Swal from "sweetalert2";
 
 class ProductList extends Component {
   constructor(props) {
@@ -28,18 +29,29 @@ class ProductList extends Component {
   }
 
   deleteProduct = (productId) => {
-    if (confirm("apakah anda yakin ingin menghapus data ?")) {
-      ProductService.deleteProduct(productId).then((res) => {
-        this.setState({
-          productList: this.state.productList.filter(
-            (prod) => prod.productId !== productId
-          ),
-          listProduct: this.state.listProduct.filter(
-            (prod) => prod.productId !== productId
-          ),
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        ProductService.deleteProduct(productId).then((res) => {
+          this.setState({
+            productList: this.state.productList.filter(
+              (prod) => prod.productId !== productId
+            ),
+            listProduct: this.state.listProduct.filter(
+              (prod) => prod.productId !== productId
+            ),
+          });
         });
-      });
-    }
+        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    });
   };
 
   openModal = (productId) => {
@@ -260,7 +272,7 @@ class ProductList extends Component {
                       .toString()
                       .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
                   </td>
-                  <td> {prod.stock}</td>
+                  <td> {prod.stock} items</td>
                   <td>
                     <Button
                       variant="info"

@@ -43,7 +43,7 @@ class BuyerList extends Component {
     this.setState({
       isOpen: false,
     });
-    this.getBuyerPaging();
+    this.getBuyerPaging(this.state.page, this.state.limit);
   };
 
   handleChange = (event, value) => {

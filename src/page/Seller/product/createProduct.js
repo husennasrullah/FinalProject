@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Form, Col, Container } from "react-bootstrap";
+import { Form, Col, Container, Button } from "react-bootstrap";
+import { connect } from "react-redux";
 import ProductService from "../../../service/ProductService";
+import HomeSeller from "../homepage/HomeSeller";
 
 class CreateProduct extends Component {
   constructor(props) {
@@ -43,6 +45,8 @@ class CreateProduct extends Component {
         unitPrice: this.state.unitPrice,
         stock: this.state.stock,
         description: this.state.description,
+        createdBy: this.props.dataUser.userId,
+        updatedBy: this.props.dataUser.userId,
       };
 
       if (this.state.productId === "add") {
@@ -209,16 +213,16 @@ class CreateProduct extends Component {
               </Form.Row>
             </Form.Group>
 
-            <button className="btn btn-success" onClick={this.saveProduct}>
+            <Button variant="success" onClick={this.saveProduct}>
               Save
-            </button>
-            <button
-              className="btn btn-danger"
+            </Button>
+            <Button
+              variant="danger"
               style={{ marginLeft: "10px" }}
               onClick={this.cancel}
             >
               Cancel
-            </button>
+            </Button>
           </Form>
         </Container>
       </>
@@ -226,4 +230,13 @@ class CreateProduct extends Component {
   }
 }
 
-export default CreateProduct;
+const mapStateToProps = (state) => {
+  return {
+    statusLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(CreateProduct);
+
+//export default CreateProduct;
