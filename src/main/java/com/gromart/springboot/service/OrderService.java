@@ -3,6 +3,7 @@ package com.gromart.springboot.service;
 import com.gromart.springboot.model.Order;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
     List<Order> findAllOrders();
@@ -19,7 +20,7 @@ public interface OrderService {
 
     void updateStatus (Order order);
 
-    int countTransaction ();
+    Map<String, Object> countTransaction ();
 
 
 }

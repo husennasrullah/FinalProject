@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -113,7 +114,7 @@ public class UserController {
     //------------------------get with paging---------------------------------
     @RequestMapping(value = "/user/paging/", method = RequestMethod.GET)
     public ResponseEntity<?>getProductWithPaging(@RequestParam int page, @RequestParam int limit){
-        List<User> users = userService.findAllWithPaging(page, limit);
+        Map<String, Object>  users = userService.findAllWithPaging(page, limit);
         if(users.isEmpty()){
             return new ResponseEntity<>(users,HttpStatus.NOT_FOUND);
         }
@@ -123,7 +124,6 @@ public class UserController {
     }
 
     ////---------------------------update-------------------------------------------
-
     @RequestMapping(value = "/user/limit/{userId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateLimit(@PathVariable("userId") String userId, @Valid @RequestBody User user) {
         logger.info("Updating User with id {}", userId);
@@ -184,4 +184,29 @@ public class UserController {
         int itemCount = userService.findAllCount();
         return new ResponseEntity<>(itemCount, HttpStatus.OK);
     }
+
+    //------------------------get name with paging ---------------------------------
+    @RequestMapping(value = "/user/findname/{firstName}/", method = RequestMethod.GET)
+    public ResponseEntity<?>getNameWithPaging(@PathVariable("firstName") String firstName, @RequestParam int page, @RequestParam int limit){
+        Map<String, Object> map = userService.findNameWithPaging(firstName, page, limit);
+        if(map.isEmpty()){
+            return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
+
+    //------------------------get Id with paging ---------------------------------
+    @RequestMapping(value = "/user/findid/{userId}/", method = RequestMethod.GET)
+    public ResponseEntity<?>getIdWithPaging(@PathVariable("userId") String userId, @RequestParam int page, @RequestParam int limit){
+        Map<String, Object> map = userService.findIdWithPaging(userId, page, limit);
+        if(map.isEmpty()){
+            return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
+
 }

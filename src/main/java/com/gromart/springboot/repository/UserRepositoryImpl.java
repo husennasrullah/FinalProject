@@ -1,15 +1,15 @@
 package com.gromart.springboot.repository;
 
-
-import com.gromart.springboot.model.Product;
 import com.gromart.springboot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -38,7 +38,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> findAllWithPaging(int page, int limit) {
+    public Map<String, Object> findAllWithPaging(int page, int limit) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM user where role='Buyer'",
+                (rs, rowNum) -> rs.getInt("count")));
+
         int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM user where role='Buyer'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
         // validate page
@@ -46,26 +51,25 @@ public class UserRepositoryImpl implements UserRepository {
         if (page > numPages) page = numPages;
 
         int start = (page - 1) * limit;
-        List<User> users =
-                jdbcTemplate.query("SELECT * FROM user where role='Buyer'LIMIT " + start + "," + limit + ";",
-                        (rs, rowNum) ->
-                                new User(
-                                        rs.getString("userID"),
-                                        rs.getString("firstname"),
-                                        rs.getString("lastName"),
-                                        rs.getString("userName"),
-                                        rs.getString("email"),
-                                        rs.getString("phoneNumber"),
-                                        rs.getBigDecimal("creditLimit"),
-                                        rs.getInt("invoiceLimit"),
-                                        rs.getString("createdBy"),
-                                        rs.getDate("createdDate"),
-                                        rs.getString("updatedBy"),
-                                        rs.getDate("updatedDate")
-                                ));
-        return users;
+        map.put("user", jdbcTemplate.query("SELECT * FROM user where role='Buyer'LIMIT " + start + "," + limit + ";",
+                (rs, rowNum) ->
+                        new User(
+                                rs.getString("userID"),
+                                rs.getString("firstname"),
+                                rs.getString("lastName"),
+                                rs.getString("userName"),
+                                rs.getString("email"),
+                                rs.getString("phoneNumber"),
+                                rs.getBigDecimal("creditLimit"),
+                                rs.getInt("invoiceLimit"),
+                                rs.getString("createdBy"),
+                                rs.getDate("createdDate"),
+                                rs.getString("updatedBy"),
+                                rs.getDate("updatedDate")
+                        )
+        ));
+        return map;
     }
-
 
     @Override
     public User findById(String userId) {
@@ -212,6 +216,74 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Map<String, Object> findNameWithPaging(String firstName, int page, int limit) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM user where role='Buyer' AND " +
+                "firstName like '" + "%" + firstName + "%" + "'", Integer.class));
+
+        int numPages = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM user where role='Buyer'",
+                (rs, rowNum) -> rs.getInt("count"));
+        // validate page
+        if (page < 1) page = 1;
+        if (page > numPages) page = numPages;
+        int start = (page - 1) * limit;
+
+        map.put("user", jdbcTemplate.query("SELECT * FROM user where role='Buyer' AND firstName like '" + "%" + firstName + "%" + "' LIMIT " + start + "," + limit + ";",
+                (rs, rowNum) ->
+                        new User(
+                                rs.getString("userID"),
+                                rs.getString("firstname"),
+                                rs.getString("lastName"),
+                                rs.getString("userName"),
+                                rs.getString("email"),
+                                rs.getString("phoneNumber"),
+                                rs.getBigDecimal("creditLimit"),
+                                rs.getInt("invoiceLimit"),
+                                rs.getString("createdBy"),
+                                rs.getDate("createdDate"),
+                                rs.getString("updatedBy"),
+                                rs.getDate("updatedDate")
+                        ))
+        );
+
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> findIdWithPaging(String userId, int page, int limit) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM user where role='Buyer' AND " +
+                "userID like '" + "%" + userId + "%" + "'", Integer.class));
+
+        int numPages = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM user where role='Buyer'",
+                (rs, rowNum) -> rs.getInt("count"));
+        // validate page
+        if (page < 1) page = 1;
+        if (page > numPages) page = numPages;
+        int start = (page - 1) * limit;
+
+        map.put("user", jdbcTemplate.query("SELECT * FROM user where role='Buyer' AND userID like '" + "%" + userId + "%" + "' LIMIT " + start + "," + limit + ";",
+                (rs, rowNum) ->
+                        new User(
+                                rs.getString("userID"),
+                                rs.getString("firstname"),
+                                rs.getString("lastName"),
+                                rs.getString("userName"),
+                                rs.getString("email"),
+                                rs.getString("phoneNumber"),
+                                rs.getBigDecimal("creditLimit"),
+                                rs.getInt("invoiceLimit"),
+                                rs.getString("createdBy"),
+                                rs.getDate("createdDate"),
+                                rs.getString("updatedBy"),
+                                rs.getDate("updatedDate")
+                        ))
+        );
+
+        return map;
+    }
+
+    @Override
     public List<User> searchId(String userId) {
         List<User> users;
         try {
@@ -275,7 +347,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User loginAccount(String userName, String password) {
         User user;
         try {
-            user = jdbcTemplate.queryForObject("SELECT * FROM user WHERE username=? AND password =?",
+            user = jdbcTemplate.queryForObject("SELECT * FROM user WHERE BINARY username=? AND BINARY password =?",
                     new Object[]{userName, password},
                     (rs, rowNum) ->
                             (new User(
@@ -303,6 +375,14 @@ public class UserRepositoryImpl implements UserRepository {
                 user.getUpdatedBy(),
                 user.getUpdatedDate(),
                 user.getUserId()
+        );
+    }
+
+    @Override
+    public void updateInvoiceLimit(String userId, int invoiceLimit) {
+        jdbcTemplate.update("update user set invoiceLimit=? where userID=? ",
+                invoiceLimit,
+                userId
         );
     }
 

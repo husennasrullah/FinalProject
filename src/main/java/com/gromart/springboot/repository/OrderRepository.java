@@ -20,9 +20,12 @@ public interface OrderRepository {
 
     void updateStatus (Order order);
 
-    int countTransaction ();
+    Map<String, Object> countTransaction ();
 
-    List<Object> countTopOrder ();
+    int countRequestedOrder (String userId);
 
     List<Map<String, Object>> countTopSales ();
+
+
+
 }

@@ -99,14 +99,10 @@ public class ProductRepositoryImpl implements ProductRepository {
                 product.getUnitPrice(),
                 product.getStock(),
                 product.getDescription(),
-                //product.getCreatedBy(),
-                "husen",
-                //product.getCreatedDate(),
-                new Date(),
-                //product.getUpdatedBy(),
-                "husen",
-                //product.getUpdatedDate()
-                new Date()
+                product.getCreatedBy(),
+                java.time.LocalDate.now(),
+                product.getUpdatedBy(),
+                java.time.LocalDate.now()
         );
     }
 
@@ -267,12 +263,15 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void updateProduct(Product product) {
-        jdbcTemplate.update("update product set productName=?, category=?, unitPrice=?, stock=?, description=? where productId=?",
+        jdbcTemplate.update("update product set productName=?, category=?, unitPrice=?, stock=?, description=?, updatedBy=?," +
+                        "updatedDate=? where productId=?",
                 product.getProductName(),
                 product.getCategory(),
                 product.getUnitPrice(),
                 product.getStock(),
                 product.getDescription(),
+                product.getUpdatedBy(),
+                java.time.LocalDate.now(),
                 product.getProductId()
         );
     }

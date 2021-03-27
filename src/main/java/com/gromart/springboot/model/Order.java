@@ -6,16 +6,15 @@ import java.util.List;
 
 public class Order {
     private String orderId;
-    private String userId;
+    private User user;
     private Date orderDate;
     private String shippingAddress;
     private BigDecimal totalAmount;
     private Boolean status;
     List<OrderDetail> details;
 
-    public Order(String orderId, String userId, Date orderDate, String shippingAddress, BigDecimal totalAmount, Boolean status) {
+    public Order(String orderId, Date orderDate, String shippingAddress, BigDecimal totalAmount, Boolean status) {
         this.orderId = orderId;
-        this.userId = userId;
         this.orderDate = orderDate;
         this.shippingAddress = shippingAddress;
         this.totalAmount = totalAmount;
@@ -30,12 +29,12 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getOrderDate() {

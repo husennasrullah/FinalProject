@@ -1,8 +1,12 @@
 package com.gromart.springboot.controller;
 
-import com.gromart.springboot.model.Order;
+import com.gromart.springboot.model.*;
 import com.gromart.springboot.repository.OrderRepository;
+import com.gromart.springboot.repository.UserRepository;
 import com.gromart.springboot.service.OrderService;
+import com.gromart.springboot.service.ProductService;
+import com.gromart.springboot.service.UserService;
+import com.gromart.springboot.util.CustomErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,15 @@ public class OrderController {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     //-------------------Retrieve All Products--------------------------------------------
     @RequestMapping(value = "/order/", method = RequestMethod.GET)
@@ -49,7 +60,7 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    //-----------------------find by userID---------------------------
+    //-----------------------find by orderID---------------------------
     @RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
     public ResponseEntity<?> getOrderbyID(@PathVariable("orderId") String orderId) {
         Order orders = orderService.findById(orderId);
@@ -65,14 +76,48 @@ public class OrderController {
     @RequestMapping(value = "/order/", method = RequestMethod.POST)
     public ResponseEntity<?> createOrder(@RequestBody Order order) {
         logger.info("Creating Order : {}", order);
+
+        //------------------- stock exceed validation------------------------
+        List<OrderDetail> details = order.getDetails();
+        for (int i=0; i< details.size(); i++ ){
+            Product product = productService.findById(order.getDetails().get(i).getProduct().getProductId());
+            if (order.getDetails().get(i).getQuantity() > product.getStock() ) {
+                return new ResponseEntity<>(
+                        new CustomErrorType("Product "+order.getDetails().get(i).getProduct().getProductName() +
+                        "exceed the available stock"), HttpStatus.CONFLICT
+                );
+            }
+        }
+        //------------------- total purchased exceed credit limit-----------------------
+        User user = userService.findById(order.getUser().getUserId());
+        if (order.getTotalAmount().compareTo(user.getCreditLimit()) == 1){
+            return new ResponseEntity<>(new CustomErrorType("Total Purchased exceed your credit limit !!"), HttpStatus.CONFLICT);
+        }
+
+        //------------------- reached transaction limit ---------------
+        if (user.getInvoiceLimit() == 0){
+            return new ResponseEntity<>(new CustomErrorType("you have reached your invoice limit, " +
+                    "please wait till your order is approved by seller"), HttpStatus.CONFLICT);
+        }
+
         orderService.saveOrder(order);
+        userRepository.updateInvoiceLimit(
+                user.getUserId(),
+                user.getInvoiceLimit() - 1
+                );
+
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
     //------------------- Update Status -------------------------------------
     @RequestMapping(value = "/order/status/", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStatus(@RequestBody Order order) {
+        User user = userService.findById(order.getUser().getUserId());
         orderService.updateStatus(order);
+        userRepository.updateInvoiceLimit(
+                user.getUserId(),
+                user.getInvoiceLimit() + 1
+        );
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
@@ -80,8 +125,8 @@ public class OrderController {
 
     @RequestMapping(value = "/order/count/", method = RequestMethod.GET)
     public ResponseEntity<?> countTransaction() {
-        int itemCount = orderService.countTransaction();
-        return new ResponseEntity<>(itemCount, HttpStatus.OK);
+        Map<String,Object> transaction = orderService.countTransaction();
+        return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
 
     //---------------------- Get Top sales -----------------------------------

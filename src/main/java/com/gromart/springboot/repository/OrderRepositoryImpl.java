@@ -4,13 +4,10 @@ import com.gromart.springboot.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
@@ -25,7 +22,6 @@ public class OrderRepositoryImpl implements OrderRepository {
                 (rs, rowNum) ->
                         new Order(
                                 rs.getString("orderID"),
-                                rs.getString("userID"),
                                 rs.getDate("orderDate"),
                                 rs.getString("shippingAddress"),
                                 rs.getBigDecimal("totalAmount"),
@@ -33,12 +29,27 @@ public class OrderRepositoryImpl implements OrderRepository {
                         )
         );
         for (Order order : orders) {
+            order.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
+                            "b.invoiceLimit FROM reportorder a JOIN user b ON a.userID = b.userID WHERE a.orderID=?",
+                    new Object[]{order.getOrderId()},
+                    (rs, rowNum) ->
+                            (new User(
+                                    rs.getString("userID"),
+                                    rs.getString("firstname"),
+                                    rs.getString("lastName"),
+                                    rs.getBigDecimal("creditLimit"),
+                                    rs.getInt("invoiceLimit")
+                            ))
+                    )
+            );
+
+
             List<OrderDetail> details = jdbcTemplate.query("select b.orderdetailID, b.orderID, b.quantity, b.subTotal " +
                             "from reportorder a join orderdetail b on a.orderID = b.orderID where b.orderID ='" + order.getOrderId() + "'",
                     (rs, rowNum) -> new OrderDetail(
                             rs.getString("orderdetailID"),
                             rs.getString("orderID"),
-                            rs.getString("quantity"),
+                            rs.getInt("quantity"),
                             rs.getBigDecimal("subTotal")
                     )
             );
@@ -67,7 +78,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         jdbcTemplate.update("INSERT INTO reportorder (orderID, userID, orderDate, shippingAddress, totalAmount, orderStatus) " +
                         "VALUES  (?,?,?,?,?,?)",
                 orderId,
-                order.getUserId(),
+                order.getUser().getUserId(),
                 java.time.LocalDate.now(),
                 order.getShippingAddress(),
                 order.getTotalAmount(),
@@ -79,10 +90,13 @@ public class OrderRepositoryImpl implements OrderRepository {
             UUID detail = UUID.randomUUID();
             String detailId = "Det-Order-" + detail;
             jdbcTemplate.update(
-                    "INSERT INTO orderdetail(orderdetailID, orderID, productID, quantity, subTotal) VALUES (?,?,?,?,?)",
+                    "INSERT INTO orderdetail(orderdetailID, orderID, productID, productName, unitPrice, quantity, subTotal) " +
+                            "VALUES (?,?,?,?,?,?,?)",
                     detailId,
                     orderId,
                     details.get(i).getProduct().getProductId(),
+                    details.get(i).getProduct().getProductName(),
+                    details.get(i).getProduct().getUnitPrice(),
                     details.get(i).getQuantity(),
                     details.get(i).getSubTotal()
             );
@@ -98,7 +112,6 @@ public class OrderRepositoryImpl implements OrderRepository {
                     (rs, rowNum) ->
                             new Order(
                                     rs.getString("orderID"),
-                                    rs.getString("userID"),
                                     rs.getDate("orderDate"),
                                     rs.getString("shippingAddress"),
                                     rs.getBigDecimal("totalAmount"),
@@ -107,12 +120,26 @@ public class OrderRepositoryImpl implements OrderRepository {
             );
 
             for (Order order : orders) {
+                order.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
+                                "b.invoiceLimit FROM reportorder a JOIN user b ON a.userID = b.userID WHERE a.orderID=?",
+                        new Object[]{order.getOrderId()},
+                        (rs, rowNum) ->
+                                (new User(
+                                        rs.getString("userID"),
+                                        rs.getString("firstname"),
+                                        rs.getString("lastName"),
+                                        rs.getBigDecimal("creditLimit"),
+                                        rs.getInt("invoiceLimit")
+                                ))
+                        )
+                );
+
                 List<OrderDetail> details = jdbcTemplate.query("select b.orderdetailID, b.orderID, b.quantity, b.subTotal " +
                                 "from reportorder a join orderdetail b on a.orderID = b.orderID where b.orderID ='" + order.getOrderId() + "'",
                         (rs, rowNum) -> new OrderDetail(
                                 rs.getString("orderdetailID"),
                                 rs.getString("orderID"),
-                                rs.getString("quantity"),
+                                rs.getInt("quantity"),
                                 rs.getBigDecimal("subTotal")
                         )
                 );
@@ -146,19 +173,32 @@ public class OrderRepositoryImpl implements OrderRepository {
                     (rs, rowNum) ->
                             new Order(
                                     rs.getString("orderID"),
-                                    rs.getString("userID"),
                                     rs.getDate("orderDate"),
                                     rs.getString("shippingAddress"),
                                     rs.getBigDecimal("totalAmount"),
                                     rs.getBoolean("orderStatus")
                             )
             );
+
+            orders.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
+                            "b.invoiceLimit FROM reportorder a JOIN user b ON a.userID = b.userID WHERE a.orderID=?",
+                    new Object[]{orderId},
+                    (rs, rowNum) ->
+                            (new User(
+                                    rs.getString("userID"),
+                                    rs.getString("firstname"),
+                                    rs.getString("lastName"),
+                                    rs.getBigDecimal("creditLimit"),
+                                    rs.getInt("invoiceLimit")
+                            ))
+                    )
+            );
             List<OrderDetail> details = jdbcTemplate.query("select b.orderdetailID, b.orderID, b.quantity, b.subTotal " +
                             "from reportorder a join orderdetail b on a.orderID = b.orderID where b.orderID ='" + orderId + "'",
                     (rs, rowNum) -> new OrderDetail(
                             rs.getString("orderdetailID"),
                             rs.getString("orderID"),
-                            rs.getString("quantity"),
+                            rs.getInt("quantity"),
                             rs.getBigDecimal("subTotal")
                     )
             );
@@ -200,32 +240,29 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public int countTransaction() {
-        int transaction;
-        transaction = jdbcTemplate.queryForObject("SELECT SUM(quantity)  FROM orderdetail", Integer.class);
+    public Map<String, Object> countTransaction() {
+        Map<String, Object> transaction = new HashMap<>();
+        transaction.put("totalSellingItem",jdbcTemplate.queryForObject("SELECT SUM(quantity) FROM orderdetail", Integer.class));
+        transaction.put("totalSellingMoney", jdbcTemplate.queryForObject("SELECT SUM(totalAmount) FROM reportorder", Integer.class));
         return transaction;
     }
 
     @Override
-    public List<Object> countTopOrder() {
-        List<Object> objects;
-        Map<String, Object> map = new HashMap<>();
-
-        objects = jdbcTemplate.query("SELECT productID, SUM(quantity) as total from orderdetail GROUP BY productID ORDER BY total DESC",
-                (rs, rowNum) ->
-                        map.put("productId", rs.getString("productID"))
-
-        );
-        return objects;
-
+    public int countRequestedOrder(String userId) {
+        int itemCount;
+        itemCount = jdbcTemplate.queryForObject("Select COUNT(*) as count from reportorder where userID='"+userId+"' " +
+                "and orderStatus=false", Integer.class);
+        return itemCount;
     }
+
 
     @Override
     public List<Map<String, Object>> countTopSales() {
-        return jdbcTemplate.query("SELECT productID, SUM(quantity) as total from orderdetail GROUP BY productID ORDER BY total DESC",
+        return jdbcTemplate.query("SELECT productID, productName, SUM(quantity) as total from orderdetail GROUP BY productID ORDER BY total DESC",
                 (rs, rowNum) -> {
                     Map<String, Object> results = new HashMap<>();
                     results.put("productId", rs.getString("productID"));
+                    results.put("productName", rs.getString("productName"));
                     results.put("total", rs.getInt("total"));
                     return results;
                 });

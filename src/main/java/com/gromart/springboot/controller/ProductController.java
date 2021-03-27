@@ -162,6 +162,8 @@ public class ProductController {
         currentProduct.setUnitPrice(product.getUnitPrice());
         currentProduct.setStock(product.getStock());
         currentProduct.setDescription(product.getDescription());
+        currentProduct.setUpdatedBy(product.getUpdatedBy());
+
 
         productService.updateProduct(currentProduct);
         return new ResponseEntity<>(currentProduct, HttpStatus.OK);

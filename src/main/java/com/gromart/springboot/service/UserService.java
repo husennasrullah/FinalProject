@@ -4,12 +4,15 @@ import com.gromart.springboot.model.Product;
 import com.gromart.springboot.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
     List<User> findAllBuyer ();
 
-    List<User> findAllWithPaging(int page, int limit);
+    Map<String, Object>  findAllWithPaging(int page, int limit);
+
+
 
     User findById(String userId);
 
@@ -20,6 +23,10 @@ public interface UserService {
     User findByEmail (String email);
 
     User findByPhoneNumber (String phoneNumber);
+
+    Map<String, Object> findNameWithPaging (String firstName, int page, int limit);
+
+    Map<String, Object> findIdWithPaging (String userId, int page, int limit);
 
     List<User> searchId(String userId);
 

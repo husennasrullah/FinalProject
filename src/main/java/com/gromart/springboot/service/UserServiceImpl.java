@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,8 +23,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAllWithPaging(int page, int limit) {
-        List<User> user = userRepository.findAllWithPaging(page, limit);
+    public Map<String, Object> findAllWithPaging(int page, int limit) {
+        Map<String, Object> user = userRepository.findAllWithPaging(page, limit);
         return user;
     }
 
@@ -81,6 +82,16 @@ public class UserServiceImpl implements UserService {
             user = null;
         }
         return user;
+    }
+
+    @Override
+    public Map<String, Object> findNameWithPaging(String firstName, int page, int limit) {
+        return userRepository.findNameWithPaging(firstName, page, limit);
+    }
+
+    @Override
+    public Map<String, Object> findIdWithPaging(String userId, int page, int limit) {
+        return userRepository.findIdWithPaging(userId, page, limit);
     }
 
     @Override

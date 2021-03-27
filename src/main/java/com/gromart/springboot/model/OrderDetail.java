@@ -6,10 +6,10 @@ public class OrderDetail {
     private String detailId;
     private String OrderId;
     private Product product;
-    private String quantity;
+    private int quantity;
     private BigDecimal subTotal;
 
-    public OrderDetail(String detailId, String orderId, String quantity, BigDecimal subTotal) {
+    public OrderDetail(String detailId, String orderId, int quantity, BigDecimal subTotal) {
         this.detailId = detailId;
         OrderId = orderId;
         this.quantity = quantity;
@@ -40,11 +40,11 @@ public class OrderDetail {
         this.product = product;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
