@@ -7,6 +7,7 @@ import {
   Button,
   Form,
   Table,
+  Badge,
 } from "react-bootstrap";
 import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
@@ -172,11 +173,37 @@ class Cart extends Component {
     console.log("detaillllllll:", detailCart);
     return (
       <Container fluid>
-        <div>
-          <center>
+        <br />
+        <Row>
+          <Col md={2}>
             <h2>Shopping Cart</h2>
-          </center>
-        </div>
+          </Col>
+          <Col md={{ span: 3, offset: 4 }}>
+            <Badge
+              style={{
+                fontSize: "25px",
+                fontFamily: "cambria",
+                border: "solid 1px black",
+              }}
+              variant="warning"
+            >
+              Credit Limit : Rp.100.000,-
+            </Badge>
+          </Col>
+          <Col md={3}>
+            <Badge
+              style={{
+                fontSize: "25px",
+                fontFamily: "cambria",
+                border: "solid 1px black",
+              }}
+              variant="success"
+            >
+              Invoice Limit : 4 Transaction
+            </Badge>
+          </Col>
+        </Row>
+
         <hr />
         <Container fluid>
           <Card>

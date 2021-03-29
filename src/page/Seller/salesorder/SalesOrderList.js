@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  Row,
-  Col,
-  Form,
-  FormControl,
-  Container,
-  Button,
-  Badge,
-} from "react-bootstrap";
+import { Row, Col, Form, FormControl, Container, Badge } from "react-bootstrap";
 import Pagination from "@material-ui/lab/Pagination";
 import OrderService from "../../../service/OrderService";
 
@@ -17,6 +9,11 @@ class SalesOrderList extends Component {
     this.state = {
       order: [],
       detailOrder: [],
+      page: 1,
+      pagenow: 1,
+      limit: 5,
+      count: 0,
+      search: "",
     };
   }
 
@@ -48,11 +45,19 @@ class SalesOrderList extends Component {
       });
   };
 
-  getAllOrder() {
-    OrderService.getAllOrder()
+  setValueSearch = (e) => {
+    this.setState({
+      search: e.target.value,
+    });
+  };
+
+  getAllOrder(page, limit) {
+    OrderService.getAllOrder(page, limit)
       .then((res) => {
+        let page = res.data.qty / this.state.limit;
         this.setState({
-          order: res.data,
+          order: res.data.order,
+          count: Math.ceil(page),
         });
       })
       .catch((err) => {
@@ -61,7 +66,7 @@ class SalesOrderList extends Component {
   }
 
   componentDidMount() {
-    this.getAllOrder();
+    this.getAllOrder(this.state.pagenow, this.state.limit);
   }
   render() {
     console.log("tesssss : ", this.state.order);
@@ -152,7 +157,12 @@ class SalesOrderList extends Component {
             </tbody>
           </table>
           <div>
-            <Pagination count={4} color="primary" />
+            <Pagination
+              page={this.state.pagenow}
+              count={this.state.count}
+              onChange={this.handleChange}
+              color="primary"
+            />
           </div>
         </div>
       </Container>

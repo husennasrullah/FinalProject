@@ -3,12 +3,14 @@ import axios from "axios";
 const ORDER_API = "http://localhost:8080/gromart/order/";
 
 class OrderService {
-  getOrderByUserID(userId) {
-    return axios.get(ORDER_API + "id/" + userId);
+  getOrderByUserID(userId, page, limit) {
+    return axios.get(
+      ORDER_API + "id/" + userId + "/?page=" + page + "&limit=" + limit
+    );
   }
 
-  getAllOrder() {
-    return axios.get(ORDER_API);
+  getAllOrder(page, limit) {
+    return axios.get(ORDER_API + "/?page=" + page + "&limit=" + limit);
   }
 
   checkoutOrder(checkout) {

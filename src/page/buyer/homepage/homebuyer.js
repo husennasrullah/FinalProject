@@ -11,14 +11,12 @@ import {
   FormControl,
   Form,
   Carousel,
-  CarouselItem,
 } from "react-bootstrap";
 
 import ProductService from "../../../service/ProductService";
 import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
 import DetailShop from "./DetailShop";
-import { Redirect } from "react-router";
 import RegistrasiService from "../../../service/RegistrasiService";
 
 class HomeBuyer extends Component {
@@ -27,11 +25,17 @@ class HomeBuyer extends Component {
     this.state = {
       product: [],
       listProduct: [],
+
+      //-----------searh, filter, and pagination----------------
       search: "",
-      page: "1",
+      page: 1,
+      pagenow: 1,
       count: 0,
       limit: 8,
       isSearch: true,
+      sort: "low",
+
+      //-------- Cart --------------------------------
       userid: this.props.dataUser.userId,
       cartId: "",
       isOpen: false,
@@ -59,7 +63,7 @@ class HomeBuyer extends Component {
     CartService.addToCart(this.props.dataUser.userId, productId, addToCart)
       .then((res) => {
         alert("Successfully added item to cart");
-        this.getCurrentCart();
+        this.getCurrentCart(this.state.userid);
       })
       .catch((err) => {
         console.log("error :", err.response.data);
@@ -81,33 +85,29 @@ class HomeBuyer extends Component {
   searchProduct = () => {
     if (this.state.isSearch) {
       if (this.state.search === "") {
-        this.getProductPaging();
+        this.getProductPaging(this.state.page, this.state.limit);
       } else {
-        ProductService.searchByName(
-          this.state.search,
-          this.state.page,
-          this.state.limit
-        )
-          .then((res) => {
-            let page = res.data.qty / this.state.limit;
-            this.setState({
-              product: res.data.product,
-              count: Math.ceil(page),
-              isSearch: false,
-            });
-          })
-          .catch((err) => {
-            alert("Failed Fetching Data nama");
-          });
+        this.searchByName(this.state.search, this.state.page, this.state.limit);
       }
     } else {
-      this.setState({
-        search: "",
-        product: this.state.listProduct,
-        isSearch: true,
-      });
-      this.getProductPaging();
+      this.getProductPaging(this.state.page, this.state.limit);
     }
+  };
+
+  searchByName = (search, page, limit) => {
+    ProductService.searchByName(search, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          product: res.data.product,
+          count: Math.ceil(page),
+          isSearch: false,
+          pagenow: 1,
+        });
+      })
+      .catch((err) => {
+        alert("Failed Fetching Data nama");
+      });
   };
 
   setSearch = (e) => {
@@ -116,33 +116,54 @@ class HomeBuyer extends Component {
     });
   };
 
-  handleChange = (event, value) => {
-    ProductService.getProductPaging(value, this.state.limit).then((res) => {
+  sortProduct = (e) => {
+    if (e.target.value === "low") {
+      let product = this.state.product.sort((a, b) =>
+        a.unitPrice > b.unitPrice ? 1 : -1
+      );
       this.setState({
-        page: value,
-        product: res.data.product,
+        product: product,
       });
-    });
+    } else {
+      let product = this.state.product.sort((a, b) =>
+        a.unitPrice < b.unitPrice ? 1 : -1
+      );
+      this.setState({
+        product: product,
+      });
+    }
   };
 
-  getProductPaging() {
-    ProductService.getProductPaging(this.state.page, this.state.limit)
+  handleChange = (event, value) => {
+    this.setState({
+      pagenow: value,
+    });
+    if (this.state.isSearch) {
+      this.getProductPaging(value, this.state.limit);
+    } else {
+      this.searchByName(this.state.Search, value, this.state.limit);
+    }
+  };
+
+  getProductPaging(page, limit) {
+    ProductService.getProductPaging(page, limit)
       .then((res) => {
         let page = res.data.qty / this.state.limit;
         this.setState({
           product: res.data.product,
           listProduct: res.data.product,
           count: Math.ceil(page),
+          isSearch: true,
+          search: "",
         });
-        this.state.product.sort((a, b) => (a.unitPrice > b.unitPrice ? 1 : -1));
       })
       .catch((err) => {
         alert("Failed Fetching Data");
       });
   }
 
-  getCurrentCart() {
-    CartService.getCartByUserID(this.state.userid).then((res) => {
+  getCurrentCart(userId) {
+    CartService.getCartByUserID(userId).then((res) => {
       console.log("pesan :", res.data.errorMessage);
       if (res.data.errorMessage === "No-Cart") {
       } else {
@@ -153,8 +174,8 @@ class HomeBuyer extends Component {
     });
   }
 
-  getNewDataUser() {
-    RegistrasiService.searchID(this.state.userid)
+  getNewDataUser(userId) {
+    RegistrasiService.getBuyerByID(userId)
       .then((res) => {
         this.props.changeLogin(res.data);
       })
@@ -164,14 +185,14 @@ class HomeBuyer extends Component {
   }
 
   componentDidMount() {
-    this.getProductPaging();
-    this.getCurrentCart();
-    this.getNewDataUser();
+    this.getProductPaging(this.state.page, this.state.limit);
+    this.getCurrentCart(this.state.userid);
+    this.getNewDataUser(this.state.userid);
   }
 
   render() {
-    // console.log("CARTID :", this.state.cartId);
     console.log("datauser :", this.props.dataUser);
+    console.log(this.state.search);
 
     return (
       <Container fluid style={{ backgroundColor: "#f8f4e1" }}>
@@ -277,6 +298,7 @@ class HomeBuyer extends Component {
                     className="mb-2"
                     id="inlineFormInput"
                     as="select"
+                    onChange={this.sortProduct}
                   >
                     <option value="low">Price - Low to High</option>
                     <option value="high">Price - High to Low</option>
@@ -362,7 +384,7 @@ class HomeBuyer extends Component {
             <Pagination
               color="primary"
               count={this.state.count}
-              page={this.state.page}
+              page={this.state.pagenow}
               onChange={this.handleChange}
             />
           </Col>

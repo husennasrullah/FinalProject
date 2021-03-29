@@ -6,10 +6,13 @@ export default class ModalForm extends Component {
   render() {
     return (
       <Modal size="lg" show={this.props.isOpen} onHide={this.props.closeModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>DETAIL PRODUCT</Modal.Title>
+        <Modal.Header closeButton style={{ backgroundColor: "#314e52" }}>
+          <Modal.Title style={{ color: "white" }}>DETAIL PRODUCT</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="show-grid">
+        <Modal.Body
+          className="show-grid"
+          style={{ backgroundColor: "#faf9f9" }}
+        >
           {this.props.productDetail.map((detail) => (
             <Container>
               <Row>
@@ -27,7 +30,7 @@ export default class ModalForm extends Component {
             </Container>
           ))}
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer style={{ backgroundColor: "#314e52" }}>
           <Button variant="primary" onClick={() => this.props.closeModal()}>
             Back
           </Button>

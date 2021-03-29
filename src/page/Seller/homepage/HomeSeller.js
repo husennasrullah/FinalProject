@@ -7,19 +7,19 @@ import {
   Row,
   Carousel,
   CardColumns,
+  Badge,
 } from "react-bootstrap";
 import "./style.css";
 import { faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { connect } from "react-redux";
-import { Redirect } from "react-router";
 import OrderService from "../../../service/OrderService";
 
 class HomeSeller extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      topSales: [{}, {}, {}],
+      topSales: [],
       transaction: 0,
     };
   }
@@ -48,8 +48,6 @@ class HomeSeller extends Component {
       });
   }
   render() {
-    console.log("trans :", this.state.transaction);
-    console.log("top :", this.state.topSales[0].total !== undefined);
     const { transaction, topSales } = this.state;
 
     return (
@@ -192,7 +190,44 @@ class HomeSeller extends Component {
             </Col>
 
             <Col md={8}>
-              <Card>
+              <Badge
+                style={{
+                  fontSize: "2vh",
+                  fontFamily: "cambria",
+                  border: "solid 1px black",
+                  backgroundColor: "#435560",
+                  color: "white",
+                }}
+              >
+                TOP 3 BEST SELLER PRODUCTS
+              </Badge>
+              <hr />
+              <Row>
+                {topSales.map((item, idx) => {
+                  let img = [
+                    "https://i.ibb.co/ZfDmDF1/1.png",
+                    "https://i.ibb.co/dj3xmmy/2.png",
+                    "https://i.ibb.co/zHw91TQ/3.png",
+                  ];
+                  const data = img[idx];
+                  return (
+                    <Col key={idx} xs={4}>
+                      <Card>
+                        <Card.Body>
+                          <img src={data} style={{ width: "30%" }}></img>
+                          <hr />
+                          <Card.Title as="h3">{item.productName}</Card.Title>
+                          <Card.Text as="h5">
+                            Total Selling Item {item.total}
+                          </Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  );
+                })}
+              </Row>
+
+              {/* <Card>
                 <Card.Header
                   as="h5"
                   style={{
@@ -220,8 +255,8 @@ class HomeSeller extends Component {
                         style={{ width: "30%" }}
                       />
                       <hr />
-                      <h3>{topSales[1].productName}</h3>
-                      <h5>Total Selling : {topSales[1].total} items</h5>
+                      <h3></h3>
+                      <h5>Total Selling : items</h5>
                     </Col>
                     <Col>
                       <img
@@ -229,12 +264,12 @@ class HomeSeller extends Component {
                         style={{ width: "30%" }}
                       />
                       <hr />
-                      <h3>{topSales[2].productName}</h3>
-                      <h5>Total Selling : {topSales[2].total} items </h5>
+                      <h3></h3>
+                      <h5>Total Selling : items </h5>
                     </Col>
                   </Row>
                 </Card.Body>
-              </Card>
+              </Card> */}
             </Col>
           </Row>
         </Container>

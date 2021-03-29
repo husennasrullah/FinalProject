@@ -19,6 +19,12 @@ class OrderList extends Component {
     this.state = {
       userId: this.props.dataUser.userId,
       orders: [],
+      page: 1,
+      pagenow: 1,
+      count: 0,
+      limit: 5,
+      Search: "",
+      isSearch: false,
     };
   }
 
@@ -26,16 +32,22 @@ class OrderList extends Component {
     this.props.history.push(`${this.props.match.path}/` + orderId);
   };
 
-  componentDidMount() {
-    OrderService.getOrderByUserID(this.state.userId)
+  getOrder(userId, page, limit) {
+    OrderService.getOrderByUserID(userId, page, limit)
       .then((res) => {
+        let page = res.data.qty / this.state.limit;
         this.setState({
-          orders: res.data,
+          orders: res.data.order,
+          count: Math.ceil(page),
         });
       })
       .catch((err) => {
         alert("failed fetching data");
       });
+  }
+
+  componentDidMount() {
+    this.getOrder(this.state.userId, this.state.page, this.state.limit);
   }
   render() {
     const { orders } = this.state;
@@ -122,7 +134,12 @@ class OrderList extends Component {
             </tbody>
           </Table>
           <div>
-            <Pagination count={4} color="primary" />
+            <Pagination
+              page={this.state.pagenow}
+              count={this.state.count}
+              onChange={this.handleChange}
+              color="primary"
+            />
           </div>
         </div>
       </Container>

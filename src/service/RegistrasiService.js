@@ -16,6 +16,10 @@ class RegistrasiService {
     return axios.get(REGISTRASI_API + "buyer/");
   }
 
+  getBuyerByID(userId) {
+    return axios.get(REGISTRASI_API + userId);
+  }
+
   searchID(userId, page, limit) {
     return axios.get(
       REGISTRASI_API + "findid/" + userId + "/?page=" + page + "&limit=" + limit

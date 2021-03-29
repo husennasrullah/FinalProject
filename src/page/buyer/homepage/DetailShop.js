@@ -75,14 +75,14 @@ class DetailShop extends Component {
               <Col md={6}>
                 <InputGroup className="mb-3" style={{ width: "130px" }}>
                   <InputGroup.Prepend>
-                    <CounterBtn onClick={this.incrementCounter}>+</CounterBtn>
+                    <CounterBtn onClick={this.decrementCounter}>-</CounterBtn>
                   </InputGroup.Prepend>
                   <FormControl
                     style={{ width: "60px" }}
                     value={this.state.quantity}
                   ></FormControl>
                   <InputGroup.Append>
-                    <CounterBtn onClick={this.decrementCounter}>-</CounterBtn>
+                    <CounterBtn onClick={this.incrementCounter}>+</CounterBtn>
                   </InputGroup.Append>
                 </InputGroup>
               </Col>
