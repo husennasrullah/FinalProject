@@ -26,6 +26,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    //-------------------find user buyer only----------------------------
     @RequestMapping(value = "/user/buyer/", method = RequestMethod.GET)
     public ResponseEntity<List<User>> listAllBuyers() {
         List<User> users = userService.findAllBuyer();
@@ -34,7 +35,8 @@ public class UserController {
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    //-----------------------------find-------------------------------------------
+
+    //-----------------------------find user (buyer) with id-------------------------------------------
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> findUserById(@PathVariable("userId") String userId) {
         logger.info("Fetching Product with id {}", userId);
@@ -46,7 +48,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    //----------------------------------Search-------------------------------------
+    //----------------------------------Search userid-------------------------------------
     @RequestMapping(value = "/user/id/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getUserById(@PathVariable("userId") String userId) {
         logger.info("Fetching Product with id {}", userId);
@@ -58,6 +60,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    //------------------------search userName---------------------
     @RequestMapping(value = "/user/name/{userName}", method = RequestMethod.GET)
     public ResponseEntity<?> getUserByName(@PathVariable("userName") String userName) {
         logger.info("Fetching Product with id {}", userName);
@@ -69,8 +72,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    //-------------------------------------------------------------------------------
-
+    //--------------------------------daftar user baru-----------------------------------------------
     @RequestMapping(value = "/user/", method = RequestMethod.POST)
     public ResponseEntity<?> createProduct(@Valid @RequestBody User user, Errors error) {
         logger.info("Creating Product : {}", user);
@@ -95,9 +97,9 @@ public class UserController {
             userService.saveUser(user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         }
-
     }
 
+    //---------------------fungsi login----------------------
     @GetMapping("user/login/") ///-------------------ini login----------------------------------
     public ResponseEntity<?> login(@RequestParam String userName, @RequestParam String password) {
         logger.info("Comparing data!");
@@ -123,7 +125,7 @@ public class UserController {
         }
     }
 
-    ////---------------------------update-------------------------------------------
+    ////---------------------------update limit (invoice dan credit)-------------------------------------------
     @RequestMapping(value = "/user/limit/{userId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateLimit(@PathVariable("userId") String userId, @Valid @RequestBody User user) {
         logger.info("Updating User with id {}", userId);
@@ -144,6 +146,7 @@ public class UserController {
         }
     }
 
+    //-------------------Ubah Password------------------------
     @RequestMapping(value = "/user/password/{userId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updatePassword(@PathVariable("userId") String userId, @Valid @RequestBody User user) {
         logger.info("Updating User with id {}", userId);
@@ -160,6 +163,7 @@ public class UserController {
         }
     }
 
+        //--------------------------------ubah profile--------------------
     @RequestMapping(value = "/user/profile/{userId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateProfile(@PathVariable("userId") String userId, @Valid @RequestBody User user) {
         logger.info("Updating User with id {}", userId);

@@ -16,9 +16,8 @@ public class OrderServiceImpl implements OrderService {
     OrderRepository orderRepository;
 
     @Override
-    public List<Order> findAllOrders() {
-        List<Order> orders = orderRepository.findAllOrders();
-        return orders;
+    public Map<String, Object> findAllOrders(int page, int limit) {
+        return orderRepository.findAllOrders(page, limit);
     }
 
     @Override
@@ -29,8 +28,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findByUserId(String userId) {
-        return orderRepository.findByUserId(userId);
+    public Map <String, Object> findByUserId(String userId, int page, int limit) {
+        return orderRepository.findByUserId(userId, page, limit);
     }
 
     @Override

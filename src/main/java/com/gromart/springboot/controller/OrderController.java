@@ -41,18 +41,18 @@ public class OrderController {
 
     //-------------------Retrieve All Products--------------------------------------------
     @RequestMapping(value = "/order/", method = RequestMethod.GET)
-    public ResponseEntity<List<Order>> listAllOrders() {
-        List<Order> orders = orderService.findAllOrders();
-        if (orders.isEmpty()) {
-            return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> listAllOrders(@RequestParam int page, @RequestParam int limit) {
+        Map<String, Object> order = orderService.findAllOrders(page, limit);
+        if (order.isEmpty()) {
+            return new ResponseEntity<>(order, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     //-----------------------find by userID---------------------------
-    @RequestMapping(value = "/order/id/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getBuyerOrder(@PathVariable("userId") String userId) {
-        List<Order> orders = orderService.findByUserId(userId);
+    @RequestMapping(value = "/order/id/{userId}/", method = RequestMethod.GET)
+    public ResponseEntity<?> getBuyerOrder(@PathVariable("userId") String userId, @RequestParam int page, @RequestParam int limit) {
+        Map<String, Object> orders = orderService.findByUserId(userId, page, limit);
         if (orders == null) {
             logger.error("Order not found.");
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);

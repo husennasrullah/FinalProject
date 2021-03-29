@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
-    List<Order> findAllOrders();
+    Map<String, Object> findAllOrders(int page, int limit);
 
     void saveOrder (Order order);
 
-    List<Order> findByUserId (String userId);
+    Map <String, Object> findByUserId (String userId, int page, int limit);
 
     Order findById (String orderId);
 
