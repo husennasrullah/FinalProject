@@ -12,6 +12,7 @@ import {
 import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
 import OrderService from "../../../service/OrderService";
+import RegistrasiService from "../../../service/RegistrasiService";
 import ShippingService from "../../../service/ShippingService";
 import Item from "./Item";
 
@@ -64,6 +65,7 @@ class Cart extends Component {
       address: e.target.value,
     });
   };
+  s;
 
   updatateCreditLimit = (totalAmount) => {
     let dataUser = this.props.dataUser;
@@ -80,7 +82,7 @@ class Cart extends Component {
         userId: this.state.userid,
       },
       shippingAddress: this.state.address,
-      totalAmount: this.countTotal(),
+      totalAmount: this.countTotal() + parseInt(this.state.shippingFee),
       status: false,
       details: detail,
     };
@@ -95,6 +97,7 @@ class Cart extends Component {
         console.log(err.response);
         alert(err.response.data.errorMessage);
       });
+    this.getNewDataUser(this.state.userid);
   };
 
   deleteAllCart = () => {
@@ -135,16 +138,21 @@ class Cart extends Component {
 
   getCart = () => {
     CartService.getCartByUserID(this.state.userid).then((res) => {
-      console.log("pesan :", res.data.errorMessage);
       if (res.data.errorMessage === "No-Cart") {
         this.setState({
           isThereCart: false,
         });
       } else {
+        let data = res.data.detail;
+        let newData = data.map((el) => {
+          return Object.assign({}, el, {
+            subTotal: parseInt(el.quantity) * parseInt(el.product.unitPrice),
+          });
+        });
         this.setState({
           isThereCart: true,
           cart: res.data,
-          detailCart: res.data.detail,
+          detailCart: newData,
           cartId: res.data.cartId,
         });
       }
@@ -163,9 +171,20 @@ class Cart extends Component {
       });
   };
 
+  getNewDataUser(userId) {
+    RegistrasiService.getBuyerByID(userId)
+      .then((res) => {
+        this.props.changeLogin(res.data);
+      })
+      .catch((err) => {
+        alert("Failed Fetch Data");
+      });
+  }
+
   componentDidMount() {
     this.getCart();
     this.getShipping();
+    this.getNewDataUser(this.state.userid);
   }
 
   render() {
@@ -187,7 +206,11 @@ class Cart extends Component {
               }}
               variant="warning"
             >
-              Credit Limit : Rp.100.000,-
+              Credit Limit : Rp.
+              {this.props.dataUser.creditLimit
+                .toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
+              ,-
             </Badge>
           </Col>
           <Col md={3}>
@@ -199,7 +222,7 @@ class Cart extends Component {
               }}
               variant="success"
             >
-              Invoice Limit : 4 Transaction
+              Invoice Limit : {this.props.dataUser.invoiceLimit} Transaction
             </Badge>
           </Col>
         </Row>

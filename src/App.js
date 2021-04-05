@@ -7,6 +7,8 @@ import LoginBaru from "./page/login/Login2.js";
 import DualRegistration from "./page/registrasi/RegistrasiDual.js";
 import RegistrasiService from "./service/RegistrasiService.js";
 import { connect } from "react-redux";
+import NotFound from "./page/404NotFound/404.js";
+import Swal from "sweetalert2";
 
 class App extends Component {
   constructor(props) {
@@ -23,11 +25,23 @@ class App extends Component {
       RegistrasiService.loginCheck(user, pass)
         .then((res) => {
           let payload = res.data;
-          alert("Successfully logged-in");
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Successfully Logged-in",
+            showConfirmButton: false,
+            timer: 2000,
+          });
           this.props.changeLogin(payload);
         })
         .catch((err) => {
-          alert(err.response.data.errorMessage);
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: err.response.data.errorMessage,
+            showConfirmButton: false,
+            timer: 2000,
+          });
         });
     }
   };
@@ -35,21 +49,24 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Route exact path="/">
-          <LoginBaru
-            statusLogin={this.state.statusLogin}
-            doLogin={this.doLogin}
-          />
-        </Route>
-        <Route path="/login">
-          <LoginBaru
-            statusLogin={this.state.statusLogin}
-            doLogin={this.doLogin}
-          />
-        </Route>
-        <Route path="/registrasi" component={DualRegistration}></Route>
-        <Route path="/gromart" component={GromartSeller}></Route>
-        <Route path="/gromart-buyer" component={GromartBuyer}></Route>
+        <Switch>
+          <Route exact path="/">
+            <LoginBaru
+              statusLogin={this.state.statusLogin}
+              doLogin={this.doLogin}
+            />
+          </Route>
+          <Route path="/login">
+            <LoginBaru
+              statusLogin={this.state.statusLogin}
+              doLogin={this.doLogin}
+            />
+          </Route>
+          <Route path="/registrasi" component={DualRegistration}></Route>
+          <Route path="/gromart" component={GromartSeller}></Route>
+          <Route path="/gromart-buyer" component={GromartBuyer}></Route>
+          <Route component={NotFound}></Route>
+        </Switch>
       </Router>
     );
   }

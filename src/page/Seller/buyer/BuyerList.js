@@ -68,6 +68,8 @@ class BuyerList extends Component {
     this.valueSelect = e.target.value;
   };
 
+  onChangeLimit = (e) => {};
+
   setValueSearch = (e) => {
     this.setState({
       Search: e.target.value,
@@ -179,6 +181,7 @@ class BuyerList extends Component {
                   <option value="name">User Name</option>
                   <option value="id">User ID</option>
                 </Form.Control>
+
                 <FormControl
                   type="text"
                   placeholder="Search......"
@@ -247,14 +250,26 @@ class BuyerList extends Component {
               ))}
             </tbody>
           </table>
-          <div>
-            <Pagination
-              count={this.state.count}
-              page={this.state.page}
-              onChange={this.handleChange}
-              variant="outlined"
-              shape="rounded"
-            />
+          <div className="paging">
+            <Form inline>
+              <Form.Label className="mr-sm-4">Limit :</Form.Label>
+              <Form.Control
+                as="select"
+                className="mr-sm-4"
+                onChange={this.onChangeLimit}
+              >
+                <option value="5">5 Data</option>
+                <option value="10">10 Data</option>
+                <option value="15">15 Data</option>
+              </Form.Control>
+              <Pagination
+                count={this.state.count}
+                page={this.state.page}
+                onChange={this.handleChange}
+                variant="outlined"
+                shape="rounded"
+              />
+            </Form>
           </div>
         </div>
       </Container>

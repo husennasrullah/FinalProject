@@ -50,6 +50,24 @@ class RegistrasiService {
       REGISTRASI_API + "login/?userName=" + user + "&password=" + pass
     );
   }
+
+  changeProfile(userId, data) {
+    return axios.put(REGISTRASI_API + "profile/" + userId, data);
+  }
+
+  changePassword(userId, oldPass, newPass, newPass2) {
+    return axios.put(
+      REGISTRASI_API +
+        "password/" +
+        userId +
+        "/?oldPass=" +
+        oldPass +
+        "&newPass=" +
+        newPass +
+        "&newPass2=" +
+        newPass2
+    );
+  }
 }
 
 export default new RegistrasiService();

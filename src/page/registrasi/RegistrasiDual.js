@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { Container, Row, Col, FormGroup, FormControl } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  FormGroup,
+  FormControl,
+  Form,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import RegistrasiService from "../../service/RegistrasiService";
 import { connect } from "react-redux";
@@ -17,13 +24,69 @@ class DualRegistration extends Component {
       password: "",
       passValidation: "",
       role: "",
+      errorUsername: false,
+      errorEmail: false,
+      errorPhone: false,
+      errorPassword: false,
     };
   }
 
   setValue = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
+    this.setState(
+      {
+        [event.target.name]: event.target.value,
+      },
+      () => this.checkValidation(event.target.name)
+    );
+  };
+
+  checkValidation = (name) => {
+    const { userName, email, phoneNumber, password } = this.state;
+    if (name === "userName") {
+      let regUname = /^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/;
+      if (!regUname.test(userName)) {
+        this.setState({
+          errorUsername: true,
+        });
+      } else {
+        this.setState({
+          errorUsername: false,
+        });
+      }
+    } else if (name === "email") {
+      let regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+      if (!regEmail.test(email)) {
+        this.setState({
+          errorEmail: true,
+        });
+      } else {
+        this.setState({
+          errorEmail: false,
+        });
+      }
+    } else if (name === "phoneNumber") {
+      let regPhone = /^(^\+62|62|^08)(\d{3,4}-?){2}\d{3,4}$/;
+      if (!regPhone.test(phoneNumber)) {
+        this.setState({
+          errorPhone: true,
+        });
+      } else {
+        this.setState({
+          errorPhone: false,
+        });
+      }
+    } else if (name === "password") {
+      let regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$/;
+      if (!regPass.test(password)) {
+        this.setState({
+          errorPassword: true,
+        });
+      } else {
+        this.setState({
+          errorPassword: false,
+        });
+      }
+    }
   };
 
   doRegistration = (e) => {
@@ -37,12 +100,11 @@ class DualRegistration extends Component {
       password,
       passValidation,
       role,
+      errorUsername,
+      errorEmail,
+      errorPhone,
+      errorPassword,
     } = this.state;
-
-    let regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    let regUname = /^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/;
-    let regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$/;
-    let regPhone = /^(^\+62|62|^08)(\d{3,4}-?){2}\d{3,4}$/;
 
     if (
       (firstName === "",
@@ -57,18 +119,13 @@ class DualRegistration extends Component {
       alert(`Insert all data!`);
     } else if (password !== passValidation) {
       alert(`Wrong Password`);
-    } else if (!regUname.test(userName)) {
-      alert(`Username must be 6 to 8 in alphanumeric and without any symbol`);
-    } else if (!regEmail.test(email)) {
-      alert(`Email Format not valid`);
-    } else if (!regPass.test(password)) {
-      alert(
-        `Password must be 6 in alphanumeric and at least 1 uppercase letter`
-      );
-    } else if (!regPhone.test(phoneNumber)) {
-      alert(
-        `Phone number must in Indonesia type (ex: 6289507952135 or 089507952135)`
-      );
+    } else if (
+      errorEmail === true ||
+      errorPassword === true ||
+      errorPhone === true ||
+      errorUsername === true
+    ) {
+      alert(`Please Check your form`);
     } else {
       let user = {
         firstName: this.state.firstName,
@@ -91,6 +148,7 @@ class DualRegistration extends Component {
     }
   };
   render() {
+    const { errorUsername, errorEmail, errorPhone, errorPassword } = this.state;
     return (
       <Container fluid className="register">
         <Row>
@@ -116,6 +174,7 @@ class DualRegistration extends Component {
                   <Col md={6}>
                     <FormGroup>
                       <FormControl
+                        required
                         size="md"
                         type="text"
                         placeholder="First Name *"
@@ -130,7 +189,11 @@ class DualRegistration extends Component {
                         placeholder="Your Email *"
                         name="email"
                         onChange={this.setValue}
+                        isInvalid={errorEmail}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        Email Format not valid
+                      </Form.Control.Feedback>
                     </FormGroup>
                     <FormGroup>
                       <FormControl
@@ -139,7 +202,12 @@ class DualRegistration extends Component {
                         placeholder="UserName *"
                         name="userName"
                         onChange={this.setValue}
+                        isInvalid={errorUsername}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        Username must be 6 to 8 in alphanumeric and without any
+                        symbol
+                      </Form.Control.Feedback>
                     </FormGroup>
                     <FormGroup>
                       <FormControl
@@ -148,7 +216,12 @@ class DualRegistration extends Component {
                         placeholder="Password *"
                         name="password"
                         onChange={this.setValue}
+                        isInvalid={errorPassword}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        Password must be 6 in alphanumeric and at least 1
+                        uppercase letter
+                      </Form.Control.Feedback>
                     </FormGroup>
                   </Col>
                   <Col md={6}>
@@ -169,13 +242,17 @@ class DualRegistration extends Component {
                         name="phoneNumber"
                         placeholder="Your Phone Number *"
                         onChange={this.setValue}
+                        isInvalid={errorPhone}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        Phone number must in Indonesia type (ex: 6289507952135
+                        or 089507952135)
+                      </Form.Control.Feedback>
                     </FormGroup>
                     <FormGroup>
                       <FormControl
                         size="md"
                         as="select"
-                        placeholder="UserName *"
                         name="role"
                         onChange={this.setValue}
                       >

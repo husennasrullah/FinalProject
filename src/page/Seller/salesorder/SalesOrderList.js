@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Row, Col, Form, FormControl, Container, Badge } from "react-bootstrap";
 import Pagination from "@material-ui/lab/Pagination";
 import OrderService from "../../../service/OrderService";
+import DetailOrder from "./detailorder";
 
 class SalesOrderList extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class SalesOrderList extends Component {
       limit: 5,
       count: 0,
       search: "",
+      isOpen: true,
     };
   }
 
@@ -51,6 +53,8 @@ class SalesOrderList extends Component {
     });
   };
 
+  onChangeLimit = (e) => {};
+
   getAllOrder(page, limit) {
     OrderService.getAllOrder(page, limit)
       .then((res) => {
@@ -73,6 +77,12 @@ class SalesOrderList extends Component {
     const { order } = this.state;
     return (
       <Container fluid>
+        {this.state.isOpen ? (
+          <DetailOrder
+            closeModal={this.closeModal}
+            isOpen={this.state.isOpen}
+          />
+        ) : null}
         <br />
         <div className="productTittle">
           <h2 className="text-center">Sales Order List</h2>
@@ -84,7 +94,8 @@ class SalesOrderList extends Component {
               <Form inline>
                 <Form.Control as="select" className="mr-sm-2">
                   <option value="name">Product Name</option>
-                  <option value="id">Product ID</option>
+                  <option value="buyer">Buyer Name</option>
+                  <option value="status">Status</option>
                 </Form.Control>
                 <FormControl
                   type="text"
@@ -101,7 +112,7 @@ class SalesOrderList extends Component {
             <thead className="thead-dark">
               <tr>
                 <th> Order ID </th>
-                <th> User ID</th>
+                <th> Buyer Name</th>
                 <th> Order Date</th>
                 <th> Total Paid</th>
                 <th> Order Status</th>
@@ -113,7 +124,7 @@ class SalesOrderList extends Component {
               {order.map((item, idx) => (
                 <tr key={idx}>
                   <td> {item.orderId}</td>
-                  <td> {item.user.userId}</td>
+                  <td> {item.user.firstName + " " + item.user.lastName}</td>
                   <td> {item.orderDate}</td>
                   <td>
                     Rp.
@@ -156,13 +167,26 @@ class SalesOrderList extends Component {
               ))}
             </tbody>
           </table>
-          <div>
-            <Pagination
-              page={this.state.pagenow}
-              count={this.state.count}
-              onChange={this.handleChange}
-              color="primary"
-            />
+          <div className="paging">
+            <Form inline>
+              <Form.Label className="mr-sm-4">Limit :</Form.Label>
+              <Form.Control
+                as="select"
+                className="mr-sm-4"
+                onChange={this.onChangeLimit}
+              >
+                <option value="5">5 Data</option>
+                <option value="10">10 Data</option>
+                <option value="15">15 Data</option>
+              </Form.Control>
+              <Pagination
+                count={this.state.count}
+                page={this.state.pagenow}
+                onChange={this.handleChange}
+                variant="outlined"
+                shape="rounded"
+              />
+            </Form>
           </div>
         </div>
       </Container>

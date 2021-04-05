@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { Col, Row, Form, FormControl, Container } from "react-bootstrap";
+import {
+  Col,
+  Row,
+  Form,
+  FormControl,
+  Container,
+  Navbar,
+} from "react-bootstrap";
 import ProductService from "../../../service/ProductService";
 import ModalForm from "./detailProduct";
 import "./style.css";
@@ -15,6 +22,7 @@ class ProductList extends Component {
       listProduct: [],
       productDetail: {},
       isOpen: false,
+      valueSelect: "name",
 
       //---pagination and search---
       page: 1,
@@ -91,7 +99,18 @@ class ProductList extends Component {
   };
 
   onChangeSelect = (e) => {
+    this.setState({
+      valueSelect: e.target.value,
+    });
     this.valueSelect = e.target.value;
+  };
+
+  onChangeLimit = (e) => {
+    e.preventDefault();
+    this.setState({
+      limit: e.target.value,
+    });
+    this.getProductPaging(this.state.page, e.target.value);
   };
 
   setValueSearch = (e) => {
@@ -182,6 +201,47 @@ class ProductList extends Component {
   }
 
   render() {
+    const { valueSelect } = this.state;
+    let FormFilter;
+    if (valueSelect === "name" || valueSelect === "id") {
+      FormFilter = (
+        <>
+          <FormControl
+            type="text"
+            placeholder="Search......"
+            className="mr-sm-2"
+            onChange={this.setValueSearch}
+            value={this.state.Search}
+          />
+        </>
+      );
+    } else if (valueSelect === "status") {
+      FormFilter = (
+        <>
+          <Form.Control
+            as="select"
+            className="mr-sm-2"
+            onChange={this.searchStatus}
+          >
+            <option value={true}>Active</option>
+            <option value={false}>In-Active</option>
+          </Form.Control>
+        </>
+      );
+    } else {
+      FormFilter = (
+        <>
+          <Form.Control
+            as="select"
+            className="mr-sm-2"
+            onChange={this.searchQty}
+          >
+            <option value="name">{"<= 30 items"}</option>
+            <option value="id">{"<= 100 items"}</option>
+          </Form.Control>
+        </>
+      );
+    }
     return (
       <Container fluid>
         {this.state.isOpen ? (
@@ -209,14 +269,18 @@ class ProductList extends Component {
                 >
                   <option value="name">Product Name</option>
                   <option value="id">Product ID</option>
+                  <option value="status">Status</option>
+                  <option value="qty">Quantity</option>
                 </Form.Control>
-                <FormControl
+                {FormFilter}
+                {/* <FormControl
                   type="text"
                   placeholder="Search......"
                   className="mr-sm-2"
                   onChange={this.setValueSearch}
                   value={this.state.Search}
-                />
+                /> */}
+
                 <Button variant="outline-success" onClick={this.Search}>
                   Search
                 </Button>
@@ -299,14 +363,26 @@ class ProductList extends Component {
               ))}
             </tbody>
           </table>
-          <div>
-            <Pagination
-              count={this.state.count}
-              page={this.state.page}
-              onChange={this.handleChange}
-              variant="outlined"
-              shape="rounded"
-            />
+          <div className="paging">
+            <Form inline>
+              <Form.Label className="mr-sm-4">Limit :</Form.Label>
+              <Form.Control
+                as="select"
+                className="mr-sm-4"
+                onChange={this.onChangeLimit}
+              >
+                <option value="5">5 Data</option>
+                <option value="10">10 Data</option>
+                <option value="15">15 Data</option>
+              </Form.Control>
+              <Pagination
+                count={this.state.count}
+                page={this.state.page}
+                onChange={this.handleChange}
+                variant="outlined"
+                shape="rounded"
+              />
+            </Form>
           </div>
         </div>
       </Container>

@@ -10,23 +10,27 @@ class Item extends Component {
   }
 
   incrementCounter = () => {
-    this.setState(({ qty }) => ({
-      qty: qty < this.props.stock ? qty + 1 : this.props.stock,
-    }));
-
-    this.props.updateQty(this.props.detailId, this.state.qty + 1);
+    const { qty } = this.state;
+    let quantity = qty < this.props.stock ? qty + 1 : this.props.stock;
+    this.setState({
+      qty: quantity,
+    });
+    this.props.updateQty(this.props.detailId, quantity);
   };
 
   decrementCounter = () => {
-    this.setState(({ qty }) => ({
-      qty: qty > 1 ? qty - 1 : 1,
-    }));
-    this.props.updateQty(this.props.detailId, this.state.qty - 1);
+    const { qty } = this.state;
+    let quantity = qty > 1 ? qty - 1 : 1;
+    this.setState({
+      qty: quantity,
+    });
+    this.props.updateQty(this.props.detailId, quantity);
   };
 
   render() {
     const { key, productName, unitPrice, detailId } = this.props;
     const { qty } = this.state;
+    //this.props.updateQty(this.props.detailId, this.state.qty);
 
     return (
       <tr key={key}>

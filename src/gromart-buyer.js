@@ -8,6 +8,7 @@ import HomeBuyer from "./page/buyer/homepage/homebuyer";
 import Invoice from "./page/buyer/orderlist/Invoice";
 import Order from "./page/buyer/orderlist/order";
 import OrderList from "./page/buyer/orderlist/orderlist";
+import profile from "./page/profile/profile";
 import Header from "./template/header/header";
 import SideBar from "./template/sidebar/sidebar";
 import SidebarBuyer from "./template/sidebar/sidebar2";
@@ -37,6 +38,11 @@ class GromartBuyer extends Component {
             <Header path={this.state.path} />
             <Switch>
               <Route exact path={this.props.match.path} component={HomeBuyer} />
+              <Route
+                exact
+                path={`${this.props.match.path}/profile`}
+                component={profile}
+              />
               <Route
                 path={`${this.props.match.path}/orderlist`}
                 component={Order}

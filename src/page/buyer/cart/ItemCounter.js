@@ -10,17 +10,29 @@ class ItemCounter extends Component {
   }
 
   incrementCounter = () => {
-    this.setState(({ qty }) => ({
-      qty: qty < this.props.stock ? qty + 1 : this.props.stock,
-    }))
-    this.props.setPrice(this.state.qty);
+    // this.setState(({ qty }) => ({
+    //   qty: qty < this.props.stock ? qty + 1 : this.props.stock,
+    // }))
+
+    const { qty } = this.state;
+    let quantity = qty < this.props.stock ? qty + 1 : this.props.stock;
+    this.setState({
+      qty: quantity,
+    });
+    this.props.setPrice(quantity);
   };
 
   decrementCounter = () => {
-    this.setState(({ qty }) => ({
-      qty: qty > 1 ? qty - 1 : 1,
-    }));
-    this.props.setPrice(this.state.qty);
+    // this.setState(({ qty }) => ({
+    //   qty: qty > 1 ? qty - 1 : 1,
+    // }));
+    const { qty } = this.state;
+    let quantity = qty > 1 ? qty - 1 : 1;
+    this.setState({
+      qty: quantity,
+    });
+
+    this.props.setPrice(quantity);
   };
 
   render() {

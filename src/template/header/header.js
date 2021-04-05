@@ -16,7 +16,6 @@ class Header extends Component {
     this.props.doLogout();
   };
   render() {
-    console.log("header :", this.props.dataUser.firstName);
 
     return (
       <Navbar bg="light" variant="light">

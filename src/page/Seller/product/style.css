@@ -19,3 +19,11 @@
   -webkit-animation: mover 2s infinite alternate;
   animation: mover 1s infinite alternate;
 }
+
+.paging {
+  padding-top: 10px;
+  padding-bottom: 15px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}

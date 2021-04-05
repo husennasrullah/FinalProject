@@ -22,7 +22,7 @@ class OrderList extends Component {
       page: 1,
       pagenow: 1,
       count: 0,
-      limit: 5,
+      limit: 10,
       Search: "",
       isSearch: false,
     };
