@@ -72,18 +72,6 @@ public class ProductController {
     }
 
 
-//    //------------------------get with paging---------------------------------
-//    @RequestMapping(value = "/product/paging/", method = RequestMethod.GET)
-//    public ResponseEntity<?>getProductWithPaging(@RequestParam int page, @RequestParam int limit){
-//        List<Product> products = productService.findAllWithPaging(page, limit);
-//        if(products.isEmpty()){
-//            return new ResponseEntity<>(products,HttpStatus.NOT_FOUND);
-//        }
-//        else{
-//            return new ResponseEntity<>(products,HttpStatus.OK);
-//        }
-//    }
-
     //------------------------get with paging neww---------------------------------
     @RequestMapping(value = "/product/paging/", method = RequestMethod.GET)
     public ResponseEntity<?>getProductWithPaging(@RequestParam int page, @RequestParam int limit){
@@ -120,6 +108,30 @@ public class ProductController {
         }
     }
 
+    //------------------------get status with paging ---------------------------------
+    @RequestMapping(value = "/product/findStatus/", method = RequestMethod.GET)
+    public ResponseEntity<?>getNameWithPaging(@RequestParam Boolean status, @RequestParam int page, @RequestParam int limit){
+        Map<String, Object> map = productService.findStatusWithPaging(status, page, limit);
+        if(map.isEmpty()){
+            return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
+
+    //------------------------get stock with paging ---------------------------------
+    @RequestMapping(value = "/product/findStock/", method = RequestMethod.GET)
+    public ResponseEntity<?>getNameWithPaging(@RequestParam int stock, @RequestParam int page, @RequestParam int limit){
+
+        Map<String, Object> map = productService.findStockWithPaging(stock, page, limit);
+        if(map.isEmpty()){
+            return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
 
     // -------------------Create a Product-------------------------------------------
 
@@ -145,7 +157,6 @@ public class ProductController {
     public ResponseEntity<?> updateProduct(@PathVariable("productId") String productId, @Valid @RequestBody Product product) {
         logger.info("Updating Product with id {}", productId);
 
-        //Product currentProduct = productService.findById(id);
         Product currentProduct = productService.findById(productId);
         if (currentProduct == null) {
             logger.error("Unable to update. Product with id {} not found.", productId);

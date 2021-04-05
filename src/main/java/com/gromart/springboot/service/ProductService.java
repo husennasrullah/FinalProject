@@ -25,6 +25,10 @@ public interface ProductService {
 
     Map<String, Object> findIdWithPaging (String productId, int page, int limit);
 
+    Map<String, Object> findStatusWithPaging (Boolean status, int page, int limit);
+
+    Map<String, Object> findStockWithPaging (int stock, int page, int limit);
+
     void saveProduct(Product product);
 
     void updateProduct(Product product);
@@ -37,7 +41,7 @@ public interface ProductService {
 
     int findAllCount ();
 
-    void changeStock (String productId, int stock);
+
 
 
 

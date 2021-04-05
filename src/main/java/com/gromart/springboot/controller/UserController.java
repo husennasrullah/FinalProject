@@ -2,6 +2,7 @@ package com.gromart.springboot.controller;
 
 import com.gromart.springboot.model.Product;
 import com.gromart.springboot.model.User;
+import com.gromart.springboot.repository.UserRepository;
 import com.gromart.springboot.service.UserService;
 import com.gromart.springboot.util.CustomErrorType;
 import org.slf4j.Logger;
@@ -25,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     //-------------------find user buyer only----------------------------
     @RequestMapping(value = "/user/buyer/", method = RequestMethod.GET)
@@ -147,17 +151,25 @@ public class UserController {
     }
 
     //-------------------Ubah Password------------------------
-    @RequestMapping(value = "/user/password/{userId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updatePassword(@PathVariable("userId") String userId, @Valid @RequestBody User user) {
+    @RequestMapping(value = "/user/password/{userId}/", method = RequestMethod.PUT)
+    public ResponseEntity<?> updatePassword(@PathVariable("userId") String userId,
+                                            @RequestParam String oldPass,
+                                            @RequestParam String newPass,
+                                            @RequestParam String newPass2 ) {
         logger.info("Updating User with id {}", userId);
 
-        User currentUser = userService.findById(userId);
-        if (currentUser == null) {
-            logger.error("Unable to update. User with id {} not found.", userId);
-            return new ResponseEntity<>(new CustomErrorType("Unable to update User with id " + userId + " not found."),
-                    HttpStatus.NOT_FOUND);
-        } else {
-            currentUser.setPassword(user.getPassword());
+        User currentUser = userRepository.findByIdForPassword(userId);
+        if (!currentUser.getPassword().equals(oldPass)) {
+            logger.error("Unable to update. Old Password is Wrong.");
+            return new ResponseEntity<>(new CustomErrorType("Unable to update, Wrong Old Password"),
+                    HttpStatus.CONFLICT);
+        } else if (!newPass.equals(newPass2)){
+            logger.error("Unable to update. New Password Not Equals");
+            return new ResponseEntity<>(new CustomErrorType("Unable to update. New Password Not Equals"),
+                    HttpStatus.CONFLICT);
+        }
+        else {
+            currentUser.setPassword(newPass);
             userService.updatePassword(currentUser);
             return new ResponseEntity<>(currentUser, HttpStatus.OK);
         }

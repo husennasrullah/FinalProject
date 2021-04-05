@@ -13,6 +13,8 @@ public interface UserRepository {
 
     User findById(String userId);
 
+    User findByIdForPassword(String userId);
+
     void saveUser(User user);
 
     User findByUserName(String userName);

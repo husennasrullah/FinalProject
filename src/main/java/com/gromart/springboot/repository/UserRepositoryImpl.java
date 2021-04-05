@@ -94,6 +94,24 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
+    @Override
+    public User findByIdForPassword(String userId) {
+        User user;
+        try {
+            user = jdbcTemplate.queryForObject("select * from user where userId = ?",
+                    new Object[]{userId},
+                    (rs, rowNum) ->
+                            new User(
+                                    rs.getString("userID"),
+                                    rs.getString("password")
+
+                            ));
+        } catch (Exception e) {
+            user = null;
+        }
+        return user;
+    }
+
 
     @Override
     public void saveUser(User user) {

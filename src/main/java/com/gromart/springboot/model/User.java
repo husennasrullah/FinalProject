@@ -105,6 +105,11 @@ public class User {
         this.invoiceLimit = invoiceLimit;
     }
 
+    public User(String userId, String password) {
+        this.userId = userId;
+        this.password = password;
+    }
+
     public User(
             String userId,
             String firstName,

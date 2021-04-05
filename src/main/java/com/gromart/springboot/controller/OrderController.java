@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +53,19 @@ public class OrderController {
 
     //-----------------------find by userID---------------------------
     @RequestMapping(value = "/order/id/{userId}/", method = RequestMethod.GET)
-    public ResponseEntity<?> getBuyerOrder(@PathVariable("userId") String userId, @RequestParam int page, @RequestParam int limit) {
+    public ResponseEntity<?> getBuyerByUserId(@PathVariable("userId") String userId, @RequestParam int page, @RequestParam int limit) {
         Map<String, Object> orders = orderService.findByUserId(userId, page, limit);
+        if (orders == null) {
+            logger.error("Order not found.");
+            return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    //-----------------------find by orderDate---------------------------
+    @RequestMapping(value = "/order/date/", method = RequestMethod.GET)
+    public ResponseEntity<?> getBuyerByDate(@RequestParam Date orderDate, @RequestParam int page, @RequestParam int limit) {
+        Map<String, Object> orders = orderService.findByOrderDate(orderDate, page, limit);
         if (orders == null) {
             logger.error("Order not found.");
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);

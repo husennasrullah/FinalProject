@@ -61,6 +61,16 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findIdWithPaging(productId, page, limit);
     }
 
+    @Override
+    public Map<String, Object> findStatusWithPaging(Boolean status, int page, int limit) {
+        return productRepository.findStatusWithPaging(status, page, limit);
+    }
+
+    @Override
+    public Map<String, Object> findStockWithPaging(int stock, int page, int limit) {
+        return productRepository.findStockWithPaging(stock, page, limit);
+    }
+
     public void saveProduct(Product product) {
         synchronized (this) {    //  Critical section synchronized
             productRepository.saveProduct(product);
@@ -88,13 +98,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public int findAllCount() {
         return productRepository.findAllCount();
-    }
-
-    @Override
-    public void changeStock(String productId, int stock) {
-        synchronized (this) {    //  Critical section synchronized
-            productRepository.changeStock (productId, stock);
-        }
     }
 
 

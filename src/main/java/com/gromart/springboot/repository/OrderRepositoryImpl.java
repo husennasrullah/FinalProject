@@ -4,10 +4,8 @@ import com.gromart.springboot.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
@@ -185,6 +183,80 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
             map.put("order", orders);
         } catch (Exception e){
+            map = null;
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> findByOrderDate(Date orderDate, int page, int limit) {
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM reportorder where " +
+                    "orderDate like '" + "%" + orderDate + "%" + "'", Integer.class));
+
+            List<Order> orders;
+            int numPages = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM reportorder where " +
+                    "orderDate like '" + "%" + orderDate + "%" + "'", Integer.class);
+            // validate page
+            if (page < 1) page = 1;
+            if (page > numPages) page = numPages;
+            int start = (page - 1) * limit;
+
+            orders = jdbcTemplate.query("SELECT * FROM reportorder where orderDate like '"+"%"+orderDate+"%"+"' LIMIT " + start + "," + limit + ";" ,
+                    (rs, rowNum) ->
+                            new Order(
+                                    rs.getString("orderID"),
+                                    rs.getDate("orderDate"),
+                                    rs.getString("shippingAddress"),
+                                    rs.getBigDecimal("totalAmount"),
+                                    rs.getBoolean("orderStatus")
+                            )
+            );
+
+            for (Order order : orders) {
+                order.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
+                                "b.invoiceLimit FROM reportorder a JOIN user b ON a.userID = b.userID WHERE a.orderID=?",
+                        new Object[]{order.getOrderId()},
+                        (rs, rowNum) ->
+                                (new User(
+                                        rs.getString("userID"),
+                                        rs.getString("firstname"),
+                                        rs.getString("lastName"),
+                                        rs.getBigDecimal("creditLimit"),
+                                        rs.getInt("invoiceLimit")
+                                ))
+                        )
+                );
+
+                List<OrderDetail> details = jdbcTemplate.query("select b.orderdetailID, b.orderID, b.quantity, b.subTotal " +
+                                "from reportorder a join orderdetail b on a.orderID = b.orderID where b.orderID ='" + order.getOrderId() + "'",
+                        (rs, rowNum) -> new OrderDetail(
+                                rs.getString("orderdetailID"),
+                                rs.getString("orderID"),
+                                rs.getInt("quantity"),
+                                rs.getBigDecimal("subTotal")
+                        )
+                );
+                order.setDetails(details);
+                for (OrderDetail detail : details) {
+                    detail.setProduct(jdbcTemplate.queryForObject("select p.productID, p.productName, p.category, p.unitPrice, " +
+                                    "p.stock from orderdetail cd join product p on cd.productID = p.productID " +
+                                    "where cd.orderdetailID='" + detail.getDetailId() + "'",
+                            (rs, rowNum) -> new Product(
+                                    rs.getString("productID"),
+                                    rs.getString("productName"),
+                                    rs.getString("category"),
+                                    rs.getBigDecimal("unitPrice"),
+                                    rs.getInt("stock")
+                            ))
+                    );
+                }
+            }
+            map.put("order", orders);
+
+        }catch (Exception e){
             map = null;
         }
         return map;

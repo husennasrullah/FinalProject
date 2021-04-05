@@ -28,6 +28,10 @@ public interface ProductRepository {
 
     Map<String, Object> findIdWithPaging (String productId, int page, int limit);
 
+    Map<String, Object> findStatusWithPaging (Boolean status, int page, int limit);
+
+    Map<String, Object> findStockWithPaging (int stock, int page, int limit);
+
     void updateProduct(Product product);
 
     void deleteProductById(String productId);

@@ -6,6 +6,7 @@ import com.gromart.springboot.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Map <String, Object> findByUserId(String userId, int page, int limit) {
         return orderRepository.findByUserId(userId, page, limit);
+    }
+
+    @Override
+    public Map<String, Object> findByOrderDate(Date orderDate, int page, int limit) {
+        return orderRepository.findByOrderDate(orderDate, page, limit);
     }
 
     @Override

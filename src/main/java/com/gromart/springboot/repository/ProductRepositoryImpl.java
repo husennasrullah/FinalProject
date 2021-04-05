@@ -205,7 +205,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product where " +
                 "productName like '"+"%"+productName+"%"+"'", Integer.class));
 
-        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product",
+        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product ",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
         // validate page
         if (page < 1) page = 1;
@@ -236,7 +236,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product where " +
                 "productId like '"+"%"+productId+"%"+"'", Integer.class));
 
-        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product",
+        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product ",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
         // validate page
         if (page < 1) page = 1;
@@ -244,6 +244,68 @@ public class ProductRepositoryImpl implements ProductRepository {
         int start = (page - 1) * limit;
 
         map.put("product", jdbcTemplate.query("SELECT * FROM product where productId like '"+"%"+productId+"%"+"' LIMIT " + start + "," + limit + ";" ,
+                (rs, rowNum) ->
+                        new Product(
+                                rs.getString("productID"),
+                                rs.getString("productName"),
+                                rs.getString("category"),
+                                rs.getBigDecimal("unitPrice"),
+                                rs.getInt("stock"),
+                                rs.getString("description"),
+                                rs.getString("createdBy"),
+                                rs.getDate("createdDate"),
+                                rs.getString("updatedBy"),
+                                rs.getDate("updatedDate")
+                        )
+        ));
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> findStatusWithPaging(Boolean status, int page, int limit) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product where " +
+                "status = '"+"%"+status+"%"+"'", Integer.class));
+
+        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product ",
+                (rs, rowNum) -> rs.getInt("count")).get(0);
+        // validate page
+        if (page < 1) page = 1;
+        if (page > numPages) page = numPages;
+        int start = (page - 1) * limit;
+
+        map.put("product", jdbcTemplate.query("SELECT * FROM product where status = '"+"%"+status+"%"+"' LIMIT " + start + "," + limit + ";" ,
+                (rs, rowNum) ->
+                        new Product(
+                                rs.getString("productID"),
+                                rs.getString("productName"),
+                                rs.getString("category"),
+                                rs.getBigDecimal("unitPrice"),
+                                rs.getInt("stock"),
+                                rs.getString("description"),
+                                rs.getString("createdBy"),
+                                rs.getDate("createdDate"),
+                                rs.getString("updatedBy"),
+                                rs.getDate("updatedDate")
+                        )
+        ));
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> findStockWithPaging(int stock, int page, int limit) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product where " +
+                "stock <= '"+stock+"'", Integer.class));
+
+        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product",
+                (rs, rowNum) -> rs.getInt("count")).get(0);
+        // validate page
+        if (page < 1) page = 1;
+        if (page > numPages) page = numPages;
+        int start = (page - 1) * limit;
+
+        map.put("product", jdbcTemplate.query("SELECT * FROM product where stock <= '"+stock+"' LIMIT " + start + "," + limit + ";" ,
                 (rs, rowNum) ->
                         new Product(
                                 rs.getString("productID"),
