@@ -20,13 +20,14 @@ class LoginBaru extends Component {
   };
 
   render() {
-    if (this.props.isLogin) {
+    if (this.props.isLogin && this.props.dataUser !== "") {
       if (this.props.dataUser.userId.includes("Seller")) {
         return <Redirect to="/gromart" />;
       } else {
         return <Redirect to="/gromart-buyer" />;
       }
     }
+
     const { user, pass } = this.state;
     return (
       <Container fluid className="register2">

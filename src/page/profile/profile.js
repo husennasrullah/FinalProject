@@ -21,7 +21,13 @@ class Profile extends Component {
 
   changePassword = (data) => {
     if (data.oldPass === "" && data.newPass === "" && data.newPass2 === "") {
-      alert("All Field Must Be Filled !");
+      Swal.fire("All Field Must be Filled", "", "warning");
+    } else if (
+      data.errorOldPass === true ||
+      data.errorNewPass === true ||
+      data.errorNewPass2 === true
+    ) {
+      Swal.fire("Please check your Form", "", "info");
     } else {
       Swal.fire({
         title: "Are you sure to change password?",
@@ -59,6 +65,12 @@ class Profile extends Component {
     this.setState({
       changeProfile: false,
     });
+  };
+
+  checkValidation = () => {
+    let regName = /^(?![ .]+$)[a-zA-Z .]*$/;
+
+    
   };
 
   saveData = () => {

@@ -310,7 +310,7 @@ class ProductList extends Component {
         <br />
         <div>
           <table
-            className="table table-striped table-borderes table-sm "
+            className="table table-striped table-borderes table-md"
             style={{ textAlign: "center" }}
           >
             <thead className="thead-dark">
@@ -342,6 +342,10 @@ class ProductList extends Component {
                       variant="info"
                       onClick={() => this.openModal(prod.productId)}
                     >
+                      <i
+                        class="fas fa-info-circle"
+                        style={{ marginRight: "1em" }}
+                      />
                       Detail
                     </Button>
                     <Button
@@ -349,6 +353,7 @@ class ProductList extends Component {
                       style={{ marginLeft: "10px" }}
                       onClick={() => this.editProduct(prod.productId)}
                     >
+                      <i class="fas fa-edit" style={{ marginRight: "1em" }} />
                       Update
                     </Button>
                     <Button
@@ -356,6 +361,10 @@ class ProductList extends Component {
                       variant="danger"
                       onClick={() => this.deleteProduct(prod.productId)}
                     >
+                      <i
+                        class="fas fa-trash-alt"
+                        style={{ marginRight: "1em" }}
+                      />
                       Delete
                     </Button>
                   </td>

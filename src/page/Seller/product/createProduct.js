@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Form, Col, Container, Button } from "react-bootstrap";
 import { connect } from "react-redux";
 import ProductService from "../../../service/ProductService";
-import HomeSeller from "../homepage/HomeSeller";
 
 class CreateProduct extends Component {
   constructor(props) {
@@ -10,7 +9,7 @@ class CreateProduct extends Component {
     this.state = {
       productId: this.props.match.params.id,
       productName: "",
-      category: "",
+      category: "food",
       unitPrice: "",
       stock: 0,
       description: "",
@@ -83,7 +82,7 @@ class CreateProduct extends Component {
     } else {
       ProductService.getProductById(this.state.productId).then((res) => {
         let productById = res.data;
-        console.log("dataaaa :", productById);
+
         this.setState({
           productName: productById.productName,
           category: productById.category,
@@ -130,12 +129,18 @@ class CreateProduct extends Component {
                 <Col>
                   <Form.Control
                     size="md"
-                    type="text"
-                    placeholder="Enter Product Category"
+                    as="select"
                     name="category"
                     value={this.state.category}
                     onChange={this.setValue}
-                  />
+                  >
+                    <option disabled selected value>
+                      --select product category--
+                    </option>
+                    <option value="Food">Food</option>
+                    <option value="Cloth">Cloth</option>
+                    <option value="Drug">Drug</option>
+                  </Form.Control>
                 </Col>
               </Form.Row>
             </Form.Group>

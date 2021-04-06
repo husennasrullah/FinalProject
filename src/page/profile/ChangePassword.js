@@ -8,15 +8,69 @@ class ModalPassword extends Component {
       oldPass: "",
       newPass: "",
       newPass2: "",
+      errorOldPass: false,
+      errorNewPass: false,
+      errorNewPass2: false,
     };
   }
 
   setValue = (el) => {
-    this.setState({
-      [el.target.name]: [el.target.value],
-    });
+    this.setState(
+      {
+        [el.target.name]: el.target.value,
+      },
+      () => this.checkValidation(event.target.name)
+    );
   };
+
+  checkValidation = (name) => {
+    const { oldPass, newPass, newPass2 } = this.state;
+    let regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$/;
+
+    if (name === "oldPass") {
+      if (!regPass.test(oldPass)) {
+        this.setState({
+          errorOldPass: true,
+        });
+      } else {
+        this.setState({
+          errorOldPass: false,
+        });
+      }
+    } else if (name === "newPass") {
+      if (!regPass.test(newPass)) {
+        this.setState({
+          errorNewPass: true,
+        });
+      } else {
+        this.setState({
+          errorNewPass: false,
+        });
+      }
+    } else if (name === "newPass2") {
+      console.log(!newPass2 === newPass);
+      if (!(newPass2 === newPass)) {
+        this.setState({
+          errorNewPass2: true,
+        });
+      } else {
+        this.setState({
+          errorNewPass2: false,
+        });
+      }
+    }
+  };
+
   render() {
+    console.log(this.state);
+    const {
+      oldPass,
+      newPass,
+      newPass2,
+      errorOldPass,
+      errorNewPass,
+      errorNewPass2,
+    } = this.state;
     return (
       <Modal
         size="md"
@@ -36,11 +90,16 @@ class ModalPassword extends Component {
                 </Col>
                 <Col>
                   <FormControl
-                    value={this.state.oldPass}
+                    value={oldPass}
                     name="oldPass"
                     onChange={this.setValue}
                     type="password"
+                    isInvalid={errorOldPass}
                   ></FormControl>
+                  <Form.Control.Feedback type="invalid">
+                    Password must be 6 in alphanumeric and at least 1 uppercase
+                    letter
+                  </Form.Control.Feedback>
                 </Col>
               </Form.Row>
             </Form.Group>
@@ -51,11 +110,16 @@ class ModalPassword extends Component {
                 </Col>
                 <Col>
                   <FormControl
-                    value={this.state.newPass}
+                    value={newPass}
                     name="newPass"
                     onChange={this.setValue}
                     type="password"
+                    isInvalid={errorNewPass}
                   ></FormControl>
+                  <Form.Control.Feedback type="invalid">
+                    Password must be 6 in alphanumeric and at least 1 uppercase
+                    letter
+                  </Form.Control.Feedback>
                 </Col>
               </Form.Row>
             </Form.Group>
@@ -66,11 +130,15 @@ class ModalPassword extends Component {
                 </Col>
                 <Col>
                   <FormControl
-                    value={this.state.newPass2}
+                    value={newPass2}
                     name="newPass2"
                     onChange={this.setValue}
                     type="password"
+                    isInvalid={errorNewPass2}
                   ></FormControl>
+                  <Form.Control.Feedback type="invalid">
+                    Not Equals to new Password
+                  </Form.Control.Feedback>
                 </Col>
               </Form.Row>
             </Form.Group>

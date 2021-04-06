@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Row, Col, Form, FormControl, Container, Badge } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Form,
+  FormControl,
+  Container,
+  Badge,
+  Button,
+} from "react-bootstrap";
 import Pagination from "@material-ui/lab/Pagination";
 import OrderService from "../../../service/OrderService";
 import DetailOrder from "./detailorder";
@@ -15,9 +23,43 @@ class SalesOrderList extends Component {
       limit: 5,
       count: 0,
       search: "",
-      isOpen: true,
+      isOpen: false,
+      valueSelect: "product",
     };
   }
+
+  handleChange = (e, value) => {
+    e.preventDefault();
+    this.setState({
+      pagenow: value,
+    });
+
+    if (!this.state.isSearch) {
+      this.getAllOrder(value, this.state.limit);
+    } else {
+      if (this.valueSelect === "product") {
+        // this.searchById(this.state.Search, value, this.state.limit);
+      } else if (this.valueSelect === "buyer") {
+        // this.searchByName(this.state.Search, value, this.state.limit);
+      } else {
+        //fungsi
+      }
+    }
+  };
+
+  onChangeSelect = (e) => {
+    this.setState({
+      valueSelect: e.target.value,
+    });
+  };
+
+  changeLimit = (e) => {
+    e.preventDefault();
+    this.setState({
+      limit: e.target.value,
+    });
+    this.getAllOrder(this.state.page, e.target.value);
+  };
 
   approveOrder = (orderId, userId) => {
     let update = {
@@ -55,6 +97,21 @@ class SalesOrderList extends Component {
 
   onChangeLimit = (e) => {};
 
+  openModal = (orderId) => {
+    this.setState({
+      detailOrder: this.state.order.filter(
+        (item) => item.orderId === orderId
+      )[0],
+      isOpen: true,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      isOpen: false,
+    });
+  };
+
   getAllOrder(page, limit) {
     OrderService.getAllOrder(page, limit)
       .then((res) => {
@@ -72,8 +129,9 @@ class SalesOrderList extends Component {
   componentDidMount() {
     this.getAllOrder(this.state.pagenow, this.state.limit);
   }
+
   render() {
-    console.log("tesssss : ", this.state.order);
+    console.log("tesssss : ", this.state.limit);
     const { order } = this.state;
     return (
       <Container fluid>
@@ -81,6 +139,8 @@ class SalesOrderList extends Component {
           <DetailOrder
             closeModal={this.closeModal}
             isOpen={this.state.isOpen}
+            detailOrder={this.state.detailOrder}
+            userId={this.props.data}
           />
         ) : null}
         <br />
@@ -92,8 +152,12 @@ class SalesOrderList extends Component {
           <Row>
             <Col md={6}>
               <Form inline>
-                <Form.Control as="select" className="mr-sm-2">
-                  <option value="name">Product Name</option>
+                <Form.Control
+                  as="select"
+                  className="mr-sm-2"
+                  onChange={this.onChangeSelect}
+                >
+                  <option value="product">Product Name</option>
                   <option value="buyer">Buyer Name</option>
                   <option value="status">Status</option>
                 </Form.Control>
@@ -152,16 +216,25 @@ class SalesOrderList extends Component {
                     )}
                   </td>
                   <td>
-                    <button className="btn btn-info">Detail</button>
-                    <button
-                      style={{ marginLeft: "10px" }}
-                      className="btn btn-success"
-                      onClick={() =>
-                        this.approveOrder(item.orderId, item.user.userId)
-                      }
-                    >
-                      Approve
-                    </button>
+                    <center>
+                      <Button
+                        variant="info"
+                        onClick={() => this.openModal(item.orderId)}
+                      >
+                        Detail
+                      </Button>
+                      {!item.status ? (
+                        <Button
+                          style={{ marginLeft: "10px" }}
+                          className="btn btn-success"
+                          onClick={() =>
+                            this.approveOrder(item.orderId, item.user.userId)
+                          }
+                        >
+                          Approve
+                        </Button>
+                      ) : null}
+                    </center>
                   </td>
                 </tr>
               ))}
@@ -173,7 +246,7 @@ class SalesOrderList extends Component {
               <Form.Control
                 as="select"
                 className="mr-sm-4"
-                onChange={this.onChangeLimit}
+                onChange={this.changeLimit}
               >
                 <option value="5">5 Data</option>
                 <option value="10">10 Data</option>

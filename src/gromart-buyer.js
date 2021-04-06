@@ -24,6 +24,9 @@ class GromartBuyer extends Component {
     if (!this.props.statusLogin) {
       return <Redirect to="/login" />;
     } else {
+      if (this.props.dataUser === "") {
+        return <Redirect to="/login" />;
+      }
       if (this.props.dataUser.userId.includes("Seller")) {
         return <Redirect to="/gromart" />;
       }

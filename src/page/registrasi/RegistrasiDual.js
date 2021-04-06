@@ -7,7 +7,7 @@ import {
   FormControl,
   Form,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import RegistrasiService from "../../service/RegistrasiService";
 import { connect } from "react-redux";
 import "./style.css";
@@ -24,6 +24,8 @@ class DualRegistration extends Component {
       password: "",
       passValidation: "",
       role: "",
+      errorFirstname: false,
+      errorLastname: false,
       errorUsername: false,
       errorEmail: false,
       errorPhone: false,
@@ -41,8 +43,38 @@ class DualRegistration extends Component {
   };
 
   checkValidation = (name) => {
-    const { userName, email, phoneNumber, password } = this.state;
-    if (name === "userName") {
+    const {
+      firstName,
+      lastName,
+      userName,
+      email,
+      phoneNumber,
+      password,
+    } = this.state;
+
+    if (name === "firstName") {
+      let regName = /^(?![ .]+$)[a-zA-Z .]*$/;
+      if (!regName.test(firstName)) {
+        this.setState({
+          errorFirstname: true,
+        });
+      } else {
+        this.setState({
+          errorFirstname: false,
+        });
+      }
+    } else if (name === "lastName") {
+      let regName = /^(?![ .]+$)[a-zA-Z .]*$/;
+      if (!regName.test(lastName)) {
+        this.setState({
+          errorLastname: true,
+        });
+      } else {
+        this.setState({
+          errorLastname: false,
+        });
+      }
+    } else if (name === "userName") {
       let regUname = /^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/;
       if (!regUname.test(userName)) {
         this.setState({
@@ -100,6 +132,8 @@ class DualRegistration extends Component {
       password,
       passValidation,
       role,
+      errorFirstname,
+      errorLastname,
       errorUsername,
       errorEmail,
       errorPhone,
@@ -120,6 +154,8 @@ class DualRegistration extends Component {
     } else if (password !== passValidation) {
       alert(`Wrong Password`);
     } else if (
+      errorFirstname === true ||
+      errorLastname === true ||
       errorEmail === true ||
       errorPassword === true ||
       errorPhone === true ||
@@ -148,7 +184,21 @@ class DualRegistration extends Component {
     }
   };
   render() {
-    const { errorUsername, errorEmail, errorPhone, errorPassword } = this.state;
+    if (this.props.isLogin && this.props.dataUser !== "") {
+      if (this.props.dataUser.userId.includes("Seller")) {
+        return <Redirect to="/gromart" />;
+      } else {
+        return <Redirect to="/gromart-buyer" />;
+      }
+    }
+    const {
+      errorUsername,
+      errorEmail,
+      errorPhone,
+      errorPassword,
+      errorFirstname,
+      errorLastname,
+    } = this.state;
     return (
       <Container fluid className="register">
         <Row>
@@ -180,7 +230,11 @@ class DualRegistration extends Component {
                         placeholder="First Name *"
                         name="firstName"
                         onChange={this.setValue}
+                        isInvalid={errorFirstname}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        FirstName cannot be number or special character
+                      </Form.Control.Feedback>
                     </FormGroup>
                     <FormGroup>
                       <FormControl
@@ -232,7 +286,11 @@ class DualRegistration extends Component {
                         placeholder="Last Name *"
                         name="lastName"
                         onChange={this.setValue}
+                        isInvalid={errorLastname}
                       />
+                      <Form.Control.Feedback type="invalid">
+                        LastName cannot be number or special character
+                      </Form.Control.Feedback>
                     </FormGroup>
 
                     <FormGroup>
@@ -286,4 +344,12 @@ class DualRegistration extends Component {
   }
 }
 
-export default DualRegistration;
+const mapStateToProps = (state) => {
+  return {
+    isLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(DualRegistration);
+//export default DualRegistration;
