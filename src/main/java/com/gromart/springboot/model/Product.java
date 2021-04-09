@@ -27,7 +27,7 @@ public class Product {
     @NotBlank (message = "Field Description Cannot be Null")
     private String description;
 
-
+    private Boolean status;
     private String createdBy;
     private Date createdDate;
     private String updatedBy;
@@ -59,6 +59,7 @@ public class Product {
             BigDecimal unitPrice,
             int stock,
             String description,
+            Boolean status,
             String createdBy,
             Date createdDate,
             String updatedBy,
@@ -70,6 +71,7 @@ public class Product {
         this.unitPrice = unitPrice;
         this.stock = stock;
         this.description = description;
+        this.status = status;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.updatedBy = updatedBy;
@@ -118,6 +120,14 @@ public class Product {
 
     public String getDescription() {
         return description;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
     public void setDescription(String description) {

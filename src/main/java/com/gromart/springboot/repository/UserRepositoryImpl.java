@@ -391,7 +391,7 @@ public class UserRepositoryImpl implements UserRepository {
                 user.getCreditLimit(),
                 user.getInvoiceLimit(),
                 user.getUpdatedBy(),
-                user.getUpdatedDate(),
+                java.time.LocalDate.now(),
                 user.getUserId()
         );
     }

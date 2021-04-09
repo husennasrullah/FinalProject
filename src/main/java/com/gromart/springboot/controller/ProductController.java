@@ -110,7 +110,7 @@ public class ProductController {
 
     //------------------------get status with paging ---------------------------------
     @RequestMapping(value = "/product/findStatus/", method = RequestMethod.GET)
-    public ResponseEntity<?>getNameWithPaging(@RequestParam Boolean status, @RequestParam int page, @RequestParam int limit){
+    public ResponseEntity<?>getStatusWithPaging(@RequestParam Boolean status, @RequestParam int page, @RequestParam int limit){
         Map<String, Object> map = productService.findStatusWithPaging(status, page, limit);
         if(map.isEmpty()){
             return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);

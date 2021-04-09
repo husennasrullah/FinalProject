@@ -53,7 +53,10 @@ public class OrderController {
 
     //-----------------------find by userID---------------------------
     @RequestMapping(value = "/order/id/{userId}/", method = RequestMethod.GET)
-    public ResponseEntity<?> getBuyerByUserId(@PathVariable("userId") String userId, @RequestParam int page, @RequestParam int limit) {
+    public ResponseEntity<?> getBuyerByUserId(
+            @PathVariable("userId") String userId,
+            @RequestParam int page,
+            @RequestParam int limit) {
         Map<String, Object> orders = orderService.findByUserId(userId, page, limit);
         if (orders == null) {
             logger.error("Order not found.");
@@ -62,10 +65,15 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    //-----------------------find by orderDate---------------------------
-    @RequestMapping(value = "/order/date/", method = RequestMethod.GET)
-    public ResponseEntity<?> getBuyerByDate(@RequestParam Date orderDate, @RequestParam int page, @RequestParam int limit) {
-        Map<String, Object> orders = orderService.findByOrderDate(orderDate, page, limit);
+
+    //-----------------------find by orderID---------------------------
+    @RequestMapping(value = "/order/findid/{orderId}/", method = RequestMethod.GET)
+    public ResponseEntity<?> getOrderbyID(
+            @PathVariable("orderId") String orderId,
+            @RequestParam int page,
+            @RequestParam int limit
+    ) {
+        Map<String, Object> orders = orderService.findByOrderId(orderId, page, limit);
         if (orders == null) {
             logger.error("Order not found.");
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
@@ -75,7 +83,7 @@ public class OrderController {
 
     //-----------------------find by orderID---------------------------
     @RequestMapping(value = "/order/{orderId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getOrderbyID(@PathVariable("orderId") String orderId) {
+    public ResponseEntity<?> getOrderID(@PathVariable("orderId") String orderId) {
         Order orders = orderService.findById(orderId);
         if (orders == null) {
             logger.error("Order not found.");
@@ -83,6 +91,37 @@ public class OrderController {
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+
+
+
+    //-----------------------find by orderDate---------------------------
+    @RequestMapping(value = "/order/date/", method = RequestMethod.GET)
+    public ResponseEntity<?> getBuyerByDate(
+            @RequestParam String startDate,
+            @RequestParam String toDate,
+            @RequestParam int page,
+            @RequestParam int limit) {
+
+        Map<String, Object> orders = orderService.findByOrderDate(startDate, toDate, page, limit);
+        if (orders == null) {
+            logger.error("Order not found.");
+            return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    //-----------------------find by orderDate---------------------------
+    @RequestMapping(value = "/order/findStatus/", method = RequestMethod.GET)
+    public ResponseEntity<?> getBuyerByStatus(@RequestParam Boolean status, @RequestParam int page, @RequestParam int limit) {
+        Map<String, Object> orders = orderService.findByStatus(status, page, limit);
+        if (orders == null) {
+            logger.error("Order not found.");
+            return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+
 
     // -------------------Create a Order-------------------------------------------
 

@@ -24,6 +24,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -41,7 +42,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         if (page > numPages) page = numPages;
         int start = (page - 1) * limit;
         List<Product> products =
-                jdbcTemplate.query("SELECT * FROM product LIMIT " + start + "," + limit + ";",
+                jdbcTemplate.query("SELECT * FROM product ORDER BY status LIMIT " + start + "," + limit + ";",
                         (rs, rowNum) ->
                                 new Product(
                                         rs.getString("productID"),
@@ -50,6 +51,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                         rs.getBigDecimal("unitPrice"),
                                         rs.getInt("stock"),
                                         rs.getString("description"),
+                                        rs.getBoolean("status"),
                                         rs.getString("createdBy"),
                                         rs.getDate("createdDate"),
                                         rs.getString("updatedBy"),
@@ -71,7 +73,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         if (page > numPages) page = numPages;
         int start = (page - 1) * limit;
 
-        map.put("product", jdbcTemplate.query("SELECT * FROM product LIMIT " + start + "," + limit + ";",
+        map.put("product", jdbcTemplate.query("SELECT * FROM product ORDER BY status DESC LIMIT " + start + "," + limit + ";",
                 (rs, rowNum) ->
                         new Product(
                                 rs.getString("productID"),
@@ -80,6 +82,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -92,13 +95,14 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public void saveProduct(Product product) {
         String idProd = "Prod - " + UUID.randomUUID();
-        jdbcTemplate.update("INSERT INTO product VALUES (?,?,?,?,?,?,?,?,?,?)",
+        jdbcTemplate.update("INSERT INTO product VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                 idProd,
                 product.getProductName(),
                 product.getCategory(),
                 product.getUnitPrice(),
                 product.getStock(),
                 product.getDescription(),
+                product.getStatus(),
                 product.getCreatedBy(),
                 java.time.LocalDate.now(),
                 product.getUpdatedBy(),
@@ -120,6 +124,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                     rs.getBigDecimal("unitPrice"),
                                     rs.getInt("stock"),
                                     rs.getString("description"),
+                                    rs.getBoolean("status"),
                                     rs.getString("createdBy"),
                                     rs.getDate("createdDate"),
                                     rs.getString("updatedBy"),
@@ -147,6 +152,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                     rs.getBigDecimal("unitPrice"),
                                     rs.getInt("stock"),
                                     rs.getString("description"),
+                                    rs.getBoolean("status"),
                                     rs.getString("createdBy"),
                                     rs.getDate("createdDate"),
                                     rs.getString("updatedBy"),
@@ -171,6 +177,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -191,6 +198,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -221,6 +229,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -252,6 +261,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -265,16 +275,16 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Map<String, Object> findStatusWithPaging(Boolean status, int page, int limit) {
         Map<String, Object> map = new HashMap<>();
         map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product where " +
-                "status = '"+"%"+status+"%"+"'", Integer.class));
+                "status = "+status+"", Integer.class));
 
-        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product ",
+        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product where status = "+status+"",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
         // validate page
         if (page < 1) page = 1;
         if (page > numPages) page = numPages;
         int start = (page - 1) * limit;
 
-        map.put("product", jdbcTemplate.query("SELECT * FROM product where status = '"+"%"+status+"%"+"' LIMIT " + start + "," + limit + ";" ,
+        map.put("product", jdbcTemplate.query("SELECT * FROM product where status="+status+" LIMIT " + start + "," + limit + ";" ,
                 (rs, rowNum) ->
                         new Product(
                                 rs.getString("productID"),
@@ -283,6 +293,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -314,6 +325,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 rs.getBigDecimal("unitPrice"),
                                 rs.getInt("stock"),
                                 rs.getString("description"),
+                                rs.getBoolean("status"),
                                 rs.getString("createdBy"),
                                 rs.getDate("createdDate"),
                                 rs.getString("updatedBy"),
@@ -340,7 +352,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void deleteProductById(String productId) {
-        jdbcTemplate.update("delete from product where productId = ?", productId);
+//        jdbcTemplate.update("delete from product where productId = ?", productId);
+        jdbcTemplate.update("update product set status=? where productId=?",
+                false,
+                productId
+        );
     }
 
     @Override

@@ -34,8 +34,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Map<String, Object> findByOrderDate(Date orderDate, int page, int limit) {
-        return orderRepository.findByOrderDate(orderDate, page, limit);
+    public Map<String, Object> findByOrderDate(String startDate, String toDate, int page, int limit) {
+        return orderRepository.findByOrderDate(startDate, toDate, page, limit);
+    }
+
+    @Override
+    public Map<String, Object> findByOrderId(String orderId, int page, int limit) {
+        return orderRepository.findByOrderId(orderId, page, limit);
+    }
+
+    @Override
+    public Map<String, Object> findByStatus(Boolean status, int page, int limit) {
+        return orderRepository.findByStatus(status, page, limit);
     }
 
     @Override
