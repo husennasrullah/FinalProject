@@ -69,8 +69,6 @@ class Profile extends Component {
 
   checkValidation = () => {
     let regName = /^(?![ .]+$)[a-zA-Z .]*$/;
-
-    
   };
 
   saveData = () => {
@@ -132,6 +130,7 @@ class Profile extends Component {
     this.setState({
       changeProfile: true,
     });
+    this.setInitialData();
   };
 
   openModal = () => {
@@ -146,7 +145,7 @@ class Profile extends Component {
     });
   };
 
-  componentDidMount() {
+  setInitialData() {
     this.setState({
       role: this.props.dataUser.role,
       firstName: this.props.dataUser.firstName,
@@ -154,6 +153,10 @@ class Profile extends Component {
       email: this.props.dataUser.email,
       phoneNumber: this.props.dataUser.phoneNumber,
     });
+  }
+
+  componentDidMount() {
+    this.setInitialData();
   }
 
   render() {

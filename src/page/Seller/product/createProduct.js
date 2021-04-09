@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Form, Col, Container, Button } from "react-bootstrap";
 import { connect } from "react-redux";
+import Swal from "sweetalert2";
 import ProductService from "../../../service/ProductService";
 
 class CreateProduct extends Component {
@@ -13,6 +14,8 @@ class CreateProduct extends Component {
       unitPrice: "",
       stock: 0,
       description: "",
+      errorUnitPrice: false,
+      errorStock: false,
     };
   }
 
@@ -21,9 +24,37 @@ class CreateProduct extends Component {
   };
 
   setValue = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
+    this.setState(
+      {
+        [event.target.name]: event.target.value,
+      },
+      () => this.checkValidation(event.target.name)
+    );
+  };
+
+  checkValidation = (name) => {
+    const { stock, unitPrice } = this.state;
+    if (name === "stock") {
+      if (stock <= 0) {
+        this.setState({
+          errorStock: true,
+        });
+      } else {
+        this.setState({
+          errorStock: false,
+        });
+      }
+    } else if (name === "unitPrice") {
+      if (unitPrice <= 0) {
+        this.setState({
+          errorUnitPrice: true,
+        });
+      } else {
+        this.setState({
+          errorUnitPrice: false,
+        });
+      }
+    }
   };
 
   saveProduct = (e) => {
@@ -36,7 +67,17 @@ class CreateProduct extends Component {
       this.state.stock === "",
       this.state.description === "")
     ) {
-      alert(`Insert all data!`);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please Insert All Data Before Submit",
+      });
+    } else if (this.state.errorStock || this.state.errorUnitPrice) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please check your Form",
+      });
     } else {
       let product = {
         productName: this.state.productName,
@@ -44,6 +85,7 @@ class CreateProduct extends Component {
         unitPrice: this.state.unitPrice,
         stock: this.state.stock,
         description: this.state.description,
+        status: true,
         createdBy: this.props.dataUser.userId,
         updatedBy: this.props.dataUser.userId,
       };
@@ -95,10 +137,10 @@ class CreateProduct extends Component {
   }
 
   render() {
-    console.log(this.state);
+    const { errorUnitPrice, errorStock } = this.state;
     return (
       <>
-        <Container>
+        <Container fluid>
           <center>{this.setJudul()}</center>
           <br />
 
@@ -158,7 +200,11 @@ class CreateProduct extends Component {
                     name="unitPrice"
                     value={this.state.unitPrice}
                     onChange={this.setValue}
+                    isInvalid={errorUnitPrice}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Unitprice can't be negative or zero
+                  </Form.Control.Feedback>
                 </Col>
               </Form.Row>
             </Form.Group>
@@ -172,12 +218,17 @@ class CreateProduct extends Component {
                   <Form.Control
                     size="md"
                     type="number"
-                    min={0}
+                    min={1}
                     placeholder="Enter Stock of Product"
                     name="stock"
                     value={this.state.stock}
                     onChange={this.setValue}
+                    isInvalid={errorStock}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Stock can't be negative or zero, minimum input stock is 1
+                    item
+                  </Form.Control.Feedback>
                 </Col>
               </Form.Row>
             </Form.Group>

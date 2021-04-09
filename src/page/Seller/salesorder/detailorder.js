@@ -73,16 +73,29 @@ class DetailOrder extends Component {
           <Row>
             <Col md={6}>
               <center>
-                <span style={{ fontSize: "5vh", fontFamily: "cambria" }}>
-                  <i
-                    class="far fa-check-square"
-                    style={{
-                      marginRight: "10px",
-                      color: "green",
-                    }}
-                  ></i>
-                  {detailOrder.status ? "Paid" : "Unpaid"}
-                </span>
+                {detailOrder.status ? (
+                  <span style={{ fontSize: "5vh", fontFamily: "cambria" }}>
+                    <i
+                      class="far fa-check-square"
+                      style={{
+                        marginRight: "10px",
+                        color: "green",
+                      }}
+                    ></i>
+                    Paid
+                  </span>
+                ) : (
+                  <span style={{ fontSize: "5vh", fontFamily: "cambria" }}>
+                    <i
+                      class="far fa-clock"
+                      style={{
+                        marginRight: "10px",
+                        color: "orange",
+                      }}
+                    ></i>
+                    Unpaid
+                  </span>
+                )}
               </center>
             </Col>
             <Col md={6}>

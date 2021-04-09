@@ -178,7 +178,7 @@ class BuyerList extends Component {
                   className="mr-sm-2"
                   onChange={this.onChangeSelect}
                 >
-                  <option value="name">User Name</option>
+                  <option value="name">First Name</option>
                   <option value="id">User ID</option>
                 </Form.Control>
 
@@ -243,6 +243,7 @@ class BuyerList extends Component {
                       className="btn btn-success"
                       onClick={() => this.openModal(buyer.userId)}
                     >
+                      <i class="fas fa-edit" style={{ marginRight: "1em" }} />
                       Update Limit
                     </button>
                   </td>

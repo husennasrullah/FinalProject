@@ -40,9 +40,6 @@ class Invoice extends Component {
     });
   }
   render() {
-    console.log("param :", this.state.orderId);
-    console.log("order :", this.state.order);
-    console.log("detail :", this.state.detailOrder);
     const { order, detailOrder } = this.state;
     return (
       <Container>

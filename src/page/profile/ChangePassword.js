@@ -1,4 +1,12 @@
-import { Modal, Form, FormControl, Row, Col, Button } from "react-bootstrap";
+import {
+  Modal,
+  Form,
+  FormControl,
+  Row,
+  Col,
+  Button,
+  InputGroup,
+} from "react-bootstrap";
 import React, { Component } from "react";
 
 class ModalPassword extends Component {
@@ -11,6 +19,9 @@ class ModalPassword extends Component {
       errorOldPass: false,
       errorNewPass: false,
       errorNewPass2: false,
+      showOldPass: false,
+      showNewPass: false,
+      showNewPass2: false,
     };
   }
 
@@ -21,6 +32,40 @@ class ModalPassword extends Component {
       },
       () => this.checkValidation(event.target.name)
     );
+  };
+
+  showPass = (name) => {
+    console.log(name);
+    if (name === "oldPass") {
+      this.setState({
+        showOldPass: true,
+      });
+    } else if (name === "newPass") {
+      this.setState({
+        showNewPass: true,
+      });
+    } else if (name === "newPass2") {
+      this.setState({
+        showNewPass2: true,
+      });
+    }
+  };
+
+  hidePass = (name) => {
+    console.log(name);
+    if (name === "oldPass") {
+      this.setState({
+        showOldPass: false,
+      });
+    } else if (name === "newPass") {
+      this.setState({
+        showNewPass: false,
+      });
+    } else if (name === "newPass2") {
+      this.setState({
+        showNewPass2: false,
+      });
+    }
   };
 
   checkValidation = (name) => {
@@ -70,6 +115,9 @@ class ModalPassword extends Component {
       errorOldPass,
       errorNewPass,
       errorNewPass2,
+      showOldPass,
+      showNewPass,
+      showNewPass2,
     } = this.state;
     return (
       <Modal
@@ -89,17 +137,34 @@ class ModalPassword extends Component {
                   <Form.Label>Old Password</Form.Label>
                 </Col>
                 <Col>
-                  <FormControl
-                    value={oldPass}
-                    name="oldPass"
-                    onChange={this.setValue}
-                    type="password"
-                    isInvalid={errorOldPass}
-                  ></FormControl>
-                  <Form.Control.Feedback type="invalid">
-                    Password must be 6 in alphanumeric and at least 1 uppercase
-                    letter
-                  </Form.Control.Feedback>
+                  <InputGroup className="mb-3">
+                    <FormControl
+                      value={oldPass}
+                      name="oldPass"
+                      onChange={this.setValue}
+                      type={showOldPass ? "text" : "password"}
+                      isInvalid={errorOldPass}
+                    ></FormControl>
+                    <InputGroup.Prepend style={{ cursor: "pointer" }}>
+                      <InputGroup.Text>
+                        {showOldPass ? (
+                          <i
+                            class="far fa-eye-slash"
+                            onClick={() => this.hidePass("oldPass")}
+                          />
+                        ) : (
+                          <i
+                            class="far fa-eye"
+                            onClick={() => this.showPass("oldPass")}
+                          />
+                        )}
+                      </InputGroup.Text>
+                      <Form.Control.Feedback type="invalid">
+                        Password must be 6 in alphanumeric and at least 1
+                        uppercase letter
+                      </Form.Control.Feedback>
+                    </InputGroup.Prepend>
+                  </InputGroup>
                 </Col>
               </Form.Row>
             </Form.Group>
@@ -109,17 +174,34 @@ class ModalPassword extends Component {
                   <Form.Label>New Password</Form.Label>
                 </Col>
                 <Col>
-                  <FormControl
-                    value={newPass}
-                    name="newPass"
-                    onChange={this.setValue}
-                    type="password"
-                    isInvalid={errorNewPass}
-                  ></FormControl>
-                  <Form.Control.Feedback type="invalid">
-                    Password must be 6 in alphanumeric and at least 1 uppercase
-                    letter
-                  </Form.Control.Feedback>
+                  <InputGroup className="mb-3">
+                    <FormControl
+                      value={newPass}
+                      name="newPass"
+                      onChange={this.setValue}
+                      type={showNewPass ? "text" : "password"}
+                      isInvalid={errorNewPass}
+                    ></FormControl>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text style={{ cursor: "pointer" }}>
+                        {showNewPass ? (
+                          <i
+                            class="far fa-eye-slash"
+                            onClick={() => this.hidePass("newPass")}
+                          />
+                        ) : (
+                          <i
+                            class="far fa-eye"
+                            onClick={() => this.showPass("newPass")}
+                          />
+                        )}
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <Form.Control.Feedback type="invalid">
+                      Password must be 6 in alphanumeric and at least 1
+                      uppercase letter
+                    </Form.Control.Feedback>
+                  </InputGroup>
                 </Col>
               </Form.Row>
             </Form.Group>
@@ -129,16 +211,33 @@ class ModalPassword extends Component {
                   <Form.Label>Re-Enter New Password</Form.Label>
                 </Col>
                 <Col>
-                  <FormControl
-                    value={newPass2}
-                    name="newPass2"
-                    onChange={this.setValue}
-                    type="password"
-                    isInvalid={errorNewPass2}
-                  ></FormControl>
-                  <Form.Control.Feedback type="invalid">
-                    Not Equals to new Password
-                  </Form.Control.Feedback>
+                  <InputGroup className="mb-3">
+                    <FormControl
+                      value={newPass2}
+                      name="newPass2"
+                      onChange={this.setValue}
+                      type={showNewPass2 ? "text" : "password"}
+                      isInvalid={errorNewPass2}
+                    ></FormControl>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text style={{ cursor: "pointer" }}>
+                        {showNewPass2 ? (
+                          <i
+                            class="far fa-eye-slash"
+                            onClick={() => this.hidePass("newPass2")}
+                          />
+                        ) : (
+                          <i
+                            class="far fa-eye"
+                            onClick={() => this.showPass("newPass2")}
+                          />
+                        )}
+                      </InputGroup.Text>
+                    </InputGroup.Prepend>
+                    <Form.Control.Feedback type="invalid">
+                      Not Equals to new Password
+                    </Form.Control.Feedback>
+                  </InputGroup>
                 </Col>
               </Form.Row>
             </Form.Group>

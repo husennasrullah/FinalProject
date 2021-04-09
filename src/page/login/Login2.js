@@ -1,6 +1,15 @@
 import React, { Component } from "react";
 import "./style.css";
-import { Container, Row, Col, FormGroup, FormControl } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  FormGroup,
+  FormControl,
+  Button,
+  InputGroup,
+  Form,
+} from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
@@ -10,12 +19,25 @@ class LoginBaru extends Component {
     this.state = {
       user: "",
       pass: "",
+      showPass: false,
     };
   }
 
   setValue = (event) => {
     this.setState({
       [event.target.name]: event.target.value,
+    });
+  };
+
+  showPass = () => {
+    this.setState({
+      showPass: true,
+    });
+  };
+
+  hidePass = () => {
+    this.setState({
+      showPass: false,
     });
   };
 
@@ -28,7 +50,7 @@ class LoginBaru extends Component {
       }
     }
 
-    const { user, pass } = this.state;
+    const { user, pass, showPass } = this.state;
     return (
       <Container fluid className="register2">
         <Row>
@@ -56,22 +78,34 @@ class LoginBaru extends Component {
                   />
                 </FormGroup>
                 <br />
-                <FormGroup>
+                <InputGroup className="mb-3">
                   <FormControl
                     size="md"
                     type="password"
                     name="pass"
+                    type={showPass ? "text" : "password"}
                     placeholder="Enter Password"
                     onChange={this.setValue}
                   />
-                </FormGroup>
-
-                <input
-                  type="button"
+                  <InputGroup.Prepend>
+                    <InputGroup.Text>
+                      {showPass ? (
+                        <i class="far fa-eye-slash" onClick={this.hidePass} />
+                      ) : (
+                        <i class="far fa-eye" onClick={this.showPass} />
+                      )}
+                    </InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <Form.Control.Feedback type="invalid">
+                    Not Equals to new Password
+                  </Form.Control.Feedback>
+                </InputGroup>
+                <Button
                   className="btnRegister2"
-                  value="Login"
                   onClick={() => this.props.doLogin(user, pass)}
-                />
+                >
+                  Login
+                </Button>
               </Col>
             </Row>
           </Col>

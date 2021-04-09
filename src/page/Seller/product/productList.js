@@ -6,6 +6,7 @@ import {
   FormControl,
   Container,
   Navbar,
+  Badge,
 } from "react-bootstrap";
 import ProductService from "../../../service/ProductService";
 import ModalForm from "./detailProduct";
@@ -48,14 +49,15 @@ class ProductList extends Component {
     }).then((result) => {
       if (result.isConfirmed) {
         ProductService.deleteProduct(productId).then((res) => {
-          this.setState({
-            productList: this.state.productList.filter(
-              (prod) => prod.productId !== productId
-            ),
-            listProduct: this.state.listProduct.filter(
-              (prod) => prod.productId !== productId
-            ),
-          });
+          this.getProductPaging(this.state.page, this.state.limit);
+          // this.setState({
+          //   productList: this.state.productList.filter(
+          //     (prod) => prod.productId !== productId
+          //   ),
+          //   listProduct: this.state.listProduct.filter(
+          //     (prod) => prod.productId !== productId
+          //   ),
+          // });
         });
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       }
@@ -119,6 +121,12 @@ class ProductList extends Component {
     });
   };
 
+  setValueStatus = (e) => {
+    this.setState({
+      valueStatus: e.target.value,
+    });
+  };
+
   Search = () => {
     if (this.state.Search === "") {
       this.getProductPaging(this.state.pagenow, this.state.limit);
@@ -131,6 +139,12 @@ class ProductList extends Component {
         );
       } else if (this.valueSelect === "name") {
         this.searchByName(
+          this.state.Search,
+          this.state.pagenow,
+          this.state.limit
+        );
+      } else if (this.valueSelect === "status") {
+        this.searchByStatus(
           this.state.Search,
           this.state.pagenow,
           this.state.limit
@@ -157,6 +171,22 @@ class ProductList extends Component {
 
   searchByName = (search, page, limit) => {
     ProductService.searchByName(search, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          productList: res.data.product,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      })
+      .catch((err) => {
+        alert("Failed Fetching Data nama");
+      });
+  };
+
+  searchByStatus = (search, page, limit) => {
+    ProductService.searchByStatus(search, page, limit)
       .then((res) => {
         let page = res.data.qty / this.state.limit;
         this.setState({
@@ -201,6 +231,7 @@ class ProductList extends Component {
   }
 
   render() {
+    console.log(this.valueSelect);
     const { valueSelect } = this.state;
     let FormFilter;
     if (valueSelect === "name" || valueSelect === "id") {
@@ -221,23 +252,10 @@ class ProductList extends Component {
           <Form.Control
             as="select"
             className="mr-sm-2"
-            onChange={this.searchStatus}
+            onChange={this.setValueSearch}
           >
-            <option value={true}>Active</option>
-            <option value={false}>In-Active</option>
-          </Form.Control>
-        </>
-      );
-    } else {
-      FormFilter = (
-        <>
-          <Form.Control
-            as="select"
-            className="mr-sm-2"
-            onChange={this.searchQty}
-          >
-            <option value="name">{"<= 30 items"}</option>
-            <option value="id">{"<= 100 items"}</option>
+            <option value="1">Active</option>
+            <option value="0">In-Active</option>
           </Form.Control>
         </>
       );
@@ -270,7 +288,6 @@ class ProductList extends Component {
                   <option value="name">Product Name</option>
                   <option value="id">Product ID</option>
                   <option value="status">Status</option>
-                  <option value="qty">Quantity</option>
                 </Form.Control>
                 {FormFilter}
                 {/* <FormControl
@@ -310,7 +327,7 @@ class ProductList extends Component {
         <br />
         <div>
           <table
-            className="table table-striped table-borderes table-md"
+            className="table table-striped table-borderes table-sm"
             style={{ textAlign: "center" }}
           >
             <thead className="thead-dark">
@@ -320,6 +337,7 @@ class ProductList extends Component {
                 <th> Category</th>
                 <th> Price</th>
                 <th> Stock</th>
+                <th> Status</th>
                 <th> Action</th>
               </tr>
             </thead>
@@ -337,6 +355,13 @@ class ProductList extends Component {
                       .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
                   </td>
                   <td> {prod.stock} items</td>
+                  <td>
+                    {prod.status ? (
+                      <Badge variant="primary">Active</Badge>
+                    ) : (
+                      <Badge variant="secondary">In-active</Badge>
+                    )}
+                  </td>
                   <td>
                     <Button
                       variant="info"
@@ -382,7 +407,7 @@ class ProductList extends Component {
               >
                 <option value="5">5 Data</option>
                 <option value="10">10 Data</option>
-                <option value="15">15 Data</option>
+                {/* <option value="15">15 Data</option> */}
               </Form.Control>
               <Pagination
                 count={this.state.count}

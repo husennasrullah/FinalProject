@@ -22,11 +22,30 @@ class OrderList extends Component {
       page: 1,
       pagenow: 1,
       count: 0,
-      limit: 10,
+      limit: 5,
       Search: "",
       isSearch: false,
+      valueSelect: "id",
     };
   }
+
+  handleChange = (e, value) => {
+    e.preventDefault();
+    this.setState({
+      pagenow: value,
+    });
+
+    if (!this.state.isSearch) {
+      this.getOrder(this.state.userId, value, this.state.limit);
+    } else {
+      if (this.state.valueSelect === "product") {
+      } else if (this.state.valueSelect === "id") {
+        this.searchByOrderId(this.state.search, value, this.state.limit);
+      } else if (this.state.valueSelect === "status") {
+        this.searchByStatus(this.state.search, value, this.state.limit);
+      }
+    }
+  };
 
   viewInvoice = (orderId) => {
     this.props.history.push(`${this.props.match.path}/` + orderId);
@@ -39,6 +58,7 @@ class OrderList extends Component {
         this.setState({
           orders: res.data.order,
           count: Math.ceil(page),
+          isSearch: false,
         });
       })
       .catch((err) => {
@@ -50,7 +70,34 @@ class OrderList extends Component {
     this.getOrder(this.state.userId, this.state.page, this.state.limit);
   }
   render() {
-    const { orders } = this.state;
+    const { orders, valueSelect } = this.state;
+    let FormFilter;
+    if (valueSelect === "product" || valueSelect === "buyer") {
+      FormFilter = (
+        <>
+          <FormControl
+            type="text"
+            placeholder="Search......"
+            className="mr-sm-2"
+            onChange={this.setValueSearch}
+            value={this.state.Search}
+          />
+        </>
+      );
+    } else if (valueSelect === "status") {
+      FormFilter = (
+        <>
+          <Form.Control
+            as="select"
+            className="mr-sm-2"
+            onChange={this.setValueSearch}
+          >
+            <option value="1">Paid</option>
+            <option value="0">Unpaid</option>
+          </Form.Control>
+        </>
+      );
+    }
     return (
       <Container fluid>
         <br />
@@ -63,8 +110,9 @@ class OrderList extends Component {
             <Col md={6}>
               <Form inline>
                 <Form.Control as="select" className="mr-sm-2">
-                  <option value="name">Product Name</option>
-                  <option value="id">Product ID</option>
+                  <option value="id"> OrderID</option>
+                  <option value="date"> Date</option>
+                  <option value="status"> Status</option>
                 </Form.Control>
 
                 <FormControl
@@ -72,6 +120,14 @@ class OrderList extends Component {
                   placeholder="Search......"
                   className="mr-sm-2"
                 />
+                {FormFilter}
+                <Button
+                  variant="outline-success"
+                  onClick={this.Search}
+                  className="mr-sm-2"
+                >
+                  Search
+                </Button>
               </Form>
             </Col>
           </Row>

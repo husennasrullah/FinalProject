@@ -24,7 +24,10 @@ class SalesOrderList extends Component {
       count: 0,
       search: "",
       isOpen: false,
-      valueSelect: "product",
+      isSearch: false,
+      valueSelect: "id",
+      startDate: "",
+      toDate: "",
     };
   }
 
@@ -37,14 +40,91 @@ class SalesOrderList extends Component {
     if (!this.state.isSearch) {
       this.getAllOrder(value, this.state.limit);
     } else {
-      if (this.valueSelect === "product") {
-        // this.searchById(this.state.Search, value, this.state.limit);
-      } else if (this.valueSelect === "buyer") {
-        // this.searchByName(this.state.Search, value, this.state.limit);
-      } else {
-        //fungsi
+      if (this.state.valueSelect === "id") {
+        this.searchByOrderId(this.state.search, value, this.state.limit);
+      } else if (this.state.valueSelect === "status") {
+        this.searchByStatus(this.state.search, value, this.state.limit);
       }
     }
+  };
+
+  Search = () => {
+    if (this.state.Search === "") {
+      this.getAllOrder(this.state.page, this.state.limit);
+    } else {
+      if (this.state.valueSelect === "product") {
+      } else if (this.state.valueSelect === "id") {
+        this.searchByOrderId(
+          this.state.search,
+          this.state.page,
+          this.state.limit
+        );
+      } else if (this.state.valueSelect === "status") {
+        this.searchByStatus(
+          this.state.search,
+          this.state.page,
+          this.state.limit
+        );
+      }
+    }
+  };
+
+  searchDate = () => {
+    if (this.state.startDate === "" || this.state.toDate === "") {
+      this.getAllOrder(this.state.page, this.state.limit);
+    } else {
+      alert("sadas");
+      this.searchByDate(
+        this.state.startDate,
+        this.state.toDate,
+        this.state.page,
+        this.state.limit
+      );
+    }
+  };
+
+  searchByOrderId = (orderId, page, limit) => {
+    OrderService.searchByOrderId(orderId, page, limit).then((res) => {
+      let page = res.data.qty / this.state.limit;
+      this.setState({
+        order: res.data.order,
+        count: Math.ceil(page),
+        isSearch: true,
+        page: 1,
+      });
+    });
+  };
+
+  searchByStatus = (status, page, limit) => {
+    OrderService.searchByStatus(status, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          order: res.data.order,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      })
+      .catch((err) => {
+        alert("failed Fetch Data");
+      });
+  };
+
+  searchByDate = (startDate, toDate, page, limit) => {
+    OrderService.searchByDate(startDate, toDate, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          order: res.data.order,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      })
+      .catch((err) => {
+        alert("failed Fetch Data");
+      });
   };
 
   onChangeSelect = (e) => {
@@ -95,6 +175,20 @@ class SalesOrderList extends Component {
     });
   };
 
+  setDate = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  cancelSearch = (e) => {
+    this.setState({
+      search: "",
+      isSearch: false,
+    });
+    this.getAllOrder(this.state.page, this.state.limit);
+  };
+
   onChangeLimit = (e) => {};
 
   openModal = (orderId) => {
@@ -119,6 +213,7 @@ class SalesOrderList extends Component {
         this.setState({
           order: res.data.order,
           count: Math.ceil(page),
+          isSearch: false,
         });
       })
       .catch((err) => {
@@ -127,12 +222,60 @@ class SalesOrderList extends Component {
   }
 
   componentDidMount() {
-    this.getAllOrder(this.state.pagenow, this.state.limit);
+    this.getAllOrder(this.state.page, this.state.limit);
   }
 
   render() {
-    console.log("tesssss : ", this.state.limit);
-    const { order } = this.state;
+    console.log(this.state.valueSelect);
+    console.log(this.state.toDate);
+    const { valueSelect, order } = this.state;
+    let FormFilter;
+    if (valueSelect === "product" || valueSelect === "id") {
+      FormFilter = (
+        <>
+          <FormControl
+            type="text"
+            placeholder="Search......"
+            className="mr-sm-2"
+            onChange={this.setValueSearch}
+            value={this.state.Search}
+          />
+        </>
+      );
+    } else if (valueSelect === "status") {
+      FormFilter = (
+        <>
+          <Form.Control
+            as="select"
+            className="mr-sm-2"
+            onChange={this.setValueSearch}
+          >
+            <option value="1">Paid</option>
+            <option value="0">Unpaid</option>
+          </Form.Control>
+        </>
+      );
+    } else if (valueSelect === "date") {
+      FormFilter = (
+        <>
+          <Form.Label className="ml-sm-3 mr-sm-3">Start</Form.Label>
+          <FormControl
+            name="startDate"
+            type="Date"
+            className="mr-sm-3"
+            onChange={this.setDate}
+          />
+          <Form.Label className="mr-sm-3">To</Form.Label>
+          <FormControl
+            name="toDate"
+            type="Date"
+            className="mr-sm-3"
+            onChange={this.setDate}
+          />
+        </>
+      );
+    }
+
     return (
       <Container fluid>
         {this.state.isOpen ? (
@@ -150,22 +293,50 @@ class SalesOrderList extends Component {
         <br />
         <div>
           <Row>
-            <Col md={6}>
+            <Col>
               <Form inline>
                 <Form.Control
                   as="select"
-                  className="mr-sm-2"
+                  className="mr-sm-3"
                   onChange={this.onChangeSelect}
                 >
-                  <option value="product">Product Name</option>
-                  <option value="buyer">Buyer Name</option>
+                  <option value="id">Order ID</option>
+                  {/* <option value="product">Product Name</option> */}
                   <option value="status">Status</option>
+                  <option value="date">Date</option>
                 </Form.Control>
-                <FormControl
-                  type="text"
-                  placeholder="Search......"
-                  className="mr-sm-2"
-                />
+                {FormFilter}
+                {valueSelect === "date" ? (
+                  <Button
+                    variant="outline-success"
+                    className="mr-sm-3"
+                    onClick={this.searchDate}
+                  >
+                    Filter
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline-success"
+                    onClick={this.Search}
+                    className="mr-sm-2"
+                  >
+                    Search
+                  </Button>
+                )}
+
+                {this.state.isSearch ? (
+                  <i
+                    class="far fa-times-circle"
+                    style={{
+                      fontSize: "4vh",
+                      color: "red",
+                      cursor: "pointer",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                    }}
+                    onClick={this.cancelSearch}
+                  ></i>
+                ) : null}
               </Form>
             </Col>
           </Row>
@@ -221,6 +392,10 @@ class SalesOrderList extends Component {
                         variant="info"
                         onClick={() => this.openModal(item.orderId)}
                       >
+                        <i
+                          class="fas fa-info-circle"
+                          style={{ marginRight: "1em" }}
+                        />
                         Detail
                       </Button>
                       {!item.status ? (
@@ -231,6 +406,10 @@ class SalesOrderList extends Component {
                             this.approveOrder(item.orderId, item.user.userId)
                           }
                         >
+                          <i
+                            class="fas fa-thumbs-up"
+                            style={{ marginRight: "1em" }}
+                          />
                           Approve
                         </Button>
                       ) : null}

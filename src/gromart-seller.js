@@ -32,8 +32,8 @@ class GromartSeller extends Component {
     return (
       <div>
         <Row noGutters>
-          <Col xs={2} noGutters>
-            <SideBar path={this.state.path} />
+          <Col xs={2}>
+            <SideBar path={this.state.path} style={{ position: "fixed" }} />
           </Col>
           <Col xs={10} noGutters>
             <Header path={this.state.path} />

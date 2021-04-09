@@ -32,6 +32,38 @@ class OrderService {
   updateStatus(update) {
     return axios.put(ORDER_API + "status/", update);
   }
+
+  searchByOrderId(orderId, page, limit) {
+    return axios.get(
+      ORDER_API + "findid/" + orderId + "/?page=" + page + "&limit=" + limit
+    );
+  }
+
+  searchByStatus(status, page, limit) {
+    return axios.get(
+      ORDER_API +
+        "findStatus/?status=" +
+        status +
+        "&page=" +
+        page +
+        "&limit=" +
+        limit
+    );
+  }
+
+  searchByDate(startDate, toDate, page, limit) {
+    return axios.get(
+      ORDER_API +
+        "date/?startDate=" +
+        startDate +
+        "&toDate=" +
+        toDate +
+        "&page=" +
+        page +
+        "&limit=" +
+        limit
+    );
+  }
 }
 
 export default new OrderService();

@@ -40,6 +40,18 @@ class ProductService {
     );
   }
 
+  searchByStatus(status, page, limit) {
+    return axios.get(
+      PRODUCT_API +
+        "findStatus/?status=" +
+        status +
+        "&page=" +
+        page +
+        "&limit=" +
+        limit
+    );
+  }
+
   updateProduct(product, productId) {
     return axios.put(PRODUCT_API + productId, product);
   }

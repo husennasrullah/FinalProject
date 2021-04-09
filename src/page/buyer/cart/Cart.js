@@ -10,6 +10,7 @@ import {
   Badge,
 } from "react-bootstrap";
 import { connect } from "react-redux";
+import Swal from "sweetalert2";
 import CartService from "../../../service/CartService";
 import OrderService from "../../../service/OrderService";
 import RegistrasiService from "../../../service/RegistrasiService";
@@ -75,6 +76,7 @@ class Cart extends Component {
 
   checkout = (e) => {
     e.preventDefault();
+
     let detail = this.state.detailCart;
     let checkout = {
       orderDate: "2021-03-16",
@@ -86,18 +88,28 @@ class Cart extends Component {
       status: false,
       details: detail,
     };
-
-    OrderService.checkoutOrder(checkout)
-      .then((res) => {
-        alert("Checkout Success");
-        this.deleteAllCart();
-        this.updatateCreditLimit(this.countTotal());
-      })
-      .catch((err) => {
-        console.log(err.response);
-        alert(err.response.data.errorMessage);
-      });
-    this.getNewDataUser(this.state.userid);
+    
+    if (this.state.shippingFee === 0 || this.state.address === "") {
+      Swal.fire("Please complete the Form", "", "error");
+    } else {
+      OrderService.checkoutOrder(checkout)
+        .then((res) => {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Checkout Success",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          this.deleteAllCart();
+          this.updatateCreditLimit(this.countTotal());
+          this.getNewDataUser(this.state.userid);
+        })
+        .catch((err) => {
+          console.log(err.response);
+          alert(err.response.data.errorMessage);
+        });
+    }
   };
 
   deleteAllCart = () => {

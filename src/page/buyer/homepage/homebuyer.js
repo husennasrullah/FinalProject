@@ -191,9 +191,6 @@ class HomeBuyer extends Component {
   }
 
   render() {
-    console.log("datauser :", this.props.dataUser);
-    console.log(this.state.search);
-
     return (
       <Container fluid style={{ backgroundColor: "#f8f4e1" }}>
         {this.state.isOpen ? (

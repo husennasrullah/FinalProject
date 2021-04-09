@@ -55,7 +55,7 @@ class HomeSeller extends Component {
         <Container fluid>
           <br />
           <Carousel fade>
-            <Carousel.Item style={{ height: "200px" }}>
+            <Carousel.Item style={{ height: "150px" }}>
               <img
                 className="d-block w-100"
                 src="https://i.ibb.co/ThqBXt8/foto.jpg"
@@ -66,7 +66,7 @@ class HomeSeller extends Component {
                 <p>choose any kind of product that match to your desire</p>
               </Carousel.Caption>
             </Carousel.Item>
-            <Carousel.Item style={{ height: "200px" }}>
+            <Carousel.Item style={{ height: "150px" }}>
               <img
                 className="d-block w-100"
                 src="https://i.ibb.co/J5DVH66/foto2.jpg"
@@ -78,7 +78,7 @@ class HomeSeller extends Component {
                 <p>Edit your Shopping cart and checkout</p>
               </Carousel.Caption>
             </Carousel.Item>
-            <Carousel.Item style={{ height: "200px" }}>
+            <Carousel.Item style={{ height: "150px" }}>
               <img
                 className="d-block w-100"
                 src="https://i.ibb.co/Gx2YB2f/foto3.jpg"
@@ -94,46 +94,45 @@ class HomeSeller extends Component {
             </Carousel.Item>
           </Carousel>
           <br />
-          <CardDeck>
-            <Card border="info" style={{ width: "18rem" }}>
-              <Card.Header>
-                <FontAwesomeIcon
-                  icon={faTachometerAlt}
-                  className="mr-3"
-                  style={{ fontSize: "3vh" }}
-                />
-                WELCOME TO GROMART APPLICATION
-              </Card.Header>
-              <Card.Body>
-                <Card.Text>
-                  As a Seller, your Dashboard Containt of three main
-                  information:
-                </Card.Text>
-                <Card.Text>
-                  <b>(1). Total Transaction :</b> containt any information
-                  regarding your daily selling and how much your product was
-                  selling in the marketplace
-                </Card.Text>
-                <Card.Text>
-                  <b>(2). Total Amount :</b> containt infromation regarding
-                  total money you have gotten from your selling product.{" "}
-                </Card.Text>
-                <Card.Text>
-                  <b>(3). Top 3 Best Seller Product :</b> In this part you can
-                  see what kind of your product which has greater totalcselling
-                  in the marketplace. content.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </CardDeck>
+
+          <Card border="info" style={{ lineHeight: "1", fontSize: "2vh" }}>
+            <Card.Header>
+              <FontAwesomeIcon
+                icon={faTachometerAlt}
+                className="mr-3"
+                style={{ fontSize: "3vh" }}
+              />
+              WELCOME TO GROMART APPLICATION
+            </Card.Header>
+            <Card.Body>
+              <Card.Text>
+                As a Seller, your Dashboard Containt of three main information:
+              </Card.Text>
+              <Card.Text>
+                <b>(1). Total Transaction :</b> containt any information
+                regarding your daily selling and how much your product was
+                selling in the marketplace
+              </Card.Text>
+              <Card.Text>
+                <b>(2). Total Amount :</b> containt infromation regarding total
+                money you have gotten from your selling product.{" "}
+              </Card.Text>
+              <Card.Text>
+                <b>(3). Top 3 Best Seller Product :</b> In this part you can see
+                what kind of your product which has greater totalcselling in the
+                marketplace. content.
+              </Card.Text>
+            </Card.Body>
+          </Card>
+
           <br />
 
           <Row style={{ textAlign: "center", fontFamily: "cambria" }}>
-            <Col md={4}>
-              <Card>
+            <Col xs={4}>
+              <Card style={{ height: "7rem" }}>
                 <Card.Header
-                  as="h5"
                   style={{
+                    fontSize: "2vh",
                     backgroundColor: "#435560",
                     color: "white",
                     textAlign: "center",
@@ -143,14 +142,14 @@ class HomeSeller extends Component {
                 </Card.Header>
                 <Card.Body>
                   <Row>
-                    <Col md={2}>
+                    <Col xs={2}>
                       <i
                         class="fab fa-sellsy"
-                        style={{ fontSize: "5vh", color: "orange" }}
+                        style={{ fontSize: "4vh", color: "orange" }}
                       ></i>
                     </Col>
-                    <Col md={10}>
-                      <h3>{transaction.totalSellingItem} Items</h3>
+                    <Col xs={10}>
+                      <h4>{transaction.totalSellingItem} Items</h4>
                     </Col>
                   </Row>
                 </Card.Body>
