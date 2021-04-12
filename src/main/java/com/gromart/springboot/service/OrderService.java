@@ -19,10 +19,6 @@ public interface OrderService {
 
     Order findById (String orderId);
 
-    void deleteOrderById(String orderId);
-
-    int countDetail (String cartId);
-
     void updateStatus (Order order);
 
     Map<String, Object> countTransaction ();

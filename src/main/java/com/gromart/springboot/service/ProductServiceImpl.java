@@ -16,39 +16,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public List<Product> findAllProducts() {
-        List<Product> product = productRepository.findAll();
-        return product;
-    }
-
-    @Override
-    public List<Product> findAllWithPaging(int page, int limit) {
-        List<Product> product = productRepository.findAllWithPaging(page, limit);
-        return product;
-    }
-
     @Override
     public Map<String, Object> findProduct(int page, int limit) {
         return productRepository.findProduct(page, limit);
-    }
-
-    public Product findById(String productId) {
-
-        return productRepository.findById(productId);
-    }
-
-    public Product findByName(String name) {
-        return productRepository.findByName(name);
-    }
-
-    @Override
-    public List<Product> searchId(String productId) {
-        return productRepository.searchId(productId);
-    }
-
-    @Override
-    public List<Product> searchName(String productName) {
-        return productRepository.searchName(productName);
     }
 
     @Override
@@ -71,38 +41,70 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findStockWithPaging(stock, page, limit);
     }
 
+    @Override
+    public Product findById(String productId) {
+        return productRepository.findById(productId);
+    }
+
+    @Override
     public void saveProduct(Product product) {
         synchronized (this) {    //  Critical section synchronized
             productRepository.saveProduct(product);
         }
     }
 
+    @Override
     public void updateProduct(Product product) {
         synchronized (this) {    //  Critical section synchronized
             productRepository.updateProduct(product);
         }
     }
 
-
+    @Override
     public void deleteProductById(String productId) {
         synchronized (this) {    //  Critical section synchronized
             productRepository.deleteProductById(productId);
         }
     }
 
+    @Override
     public boolean isProductExist(Product product) {
-
         return productRepository.findByName(product.getProductName()) != null;
     }
 
-    @Override
-    public int findAllCount() {
-        return productRepository.findAllCount();
-    }
 
-
-    public void deleteAllProducts() {
-        productRepository.deleteAllProducts();
-    }
+//    public List<Product> findAllProducts() {
+//        List<Product> product = productRepository.findAll();
+//        return product;
+//    }
+//
+//    @Override
+//    public List<Product> findAllWithPaging(int page, int limit) {
+//        List<Product> product = productRepository.findAllWithPaging(page, limit);
+//        return product;
+//    }
+//
+//    public Product findByName(String name) {
+//        return productRepository.findByName(name);
+//    }
+//
+//    @Override
+//    public List<Product> searchId(String productId) {
+//        return productRepository.searchId(productId);
+//    }
+//
+//    @Override
+//    public List<Product> searchName(String productName) {
+//        return productRepository.searchName(productName);
+//    }
+//
+//    @Override
+//    public int findAllCount() {
+//        return productRepository.findAllCount();
+//    }
+//
+//    public void deleteAllProducts() {
+//        productRepository.deleteAllProducts();
+//    }
 
 }

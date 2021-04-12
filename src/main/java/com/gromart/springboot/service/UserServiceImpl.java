@@ -1,12 +1,9 @@
 package com.gromart.springboot.service;
 
-import com.gromart.springboot.model.Product;
 import com.gromart.springboot.model.User;
 import com.gromart.springboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -15,12 +12,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-
-    @Override
-    public List<User> findAllBuyer() {
-        List<User> user = userRepository.findAllBuyer();
-        return user;
-    }
 
     @Override
     public Map<String, Object> findAllWithPaging(int page, int limit) {
@@ -45,7 +36,6 @@ public class UserServiceImpl implements UserService {
         synchronized (this) {
             userRepository.saveUser(user);
         }
-
     }
 
     @Override
@@ -95,30 +85,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> searchId(String userId) {
-        List<User> user;
-        try {
-            user = userRepository.searchId(userId);
-        } catch (Exception e) {
-            System.out.println(e);
-            user = null;
-        }
-        return user;
-    }
-
-    @Override
-    public List<User> searchName(String firstName) {
-        List<User> user;
-        try {
-            user = userRepository.searchName(firstName);
-        } catch (Exception e) {
-            System.out.println(e);
-            user = null;
-        }
-        return user;
-    }
-
-    @Override
     public User loginAccount(String userName, String password) {
         return userRepository.loginAccount(userName, password);
     }
@@ -145,7 +111,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int findAllCount() {
-        return userRepository.findAllCount();
+    public void updateInvoiceLimit(String userId, int invoiceLimit) {
+        synchronized (this) {
+            userRepository.updateInvoiceLimit(userId, invoiceLimit);
+        }
     }
+
+//    @Override
+//    public int findAllCount() {
+//        return userRepository.findAllCount();
+//    }
+//
+//    @Override
+//    public List<User> searchId(String userId) {
+//        List<User> user;
+//        try {
+//            user = userRepository.searchId(userId);
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            user = null;
+//        }
+//        return user;
+//    }
+//
+//    @Override
+//    public List<User> findAllBuyer() {
+//        List<User> user = userRepository.findAllBuyer();
+//        return user;
+//    }
+//
+//    @Override
+//    public List<User> searchName(String firstName) {
+//        List<User> user;
+//        try {
+//            user = userRepository.searchName(firstName);
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            user = null;
+//        }
+//        return user;
+//    }
 }

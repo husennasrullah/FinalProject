@@ -8,21 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ProductRepository {
-    List<Product> findAll();
-
-    List<Product> findAllWithPaging(int page, int limit);
 
     Map<String, Object> findProduct (int page, int limit);
-
-    void saveProduct(Product product);
-
-    Product findById(String productId);
-
-    Product findByName(String productName);
-
-    List<Product> searchId(String productId);
-
-    List<Product> searchName(String productName);
 
     Map<String, Object> findNameWithPaging (String productName, int page, int limit);
 
@@ -32,16 +19,30 @@ public interface ProductRepository {
 
     Map<String, Object> findStockWithPaging (int stock, int page, int limit);
 
+    void saveProduct(Product product);
+
     void updateProduct(Product product);
 
     void deleteProductById(String productId);
 
-    void deleteAllProducts();
+    Product findById(String productId);
 
-    boolean isProductExist(Product product);
+    Product findByName(String productName);
 
     int findAllCount ();
 
-    void changeStock (String productId, int stock);
+//    List<Product> findAll();
+//
+//    List<Product> findAllWithPaging(int page, int limit);
+//
+//    List<Product> searchId(String productId);
+//
+//    List<Product> searchName(String productName);
+//
+//    void deleteAllProducts();
+//
+//    boolean isProductExist(Product product);
+//
+//    void changeStock (String productId, int stock);
 
 }

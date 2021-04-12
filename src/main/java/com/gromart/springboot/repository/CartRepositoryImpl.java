@@ -43,18 +43,15 @@ public class CartRepositoryImpl implements CartRepository {
                             ))
                     )
             );
-
             List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity " +
                             "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + cart.getCartId() + "'",
                     (rs, rowNum) -> new CartDetail(
                             rs.getString("cartdetailID"),
                             rs.getString("cartID"),
                             rs.getString("quantity")
-
                     )
             ));
             cart.setDetail(detail);
-
             for (CartDetail details : detail) {
                 details.setProduct(jdbcTemplate.queryForObject("select p.productID, p.productName, p.category, p.unitPrice, " +
                                 "p.stock from cartdetail cd join product p on cd.productID = p.productID " +
@@ -112,7 +109,6 @@ public class CartRepositoryImpl implements CartRepository {
                                     rs.getBigDecimal("totalAmount")
                             )
             );
-
             carts.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
                             "b.invoiceLimit FROM cart a JOIN user b ON a.userID = b.userID WHERE a.cartID=?",
                     new Object[]{carts.getCartId()},
@@ -126,7 +122,6 @@ public class CartRepositoryImpl implements CartRepository {
                             ))
                     )
             );
-
             List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity " +
                             "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + carts.getCartId() + "'",
                     (rs, rowNum) -> new CartDetail(
@@ -167,7 +162,6 @@ public class CartRepositoryImpl implements CartRepository {
                                 rs.getBigDecimal("totalAmount")
                         )
         );
-
         carts.setUser(jdbcTemplate.queryForObject("SELECT b.userID, b.firstName, b.lastName, b.creditLimit, " +
                         "b.invoiceLimit FROM cart a JOIN user b ON a.userID = b.userID WHERE a.cartID=?",
                 new Object[]{cartId},
@@ -181,14 +175,12 @@ public class CartRepositoryImpl implements CartRepository {
                         ))
                 )
         );
-
         List<CartDetail> detail = (jdbcTemplate.query("select b.cartdetailID, b.cartID, b.quantity " +
                         "from cart a join cartdetail b on a.cartID = b.cartID where b.cartID ='" + cartId + "'",
                 (rs, rowNum) -> new CartDetail(
                         rs.getString("cartdetailID"),
                         rs.getString("cartID"),
                         rs.getString("quantity")
-
                 )
         ));
         carts.setDetail(detail);
@@ -253,19 +245,6 @@ public class CartRepositoryImpl implements CartRepository {
             );
         }
     }
-
-//    @Override
-//    public void addItem(CartDetail cartDetail) {
-//        UUID detail = UUID.randomUUID();
-//        String detailId = "Detail-" + detail;
-//        jdbcTemplate.update("insert into cartdetail (cartdetailID, cartID, productID, quantity, subTotal) values (?,?,?,?,?)",
-//                detailId,
-//                cartDetail.getCartId(),
-//                cartDetail.getProduct().getProductId(),
-//                cartDetail.getQuantity(),
-//                cartDetail.getProduct().getUnitPrice().multiply(new BigDecimal(cartDetail.getQuantity()))
-//                );
-//    }
 
     @Override
     public void updateQuantity(CartDetail cartDetail) {

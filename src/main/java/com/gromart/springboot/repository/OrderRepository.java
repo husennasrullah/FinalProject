@@ -1,8 +1,6 @@
 package com.gromart.springboot.repository;
 
 import com.gromart.springboot.model.Order;
-
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -21,18 +19,12 @@ public interface OrderRepository {
 
     Order findById (String orderId);
 
-    void deleteOrderById(String orderId);
-
-    int countDetail (String cartId);
-
     void updateStatus (Order order);
 
     Map<String, Object> countTransaction ();
 
-    int countRequestedOrder (String userId);
-
     List<Map<String, Object>> countTopSales ();
 
-
+    int countRequestedOrder (String userId);
 
 }

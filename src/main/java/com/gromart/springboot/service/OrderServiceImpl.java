@@ -1,13 +1,9 @@
 package com.gromart.springboot.service;
 
-import com.gromart.springboot.model.Cart;
 import com.gromart.springboot.model.Order;
 import com.gromart.springboot.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -54,21 +50,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrderById(String orderId) {
-
-    }
-
-    @Override
-    public int countDetail(String cartId) {
-        return 0;
-    }
-
-    @Override
     public void updateStatus(Order order) {
         synchronized (this) {
             orderRepository.updateStatus(order);
         }
-
     }
 
     @Override

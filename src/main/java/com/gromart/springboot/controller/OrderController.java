@@ -41,7 +41,7 @@ public class OrderController {
     @Autowired
     private UserRepository userRepository;
 
-    //-------------------Retrieve All Products--------------------------------------------
+    //-------------------Retrieve All Order--------------------------------------------
     @RequestMapping(value = "/order/", method = RequestMethod.GET)
     public ResponseEntity<?> listAllOrders(@RequestParam int page, @RequestParam int limit) {
         Map<String, Object> order = orderService.findAllOrders(page, limit);
@@ -64,7 +64,6 @@ public class OrderController {
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
-
 
     //-----------------------find by orderID---------------------------
     @RequestMapping(value = "/order/findid/{orderId}/", method = RequestMethod.GET)
@@ -91,8 +90,6 @@ public class OrderController {
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
-
-
 
     //-----------------------find by orderDate---------------------------
     @RequestMapping(value = "/order/date/", method = RequestMethod.GET)
@@ -121,8 +118,6 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-
-
     // -------------------Create a Order-------------------------------------------
 
     @RequestMapping(value = "/order/", method = RequestMethod.POST)
@@ -145,19 +140,16 @@ public class OrderController {
         if (order.getTotalAmount().compareTo(user.getCreditLimit()) == 1){
             return new ResponseEntity<>(new CustomErrorType("Total Purchased exceed your credit limit !!"), HttpStatus.CONFLICT);
         }
-
         //------------------- reached transaction limit ---------------
         if (user.getInvoiceLimit() == 0){
             return new ResponseEntity<>(new CustomErrorType("you have reached your invoice limit, " +
                     "please wait till your order is approved by seller"), HttpStatus.CONFLICT);
         }
-
         orderService.saveOrder(order);
-        userRepository.updateInvoiceLimit(
+        userService.updateInvoiceLimit(
                 user.getUserId(),
                 user.getInvoiceLimit() - 1
                 );
-
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
@@ -166,7 +158,7 @@ public class OrderController {
     public ResponseEntity<?> updateStatus(@RequestBody Order order) {
         User user = userService.findById(order.getUser().getUserId());
         orderService.updateStatus(order);
-        userRepository.updateInvoiceLimit(
+        userService.updateInvoiceLimit(
                 user.getUserId(),
                 user.getInvoiceLimit() + 1
         );
@@ -174,7 +166,6 @@ public class OrderController {
     }
 
     //---------------------- Get Count -----------------------------------
-
     @RequestMapping(value = "/order/count/", method = RequestMethod.GET)
     public ResponseEntity<?> countTransaction() {
         Map<String,Object> transaction = orderService.countTransaction();
@@ -182,7 +173,6 @@ public class OrderController {
     }
 
     //---------------------- Get Top sales -----------------------------------
-
     @RequestMapping(value = "/order/topsales/", method = RequestMethod.GET)
     public ResponseEntity<?> topSales() {
         List<Map<String, Object>> obj = orderRepository.countTopSales();

@@ -459,16 +459,6 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void deleteOrderById(String orderId) {
-
-    }
-
-    @Override
-    public int countDetail(String cartId) {
-        return 0;
-    }
-
-    @Override
     public void updateStatus(Order order) {
         jdbcTemplate.update("update reportorder set orderStatus=? where orderID=?",
                 order.getStatus(),
