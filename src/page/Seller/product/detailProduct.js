@@ -3,6 +3,14 @@ import gambar from "./gambar.jpg";
 import { Modal, Button, Container, Row, Col } from "react-bootstrap";
 
 export default class ModalForm extends Component {
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   render() {
     return (
       <Modal size="lg" show={this.props.isOpen} onHide={this.props.closeModal}>
@@ -24,7 +32,7 @@ export default class ModalForm extends Component {
                   <p>{detail.category}</p>
                   <hr />
                   <h6>{detail.description}</h6>
-                  <h2>Rp.{detail.unitPrice},-</h2>
+                  <h2>{this.Rupiah(detail.unitPrice)}</h2>
                 </Col>
               </Row>
             </Container>

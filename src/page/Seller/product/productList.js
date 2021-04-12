@@ -50,14 +50,6 @@ class ProductList extends Component {
       if (result.isConfirmed) {
         ProductService.deleteProduct(productId).then((res) => {
           this.getProductPaging(this.state.page, this.state.limit);
-          // this.setState({
-          //   productList: this.state.productList.filter(
-          //     (prod) => prod.productId !== productId
-          //   ),
-          //   listProduct: this.state.listProduct.filter(
-          //     (prod) => prod.productId !== productId
-          //   ),
-          // });
         });
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       }
@@ -226,6 +218,14 @@ class ProductList extends Component {
       });
   }
 
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   componentDidMount() {
     this.getProductPaging(this.state.page, this.state.limit);
   }
@@ -290,13 +290,6 @@ class ProductList extends Component {
                   <option value="status">Status</option>
                 </Form.Control>
                 {FormFilter}
-                {/* <FormControl
-                  type="text"
-                  placeholder="Search......"
-                  className="mr-sm-2"
-                  onChange={this.setValueSearch}
-                  value={this.state.Search}
-                /> */}
 
                 <Button variant="outline-success" onClick={this.Search}>
                   Search
@@ -328,7 +321,7 @@ class ProductList extends Component {
         <div>
           <table
             className="table table-striped table-borderes table-sm"
-            style={{ textAlign: "center" }}
+            style={{ textAlign: "center", fontSize: "2vh" }}
           >
             <thead className="thead-dark">
               <tr>
@@ -348,12 +341,7 @@ class ProductList extends Component {
                   <td> {prod.productId}</td>
                   <td> {prod.productName}</td>
                   <td> {prod.category}</td>
-                  <td>
-                    Rp.
-                    {prod.unitPrice
-                      .toString()
-                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                  </td>
+                  <td>{this.Rupiah(prod.unitPrice)}</td>
                   <td> {prod.stock} items</td>
                   <td>
                     {prod.status ? (
@@ -365,6 +353,7 @@ class ProductList extends Component {
                   <td>
                     <Button
                       variant="info"
+                      size="sm"
                       onClick={() => this.openModal(prod.productId)}
                     >
                       <i
@@ -375,6 +364,7 @@ class ProductList extends Component {
                     </Button>
                     <Button
                       variant="success"
+                      size="sm"
                       style={{ marginLeft: "10px" }}
                       onClick={() => this.editProduct(prod.productId)}
                     >
@@ -384,6 +374,7 @@ class ProductList extends Component {
                     <Button
                       style={{ marginLeft: "10px" }}
                       variant="danger"
+                      size="sm"
                       onClick={() => this.deleteProduct(prod.productId)}
                     >
                       <i
@@ -407,7 +398,6 @@ class ProductList extends Component {
               >
                 <option value="5">5 Data</option>
                 <option value="10">10 Data</option>
-                {/* <option value="15">15 Data</option> */}
               </Form.Control>
               <Pagination
                 count={this.state.count}

@@ -31,6 +31,14 @@ class Invoice extends Component {
     this.props.history.push("/gromart-buyer/orderlist");
   };
 
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   componentDidMount() {
     OrderService.getOrderById(this.state.orderId).then((res) => {
       this.setState({
@@ -92,20 +100,8 @@ class Invoice extends Component {
                       <tr key={idx}>
                         <td> {item.quantity} items </td>
                         <td> {item.product.productName}</td>
-                        <td>
-                          Rp.
-                          {item.product.unitPrice
-                            .toString()
-                            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                          ,-
-                        </td>
-                        <td>
-                          Rp.
-                          {item.subTotal
-                            .toString()
-                            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                          ,-
-                        </td>
+                        <td>{this.Rupiah(item.product.unitPrice)}</td>
+                        <td>{this.Rupiah(item.subTotal)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -150,11 +146,7 @@ class Invoice extends Component {
                       </Col>
                       <Col md={{ span: 4, offset: 2 }}>
                         <Form.Label as="h5">
-                          Rp.
-                          {parseInt(order.totalAmount)
-                            .toString()
-                            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                          ,-
+                          {this.Rupiah(parseInt(order.totalAmount))}
                         </Form.Label>
                       </Col>
                     </Form.Row>

@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import GromartSeller from "./gromart-seller.js";
 import GromartBuyer from "./gromart-buyer.js";
-import LoginBaru from "./page/login/Login2.js";
-import DualRegistration from "./page/registrasi/RegistrasiDual.js";
+import Login from "./page/login/Login.js";
+import Registration from "./page/registrasi/Registrasi.js";
 import RegistrasiService from "./service/RegistrasiService.js";
 import { connect } from "react-redux";
 import NotFound from "./page/404NotFound/404.js";
@@ -51,18 +51,18 @@ class App extends Component {
       <Router>
         <Switch>
           <Route exact path="/">
-            <LoginBaru
+            <Login
               statusLogin={this.state.statusLogin}
               doLogin={this.doLogin}
             />
           </Route>
           <Route path="/login">
-            <LoginBaru
+            <Login
               statusLogin={this.state.statusLogin}
               doLogin={this.doLogin}
             />
           </Route>
-          <Route path="/registrasi" component={DualRegistration}></Route>
+          <Route path="/registrasi" component={Registration}></Route>
           <Route path="/gromart" component={GromartSeller}></Route>
           <Route path="/gromart-buyer" component={GromartBuyer}></Route>
           <Route component={NotFound}></Route>
@@ -78,4 +78,3 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(null, mapDispatchToProps)(App);
 
-//export default App;

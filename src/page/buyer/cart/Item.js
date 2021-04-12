@@ -27,10 +27,17 @@ class Item extends Component {
     this.props.updateQty(this.props.detailId, quantity);
   };
 
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   render() {
-    const { key, productName, unitPrice, detailId } = this.props;
+    const { key, productName, unitPrice, detailId, stock } = this.props;
     const { qty } = this.state;
-    //this.props.updateQty(this.props.detailId, this.state.qty);
 
     return (
       <tr key={key}>
@@ -55,16 +62,9 @@ class Item extends Component {
             </InputGroup.Append>
           </InputGroup>
         </td>
-        <td>
-          Rp.
-          {unitPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-        </td>
-        <td>
-          Rp.
-          {(qty * unitPrice)
-            .toString()
-            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-        </td>
+        <td style={{ color: "firebrick" }}>{stock} item available</td>
+        <td>{this.Rupiah(unitPrice)}</td>
+        <td>{this.Rupiah(qty * unitPrice)}</td>
         <td>
           <i
             class="fas fa-trash-alt"

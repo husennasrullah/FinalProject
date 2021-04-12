@@ -24,11 +24,10 @@ class HomeSeller extends Component {
     };
   }
 
-  componentDidMount() {
+  getTopSales() {
     OrderService.getTopSales()
       .then((res) => {
-        let data = res.data;
-        let topThree = data.slice(0, 3);
+        let topThree = res.data.slice(0, 3);
         this.setState({
           topSales: topThree,
         });
@@ -36,7 +35,9 @@ class HomeSeller extends Component {
       .catch((err) => {
         alert("failed");
       });
+  }
 
+  getTotalTransaction() {
     OrderService.getTotalTransaction()
       .then((res) => {
         this.setState({
@@ -47,6 +48,20 @@ class HomeSeller extends Component {
         alert("failed");
       });
   }
+
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
+  componentDidMount() {
+    this.getTopSales();
+    this.getTotalTransaction();
+  }
+
   render() {
     const { transaction, topSales } = this.state;
 
@@ -115,11 +130,11 @@ class HomeSeller extends Component {
               </Card.Text>
               <Card.Text>
                 <b>(2). Total Amount :</b> containt infromation regarding total
-                money you have gotten from your selling product.{" "}
+                money you have gotten from your selling product.
               </Card.Text>
               <Card.Text>
                 <b>(3). Top 3 Best Seller Product :</b> In this part you can see
-                what kind of your product which has greater totalcselling in the
+                what kind of your product which has greater total selling in the
                 marketplace. content.
               </Card.Text>
             </Card.Body>
@@ -157,8 +172,8 @@ class HomeSeller extends Component {
               <br />
               <Card>
                 <Card.Header
-                  as="h5"
                   style={{
+                    fontSize: "2vh",
                     backgroundColor: "#435560",
                     color: "white",
                     textAlign: "center",
@@ -171,17 +186,13 @@ class HomeSeller extends Component {
                     <Col md={2}>
                       <i
                         class="fas fa-wallet"
-                        style={{ fontSize: "5vh", color: "greenyellow" }}
+                        style={{ fontSize: "4vh", color: "greenyellow" }}
                       ></i>
                     </Col>
                     <Col md={10}>
-                      <h3>
-                        Rp.
-                        {parseInt(transaction.totalSellingMoney)
-                          .toString()
-                          .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                        ,-
-                      </h3>
+                      <h4>
+                        {this.Rupiah(parseInt(transaction.totalSellingMoney))}
+                      </h4>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -213,11 +224,11 @@ class HomeSeller extends Component {
                     <Col key={idx} xs={4}>
                       <Card>
                         <Card.Body>
-                          <img src={data} style={{ width: "30%" }}></img>
+                          <img src={data} style={{ width: "25%" }}></img>
                           <hr />
-                          <Card.Title as="h3">{item.productName}</Card.Title>
-                          <Card.Text as="h5">
-                            Total Selling Item {item.total}
+                          <Card.Title as="h4">{item.productName}</Card.Title>
+                          <Card.Text as="h6">
+                            Total Selling : {item.total} items
                           </Card.Text>
                         </Card.Body>
                       </Card>
@@ -225,50 +236,6 @@ class HomeSeller extends Component {
                   );
                 })}
               </Row>
-
-              {/* <Card>
-                <Card.Header
-                  as="h5"
-                  style={{
-                    backgroundColor: "#435560",
-                    color: "white",
-                    textAlign: "center",
-                  }}
-                >
-                  TOP 3 BEST SELLER PRODUCTS
-                </Card.Header>
-                <Card.Body>
-                  <Row>
-                    <Col>
-                      <img
-                        src="https://i.ibb.co/ZfDmDF1/1.png"
-                        style={{ width: "30%" }}
-                      />
-                      <hr />
-                      <h3>{topSales[0].productName}</h3>
-                      <h5>Total Selling : {topSales[0].total} items</h5>
-                    </Col>
-                    <Col>
-                      <img
-                        src="https://i.ibb.co/dj3xmmy/2.png"
-                        style={{ width: "30%" }}
-                      />
-                      <hr />
-                      <h3></h3>
-                      <h5>Total Selling : items</h5>
-                    </Col>
-                    <Col>
-                      <img
-                        src="https://i.ibb.co/zHw91TQ/3.png"
-                        style={{ width: "30%" }}
-                      />
-                      <hr />
-                      <h3></h3>
-                      <h5>Total Selling : items </h5>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card> */}
             </Col>
           </Row>
         </Container>
@@ -285,4 +252,3 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps)(HomeSeller);
-//export default HomeSeller;

@@ -149,21 +149,21 @@ class ModalPassword extends Component {
                       <InputGroup.Text>
                         {showOldPass ? (
                           <i
-                            class="far fa-eye-slash"
+                            class="far fa-eye"
                             onClick={() => this.hidePass("oldPass")}
                           />
                         ) : (
                           <i
-                            class="far fa-eye"
+                            class="far fa-eye-slash"
                             onClick={() => this.showPass("oldPass")}
                           />
                         )}
                       </InputGroup.Text>
-                      <Form.Control.Feedback type="invalid">
-                        Password must be 6 in alphanumeric and at least 1
-                        uppercase letter
-                      </Form.Control.Feedback>
                     </InputGroup.Prepend>
+                    <Form.Control.Feedback type="invalid">
+                      Password must be 6 in alphanumeric and at least 1
+                      uppercase letter
+                    </Form.Control.Feedback>
                   </InputGroup>
                 </Col>
               </Form.Row>
@@ -186,12 +186,12 @@ class ModalPassword extends Component {
                       <InputGroup.Text style={{ cursor: "pointer" }}>
                         {showNewPass ? (
                           <i
-                            class="far fa-eye-slash"
+                            class="far fa-eye"
                             onClick={() => this.hidePass("newPass")}
                           />
                         ) : (
                           <i
-                            class="far fa-eye"
+                            class="far fa-eye-slash"
                             onClick={() => this.showPass("newPass")}
                           />
                         )}
@@ -223,12 +223,12 @@ class ModalPassword extends Component {
                       <InputGroup.Text style={{ cursor: "pointer" }}>
                         {showNewPass2 ? (
                           <i
-                            class="far fa-eye-slash"
+                            class="far fa-eye"
                             onClick={() => this.hidePass("newPass2")}
                           />
                         ) : (
                           <i
-                            class="far fa-eye"
+                            class="far fa-eye-slash"
                             onClick={() => this.showPass("newPass2")}
                           />
                         )}

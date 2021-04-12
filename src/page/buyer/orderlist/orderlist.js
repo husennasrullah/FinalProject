@@ -66,6 +66,14 @@ class OrderList extends Component {
       });
   }
 
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   componentDidMount() {
     this.getOrder(this.state.userId, this.state.page, this.state.limit);
   }
@@ -150,13 +158,7 @@ class OrderList extends Component {
                 <tr key={idx}>
                   <td>{item.orderId}</td>
                   <td>{item.orderDate}</td>
-                  <td>
-                    Rp.
-                    {item.totalAmount
-                      .toString()
-                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                    ,-
-                  </td>
+                  <td>{this.Rupiah(item.totalAmount)}</td>
                   <td>
                     {item.status === false ? (
                       <Badge
@@ -180,6 +182,7 @@ class OrderList extends Component {
                     <Button
                       style={{ marginLeft: "10px" }}
                       variant="info"
+                      size="sm"
                       onClick={() => this.viewInvoice(item.orderId)}
                     >
                       View Invoice
@@ -189,7 +192,7 @@ class OrderList extends Component {
               ))}
             </tbody>
           </Table>
-          <div>
+          <div className="paging">
             <Pagination
               page={this.state.pagenow}
               count={this.state.count}

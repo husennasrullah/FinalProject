@@ -93,18 +93,20 @@ class CreateProduct extends Component {
       if (this.state.productId === "add") {
         ProductService.createProduct(product)
           .then((res) => {
+            Swal.fire("Successfully Added New Product", "", "succes");
             this.props.history.push("/gromart/product");
           })
           .catch((err) => {
-            alert(err.response.data.errorMessage);
+            Swal.fire(err.response.data.errorMessage, "", "error");
           });
       } else {
         ProductService.updateProduct(product, this.state.productId)
           .then((res) => {
+            Swal.fire("Successfully Update Product", "", "succes");
             this.props.history.push("/gromart/product");
           })
           .catch((err) => {
-            alert(err.response.data.errorMessage);
+            Swal.fire(err.response.data.errorMessage, "", "error");
           });
       }
     }
@@ -182,6 +184,7 @@ class CreateProduct extends Component {
                     <option value="Food">Food</option>
                     <option value="Cloth">Cloth</option>
                     <option value="Drug">Drug</option>
+                    <option value="Electronic">Electronic</option>
                   </Form.Control>
                 </Col>
               </Form.Row>
@@ -253,7 +256,7 @@ class CreateProduct extends Component {
               </Form.Row>
             </Form.Group>
 
-            <Form.Group>
+            {/* <Form.Group>
               <Form.Row>
                 <Form.Label column="md" md={2}>
                   Upload Picture
@@ -267,7 +270,7 @@ class CreateProduct extends Component {
                   />
                 </Col>
               </Form.Row>
-            </Form.Group>
+            </Form.Group> */}
 
             <Button variant="success" onClick={this.saveProduct}>
               Save
@@ -294,5 +297,3 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps)(CreateProduct);
-
-//export default CreateProduct;

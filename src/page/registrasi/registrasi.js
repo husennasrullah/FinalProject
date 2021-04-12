@@ -1,9 +1,19 @@
 import React, { Component } from "react";
-import "./style.css";
-import { Form, Button, Col } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  FormGroup,
+  FormControl,
+  Form,
+} from "react-bootstrap";
+import { Link, Redirect } from "react-router-dom";
 import RegistrasiService from "../../service/RegistrasiService";
+import { connect } from "react-redux";
+import "./style.css";
+import Swal from "sweetalert2";
 
-class Registrasi extends Component {
+class Registration extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,13 +25,101 @@ class Registrasi extends Component {
       password: "",
       passValidation: "",
       role: "",
+      errorFirstname: false,
+      errorLastname: false,
+      errorUsername: false,
+      errorEmail: false,
+      errorPhone: false,
+      errorPassword: false,
     };
   }
 
   setValue = (event) => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
+    this.setState(
+      {
+        [event.target.name]: event.target.value,
+      },
+      () => this.checkValidation(event.target.name)
+    );
+  };
+
+  checkValidation = (name) => {
+    const {
+      firstName,
+      lastName,
+      userName,
+      email,
+      phoneNumber,
+      password,
+    } = this.state;
+
+    if (name === "firstName") {
+      let regName = /^(?![ .]+$)[a-zA-Z .]*$/;
+      if (!regName.test(firstName)) {
+        this.setState({
+          errorFirstname: true,
+        });
+      } else {
+        this.setState({
+          errorFirstname: false,
+        });
+      }
+    } else if (name === "lastName") {
+      let regName = /^(?![ .]+$)[a-zA-Z .]*$/;
+      if (!regName.test(lastName)) {
+        this.setState({
+          errorLastname: true,
+        });
+      } else {
+        this.setState({
+          errorLastname: false,
+        });
+      }
+    } else if (name === "userName") {
+      let regUname = /^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/;
+      if (!regUname.test(userName)) {
+        this.setState({
+          errorUsername: true,
+        });
+      } else {
+        this.setState({
+          errorUsername: false,
+        });
+      }
+    } else if (name === "email") {
+      let regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+      if (!regEmail.test(email)) {
+        this.setState({
+          errorEmail: true,
+        });
+      } else {
+        this.setState({
+          errorEmail: false,
+        });
+      }
+    } else if (name === "phoneNumber") {
+      let regPhone = /^(^\+62|62|^08)(\d{3,4}-?){2}\d{3,4}$/;
+      if (!regPhone.test(phoneNumber)) {
+        this.setState({
+          errorPhone: true,
+        });
+      } else {
+        this.setState({
+          errorPhone: false,
+        });
+      }
+    } else if (name === "password") {
+      let regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$/;
+      if (!regPass.test(password)) {
+        this.setState({
+          errorPassword: true,
+        });
+      } else {
+        this.setState({
+          errorPassword: false,
+        });
+      }
+    }
   };
 
   doRegistration = (e) => {
@@ -35,13 +133,13 @@ class Registrasi extends Component {
       password,
       passValidation,
       role,
+      errorFirstname,
+      errorLastname,
+      errorUsername,
+      errorEmail,
+      errorPhone,
+      errorPassword,
     } = this.state;
-    console.log(email);
-
-    let regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    let regUname = /^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/;
-    let regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$/;
-    let regPhone = /^(^\+62|62|^08)(\d{3,4}-?){2}\d{3,4}$/;
 
     if (
       (firstName === "",
@@ -53,21 +151,18 @@ class Registrasi extends Component {
       passValidation === "",
       role === "")
     ) {
-      alert(`Insert all data!`);
+      Swal.fire("Please Insert All Data", "", "error");
     } else if (password !== passValidation) {
-      alert(`Wrong Password`);
-    } else if (!regUname.test(userName)) {
-      alert(`Username must be 6 to 8 in alphanumeric and without any symbol`);
-    } else if (!regEmail.test(email)) {
-      alert(`Email Format not valid`);
-    } else if (!regPass.test(password)) {
-      alert(
-        `Password must be 6 in alphanumeric and at least 1 uppercase letter`
-      );
-    } else if (!regPhone.test(phoneNumber)) {
-      alert(
-        `Phone number must in Indonesia type (ex: 6289507952135 or 089507952135)`
-      );
+      Swal.fire("Wrong Password", "", "error");
+    } else if (
+      errorFirstname === true ||
+      errorLastname === true ||
+      errorEmail === true ||
+      errorPassword === true ||
+      errorPhone === true ||
+      errorUsername === true
+    ) {
+      Swal.fire("Please Check Your Form", "", "error");
     } else {
       let user = {
         firstName: this.state.firstName,
@@ -81,169 +176,181 @@ class Registrasi extends Component {
 
       RegistrasiService.createUser(user)
         .then((res) => {
-          alert("success");
+          Swal.fire("Your Account has Been created", "Please Login", "success");
+          this.props.history.push("/login");
         })
         .catch((err) => {
-          alert(err.response.data.errorMessage);
-          console.log("error :", err.response);
+          Swal.fire(err.response.data.errorMessage, "", "error");
         });
     }
   };
-
   render() {
-    console.log("cobaa :", this.state);
+    if (this.props.isLogin && this.props.dataUser !== "") {
+      if (this.props.dataUser.userId.includes("Seller")) {
+        return <Redirect to="/gromart" />;
+      } else {
+        return <Redirect to="/gromart-buyer" />;
+      }
+    }
+    const {
+      errorUsername,
+      errorEmail,
+      errorPhone,
+      errorPassword,
+      errorFirstname,
+      errorLastname,
+    } = this.state;
     return (
-      <div className="box2">
-        <Form>
-          <center>
-            <Form.Label size="lg">Silahkan Registrasi</Form.Label>
-          </center>
-          <hr />
-          <Form.Group>
-            <Form.Row>
-              <Form.Label column="sm" sm={2}>
-                Nama
-              </Form.Label>
-              <Col>
-                <Form.Control
-                  size="sm"
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  onChange={this.setValue}
-                />
-              </Col>
-              <Col>
-                <Form.Control
-                  size="sm"
-                  name="lastName"
-                  placeholder="Last Name"
-                  onChange={this.setValue}
-                />
-              </Col>
-            </Form.Row>
-          </Form.Group>
+      <Container fluid className="register">
+        <Row>
+          <Col md={3} className="register-left">
+            <img src="https://i.ibb.co/d5q6VxJ/logo.png" alt="" />
+            <h3>Welcome</h3>
+            <p>An exciting place for the whole family to shop.</p>
+            <Link to="/login">
+              <input type="submit" name="" value="Back" />
+            </Link>
+            <br />
+          </Col>
+          <Col md={9} className="register-right">
+            <div className="tab-content" id="myTabContent">
+              <div
+                className="tab-pane fade show active"
+                id="home"
+                role="tabpanel"
+                aria-labelledby="home-tab"
+              >
+                <h3 className="register-heading">Account Registration</h3>
+                <Row className="register-form">
+                  <Col md={6}>
+                    <FormGroup>
+                      <FormControl
+                        required
+                        size="md"
+                        type="text"
+                        placeholder="First Name *"
+                        name="firstName"
+                        onChange={this.setValue}
+                        isInvalid={errorFirstname}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        FirstName cannot be number or special character
+                      </Form.Control.Feedback>
+                    </FormGroup>
+                    <FormGroup>
+                      <FormControl
+                        size="md"
+                        type="email"
+                        placeholder="Your Email *"
+                        name="email"
+                        onChange={this.setValue}
+                        isInvalid={errorEmail}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Email Format not valid
+                      </Form.Control.Feedback>
+                    </FormGroup>
+                    <FormGroup>
+                      <FormControl
+                        size="md"
+                        type="text"
+                        placeholder="UserName *"
+                        name="userName"
+                        onChange={this.setValue}
+                        isInvalid={errorUsername}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Username must be 6 to 8 in alphanumeric and without any
+                        symbol
+                      </Form.Control.Feedback>
+                    </FormGroup>
+                    <FormGroup>
+                      <FormControl
+                        size="md"
+                        type="password"
+                        placeholder="Password *"
+                        name="password"
+                        onChange={this.setValue}
+                        isInvalid={errorPassword}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Password must be 6 in alphanumeric and at least 1
+                        uppercase letter
+                      </Form.Control.Feedback>
+                    </FormGroup>
+                  </Col>
+                  <Col md={6}>
+                    <FormGroup>
+                      <FormControl
+                        size="md"
+                        type="text"
+                        placeholder="Last Name *"
+                        name="lastName"
+                        onChange={this.setValue}
+                        isInvalid={errorLastname}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        LastName cannot be number or special character
+                      </Form.Control.Feedback>
+                    </FormGroup>
 
-          <Form.Group>
-            <Form.Row>
-              <Form.Label column="sm" sm={2}>
-                Email
-              </Form.Label>
-              <Col>
-                <Form.Control
-                  size="sm"
-                  type="text"
-                  name="email"
-                  placeholder="ex : husen@gmail.com"
-                  onChange={this.setValue}
-                />
-              </Col>
-            </Form.Row>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Row>
-              <Form.Label column="sm" sm={2}>
-                UserName
-              </Form.Label>
-              <Col>
-                <Form.Control
-                  size="sm"
-                  type="text"
-                  name="userName"
-                  placeholder="UserName"
-                  onChange={this.setValue}
-                />
-              </Col>
-            </Form.Row>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Row>
-              <Form.Label column="sm" sm={2}>
-                Phone
-              </Form.Label>
-              <Col>
-                <Form.Control
-                  size="sm"
-                  type="text"
-                  name="phoneNumber"
-                  placeholder="ex : 085289507952135"
-                  onChange={this.setValue}
-                />
-              </Col>
-            </Form.Row>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Row>
-              <Form.Label column="sm" sm={2}>
-                Password
-              </Form.Label>
-              <Col>
-                <Form.Control
-                  size="sm"
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  onChange={this.setValue}
-                />
-              </Col>
-            </Form.Row>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Row>
-              <Form.Label column="sm" sm={2}>
-                Confirm Password
-              </Form.Label>
-              <Col>
-                <Form.Control
-                  size="sm"
-                  type="password"
-                  name="passValidation"
-                  placeholder="Confirm Your Password"
-                  onChange={this.setValue}
-                />
-              </Col>
-            </Form.Row>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Row>
-              <Form.Label column="sm" sm={2}>
-                Role
-              </Form.Label>
-              <Col>
-                <Form.Control
-                  as="select"
-                  size="sm"
-                  name="role"
-                  onChange={this.setValue}
-                >
-                  <option value="seller">Seller</option>
-                  <option value="buyer">Buyer</option>
-                </Form.Control>
-              </Col>
-            </Form.Row>
-          </Form.Group>
-
-          <Button
-            className="mb-2 mr-2"
-            variant="success"
-            type="submit"
-            onClick={this.doRegistration}
-          >
-            Submit
-          </Button>
-
-          <Button className="mb-2 mr-2" variant="danger" type="submit">
-            Back
-          </Button>
-        </Form>
-      </div>
+                    <FormGroup>
+                      <FormControl
+                        size="md"
+                        type="text"
+                        name="phoneNumber"
+                        placeholder="Your Phone Number *"
+                        onChange={this.setValue}
+                        isInvalid={errorPhone}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Phone number must in Indonesia type (ex: 6289507952135
+                        or 089507952135)
+                      </Form.Control.Feedback>
+                    </FormGroup>
+                    <FormGroup>
+                      <FormControl
+                        size="md"
+                        as="select"
+                        name="role"
+                        onChange={this.setValue}
+                      >
+                        <option value="Seller">Apply as Seller</option>
+                        <option value="Buyer">Apply as Buyer</option>
+                      </FormControl>
+                    </FormGroup>
+                    <FormGroup>
+                      <FormControl
+                        size="md"
+                        type="password"
+                        placeholder="Confirm Password *"
+                        name="passValidation"
+                        onChange={this.setValue}
+                      />
+                    </FormGroup>
+                    <input
+                      type="button"
+                      className="btnRegister"
+                      value="Register"
+                      onClick={this.doRegistration}
+                    />
+                  </Col>
+                </Row>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
 
-export default Registrasi;
+const mapStateToProps = (state) => {
+  return {
+    isLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+export default connect(mapStateToProps)(Registration);
+//export default DualRegistration;

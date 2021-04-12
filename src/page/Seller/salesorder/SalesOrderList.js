@@ -221,6 +221,14 @@ class SalesOrderList extends Component {
       });
   }
 
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   componentDidMount() {
     this.getAllOrder(this.state.page, this.state.limit);
   }
@@ -343,8 +351,11 @@ class SalesOrderList extends Component {
         </div>
         <br />
         <div>
-          <table className="table table-striped table-borderes table-md ">
-            <thead className="thead-dark">
+          <table
+            className="table table-striped table-borderes table-sm"
+            style={{ fontSize: "2vh" }}
+          >
+            <thead className="thead-dark" style={{ textAlign: "center" }}>
               <tr>
                 <th> Order ID </th>
                 <th> Buyer Name</th>
@@ -361,12 +372,7 @@ class SalesOrderList extends Component {
                   <td> {item.orderId}</td>
                   <td> {item.user.firstName + " " + item.user.lastName}</td>
                   <td> {item.orderDate}</td>
-                  <td>
-                    Rp.
-                    {item.totalAmount
-                      .toString()
-                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                  </td>
+                  <td>{this.Rupiah(item.totalAmount)}</td>
                   <td>
                     {item.status ? (
                       <Badge
@@ -387,33 +393,33 @@ class SalesOrderList extends Component {
                     )}
                   </td>
                   <td>
-                    <center>
+                    <Button
+                      variant="info"
+                      size="sm"
+                      onClick={() => this.openModal(item.orderId)}
+                    >
+                      <i
+                        class="fas fa-info-circle"
+                        style={{ marginRight: "1em" }}
+                      />
+                      Detail
+                    </Button>
+                    {!item.status ? (
                       <Button
-                        variant="info"
-                        onClick={() => this.openModal(item.orderId)}
+                        style={{ marginLeft: "10px" }}
+                        size="sm"
+                        variant="success"
+                        onClick={() =>
+                          this.approveOrder(item.orderId, item.user.userId)
+                        }
                       >
                         <i
-                          class="fas fa-info-circle"
+                          class="fas fa-thumbs-up"
                           style={{ marginRight: "1em" }}
                         />
-                        Detail
+                        Approve
                       </Button>
-                      {!item.status ? (
-                        <Button
-                          style={{ marginLeft: "10px" }}
-                          className="btn btn-success"
-                          onClick={() =>
-                            this.approveOrder(item.orderId, item.user.userId)
-                          }
-                        >
-                          <i
-                            class="fas fa-thumbs-up"
-                            style={{ marginRight: "1em" }}
-                          />
-                          Approve
-                        </Button>
-                      ) : null}
-                    </center>
+                    ) : null}
                   </td>
                 </tr>
               ))}
@@ -429,7 +435,6 @@ class SalesOrderList extends Component {
               >
                 <option value="5">5 Data</option>
                 <option value="10">10 Data</option>
-                <option value="15">15 Data</option>
               </Form.Control>
               <Pagination
                 count={this.state.count}

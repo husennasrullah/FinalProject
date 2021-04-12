@@ -11,6 +11,7 @@ import {
   FormControl,
   Form,
   Carousel,
+  Badge,
 } from "react-bootstrap";
 
 import ProductService from "../../../service/ProductService";
@@ -184,6 +185,14 @@ class HomeBuyer extends Component {
       });
   }
 
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   componentDidMount() {
     this.getProductPaging(this.state.page, this.state.limit);
     this.getCurrentCart(this.state.userid);
@@ -205,12 +214,7 @@ class HomeBuyer extends Component {
         <br />
         <Row>
           <Col md={3}>
-            <Card
-              bg="warning"
-              text=""
-              className="mb-2"
-              style={{ textAlign: "center" }}
-            >
+            <Card bg="warning" className="mb-2" style={{ textAlign: "center" }}>
               <Card.Header>
                 <Card.Title> CREDIT LIMIT </Card.Title>
               </Card.Header>
@@ -219,28 +223,17 @@ class HomeBuyer extends Component {
                   <Col md={3}>
                     <i
                       class="fas fa-wallet"
-                      style={{ fontSize: "6vh", color: "white" }}
+                      style={{ fontSize: "5vh", color: "white" }}
                     ></i>
                   </Col>
                   <Col md={8}>
-                    <h2>
-                      Rp.
-                      {this.props.dataUser.creditLimit
-                        .toString()
-                        .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                      ,-
-                    </h2>
+                    <h5>{this.Rupiah(this.props.dataUser.creditLimit)}</h5>
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
-            <br />
-            <Card
-              bg="success"
-              text=""
-              className="mb-2"
-              style={{ textAlign: "center" }}
-            >
+
+            <Card bg="success" className="mb-2" style={{ textAlign: "center" }}>
               <Card.Header>
                 <Card.Title> INVOICE LIMIT </Card.Title>
               </Card.Header>
@@ -249,32 +242,33 @@ class HomeBuyer extends Component {
                   <Col md={3}>
                     <i
                       class="fab fa-sellsy"
-                      style={{ fontSize: "6vh", color: "white" }}
+                      style={{ fontSize: "5vh", color: "white" }}
                     ></i>
                   </Col>
                   <Col md={8}>
-                    <h2>{this.props.dataUser.invoiceLimit} Transaction</h2>
+                    <h5>{this.props.dataUser.invoiceLimit} Transaction</h5>
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
             <br />
+
             <Carousel fade>
-              <Carousel.Item style={{ height: "400px" }}>
+              <Carousel.Item style={{ height: "300px" }}>
                 <img
                   className="d-block w-100"
                   src="https://i.ibb.co/F6qy0wj/img1.png"
                   alt="First slide"
                 />
               </Carousel.Item>
-              <Carousel.Item style={{ height: "400px" }}>
+              <Carousel.Item style={{ height: "300px" }}>
                 <img
                   className="d-block w-100"
                   src="https://i.ibb.co/sb8999b/img2.png"
                   alt="Second slide"
                 />
               </Carousel.Item>
-              <Carousel.Item style={{ height: "400px" }}>
+              <Carousel.Item style={{ height: "300px" }}>
                 <img
                   className="d-block w-100"
                   src="https://i.ibb.co/K99ScDT/img3.png"
@@ -325,59 +319,52 @@ class HomeBuyer extends Component {
               </Form.Row>
             </Form>
             <hr />
-            <Container>
-              <center>
-                <Row>
-                  {this.state.product.map((prod, idx) => (
-                    <Col key={idx} xs={3}>
-                      <Card>
-                        <Card.Body
-                          style={{ cursor: "pointer" }}
-                          onClick={() => this.detailShop(prod.productId)}
+
+            <center>
+              <Row>
+                {this.state.product.map((prod, idx) => (
+                  <Col key={idx} md={3}>
+                    <Card style={{ fontFamily: "cambria" }}>
+                      <Card.Body
+                        style={{ cursor: "pointer" }}
+                        onClick={() => this.detailShop(prod.productId)}
+                      >
+                        <i
+                          class="fas fa-camera-retro"
+                          style={{ fontSize: "10vh" }}
+                        ></i>
+                        <Card.Title as="h6">{prod.productName}</Card.Title>
+                        <Card.Text>
+                          {prod.stock == 0 ? (
+                            <Badge variant="danger">Out of Stock</Badge>
+                          ) : (
+                            <div style={{ fontSize: "2vh" }}>
+                              Stock : {prod.stock} items
+                            </div>
+                          )}
+                        </Card.Text>
+                        <Card.Text>
+                          <h6>{this.Rupiah(prod.unitPrice)}</h6>
+                        </Card.Text>
+                      </Card.Body>
+                      <Card.Footer>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          style={{ width: "70%", fontSize: "2vh" }}
+                          onClick={() => this.addToCart(prod.productId, 1)}
+                          disabled={prod.stock === 0}
                         >
-                          <i
-                            class="fas fa-camera-retro"
-                            style={{ fontSize: "11vh" }}
-                          ></i>
-                          <Card.Title>{prod.productName}</Card.Title>
-                          <Card.Text>
-                            {prod.stock == 0 ? (
-                              <Button variant="danger" disabled>
-                                Out of Stock
-                              </Button>
-                            ) : (
-                              <p>Stock Available : {prod.stock} items</p>
-                            )}
-                            <p>
-                              Rp.
-                              {prod.unitPrice
-                                .toString()
-                                .replace(
-                                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                                  "."
-                                )}
-                              ,-
-                            </p>
-                          </Card.Text>
-                        </Card.Body>
-                        <Card.Footer>
-                          <Button
-                            variant="primary"
-                            size="md"
-                            style={{ width: "80%" }}
-                            onClick={() => this.addToCart(prod.productId, 1)}
-                            disabled={prod.stock === 0}
-                          >
-                            add to cart
-                          </Button>
-                        </Card.Footer>
-                      </Card>
-                      <br />
-                    </Col>
-                  ))}
-                </Row>
-              </center>
-            </Container>
+                          add to cart
+                        </Button>
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </center>
+            <br />
+
             <Pagination
               color="primary"
               count={this.state.count}
@@ -403,5 +390,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeBuyer);
-
-//export default HomeBuyer;

@@ -4,10 +4,9 @@ import storage from 'redux-persist/lib/storage'
 
 import allReducers from "./index"
 
-
 const persistConfig = { 
     key: 'root',
-    storage, 
+    storage,
 }
 
 const persistedReducer = persistReducer(persistConfig, allReducers) 

@@ -1,7 +1,17 @@
 import React, { Component } from "react";
-import { Form, Button } from "react-bootstrap";
-import RegistrasiService from "../../service/RegistrasiService";
 import "./style.css";
+import {
+  Container,
+  Row,
+  Col,
+  FormGroup,
+  FormControl,
+  Button,
+  InputGroup,
+  Form,
+} from "react-bootstrap";
+import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
 class Login extends Component {
   constructor(props) {
@@ -9,7 +19,7 @@ class Login extends Component {
     this.state = {
       user: "",
       pass: "",
-      users: [],
+      showPass: false,
     };
   }
 
@@ -19,69 +29,103 @@ class Login extends Component {
     });
   };
 
-  doLogin = (e) => {
-    e.preventDefault();
-    const { user, pass } = this.state;
-    if (user === "" || pass === "") {
-      alert(`Insert all data!`);
-    } else {
-      RegistrasiService.loginCheck(user, pass)
-        .then((res) => {
-          this.setState({
-            users: res.data,
-          });
-          alert("success");
-        })
-        .catch((err) => {
-          alert(err.response.data.errorMessage);
-        });
-    }
+  showPass = () => {
+    this.setState({
+      showPass: true,
+    });
+  };
+
+  hidePass = () => {
+    this.setState({
+      showPass: false,
+    });
   };
 
   render() {
-    console.log(this.state);
-    console.log("data :", this.state.users);
+    if (this.props.isLogin && this.props.dataUser !== "") {
+      if (this.props.dataUser.userId.includes("Seller")) {
+        return <Redirect to="/gromart" />;
+      } else {
+        return <Redirect to="/gromart-buyer" />;
+      }
+    }
+
+    const { user, pass, showPass } = this.state;
     return (
-      <div className="box">
-        <Form>
-          <center>
-            <b>
-              <h3>PLEASE LOGIN</h3>
-            </b>
+      <Container fluid className="register2">
+        <Row>
+          <Col md={3} className="register-left2">
+            <img src="https://i.ibb.co/d5q6VxJ/logo.png" alt="" />
+            <h3>Welcome</h3>
+            <p>An exciting place for the whole family to shop.</p>
+            <h6>Don't have any account ?</h6>
+            <Link to="/registrasi">
+              <input type="submit" name="" value="Register" />
+            </Link>
             <br />
-          </center>
-          <hr />
-          <Form.Group>
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              name="user"
-              placeholder="Enter username"
-              onChange={this.setValue}
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="pass"
-              placeholder="Password"
-              onChange={this.setValue}
-            />
-          </Form.Group>
-          <Button variant="success" type="submit" onClick={this.doLogin}>
-            Submit
-          </Button>
-
-          <hr />
-          <Form.Group>
-            <Form.Label>Don't Have an Account ? Register</Form.Label>
-          </Form.Group>
-        </Form>
-      </div>
+          </Col>
+          <Col md={9} className="register-right2">
+            <h3 className="register-heading">Please Login</h3>
+            <Row className="register-form">
+              <Col md={{ span: 6, offset: 3 }}>
+                <FormGroup>
+                  <FormControl
+                    size="md"
+                    type="text"
+                    name="user"
+                    placeholder="Enter username"
+                    onChange={this.setValue}
+                  />
+                </FormGroup>
+                <br />
+                <InputGroup className="mb-3">
+                  <FormControl
+                    size="md"
+                    type="password"
+                    name="pass"
+                    type={showPass ? "text" : "password"}
+                    placeholder="Enter Password"
+                    onChange={this.setValue}
+                  />
+                  <InputGroup.Prepend>
+                    <InputGroup.Text>
+                      {showPass ? (
+                        <i class="far fa-eye-slash" onClick={this.hidePass} />
+                      ) : (
+                        <i class="far fa-eye" onClick={this.showPass} />
+                      )}
+                    </InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <Form.Control.Feedback type="invalid">
+                    Not Equals to new Password
+                  </Form.Control.Feedback>
+                </InputGroup>
+                <Button
+                  className="btnRegister2"
+                  onClick={() => this.props.doLogin(user, pass)}
+                >
+                  Login
+                </Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    isLogin: state.Auth.statusLogin,
+    dataUser: state.Auth.users,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  changeLogin: () => dispatch({ type: "LOGIN_SUCCESS" }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
+
+//export default LoginBaru;

@@ -46,7 +46,7 @@ class BuyerList extends Component {
     this.getBuyerPaging(this.state.page, this.state.limit);
   };
 
-  handleChange = (event, value) => {
+  handleChange = (e, value) => {
     e.preventDefault();
     this.setState({
       page: value,
@@ -131,6 +131,14 @@ class BuyerList extends Component {
       .catch((err) => {
         alert("Failed Fetching Data nama");
       });
+  };
+
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
   };
 
   getBuyerPaging(page, limit) {
@@ -230,22 +238,18 @@ class BuyerList extends Component {
                   <td> {buyer.firstName + " " + buyer.lastName}</td>
                   <td> {buyer.email}</td>
                   <td> {buyer.phoneNumber}</td>
-                  <td>
-                    Rp.
-                    {buyer.creditLimit
-                      .toString()
-                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                  </td>
+                  <td>{this.Rupiah(buyer.creditLimit)}</td>
                   <td> {buyer.invoiceLimit}</td>
                   <td>
-                    <button
+                    <Button
                       style={{ marginLeft: "10px" }}
-                      className="btn btn-success"
+                      variant="success"
+                      size="sm"
                       onClick={() => this.openModal(buyer.userId)}
                     >
                       <i class="fas fa-edit" style={{ marginRight: "1em" }} />
                       Update Limit
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}

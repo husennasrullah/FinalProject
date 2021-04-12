@@ -6,6 +6,15 @@ class DetailOrder extends Component {
     super(props);
     this.state = {};
   }
+
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   render() {
     const { isOpen, closeModal, detailOrder } = this.props;
 
@@ -52,18 +61,8 @@ class DetailOrder extends Component {
                   <tr>
                     <td> {item.product.productName}</td>
                     <td> {item.quantity}</td>
-                    <td>
-                      Rp.
-                      {item.product.unitPrice
-                        .toString()
-                        .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                    </td>
-                    <td>
-                      Rp.
-                      {item.subTotal
-                        .toString()
-                        .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                    </td>
+                    <td>{this.Rupiah(item.product.unitPrice)}</td>
+                    <td>{this.Rupiah(item.subTotal)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -104,21 +103,12 @@ class DetailOrder extends Component {
                   <h5>Total Payment</h5>
                 </Col>
                 <Col>
-                  <h5>
-                    Rp.
-                    {detailOrder.totalAmount
-                      .toString()
-                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-                  </h5>
+                  <h5>{this.Rupiah(detailOrder.totalAmount)}</h5>
                 </Col>
               </Row>
             </Col>
           </Row>
         </Modal.Body>
-
-        {/* <Modal.Body
-          style={{ backgroundColor: "#314e52", textAlign: "center" }}
-        ></Modal.Body> */}
       </Modal>
     );
   }

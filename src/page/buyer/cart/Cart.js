@@ -53,6 +53,14 @@ class Cart extends Component {
     });
   };
 
+  Rupiah = (money) => {
+    let value =
+      "Rp. " +
+      money.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") +
+      ",-";
+    return value;
+  };
+
   countTotal = () => {
     let total = this.state.detailCart.reduce(
       (acc, item) => acc + item.product.unitPrice * item.quantity,
@@ -88,7 +96,7 @@ class Cart extends Component {
       status: false,
       details: detail,
     };
-    
+
     if (this.state.shippingFee === 0 || this.state.address === "") {
       Swal.fire("Please complete the Form", "", "error");
     } else {
@@ -201,34 +209,29 @@ class Cart extends Component {
 
   render() {
     const { detailCart } = this.state;
-    console.log("detaillllllll:", detailCart);
     return (
       <Container fluid>
         <br />
         <Row>
           <Col md={2}>
-            <h2>Shopping Cart</h2>
+            <h4>Shopping Cart</h4>
           </Col>
-          <Col md={{ span: 3, offset: 4 }}>
+          <Col md={{ span: 3, offset: 3 }}>
             <Badge
               style={{
-                fontSize: "25px",
+                fontSize: "3vh",
                 fontFamily: "cambria",
                 border: "solid 1px black",
               }}
               variant="warning"
             >
-              Credit Limit : Rp.
-              {this.props.dataUser.creditLimit
-                .toString()
-                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")}
-              ,-
+              Credit Limit :{this.Rupiah(this.props.dataUser.creditLimit)}
             </Badge>
           </Col>
           <Col md={3}>
             <Badge
               style={{
-                fontSize: "25px",
+                fontSize: "3vh",
                 fontFamily: "cambria",
                 border: "solid 1px black",
               }}
@@ -243,7 +246,6 @@ class Cart extends Component {
         <Container fluid>
           <Card>
             <Card.Header
-              as="h5"
               style={{
                 backgroundColor: "#435560",
                 color: "white",
@@ -253,10 +255,10 @@ class Cart extends Component {
             >
               <Row sm>
                 <Col sm={8}>
-                  <h4>ITEM DETAIL</h4>
+                  <h5>ITEM DETAIL</h5>
                 </Col>
                 <Col sm={4}>
-                  <h4>SUMMARY</h4>
+                  <h5>SUMMARY</h5>
                 </Col>
               </Row>
             </Card.Header>
@@ -278,6 +280,7 @@ class Cart extends Component {
                         <thead className="thead-dark">
                           <th> Product </th>
                           <th> Quantity </th>
+                          <th></th>
                           <th> unit Price </th>
                           <th> SubTotal </th>
                           <th></th>
@@ -305,25 +308,19 @@ class Cart extends Component {
                         <Form.Group>
                           <Form.Row>
                             <Col md={5}>
-                              <Form.Label as="h5">
+                              <Form.Label as="h6">
                                 {detailCart.length} items
                               </Form.Label>
                             </Col>
                             <Col md={{ span: 3, offset: 3 }}>
-                              <Form.Label as="h5">
-                                Rp.
-                                {this.countTotal()
-                                  .toString()
-                                  .replace(
-                                    /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                                    "."
-                                  )}
+                              <Form.Label as="h6">
+                                {this.Rupiah(this.countTotal())}
                               </Form.Label>
                             </Col>
                           </Form.Row>
                         </Form.Group>
                         <Form.Group>
-                          <Form.Label as="h5">Shipping Address</Form.Label>
+                          <Form.Label as="h6">Shipping Address</Form.Label>
                           <Form.Control
                             as="textarea"
                             type="text"
@@ -336,7 +333,7 @@ class Cart extends Component {
                         <Form.Group>
                           <Form.Row>
                             <Col md={3}>
-                              <Form.Label as="h5">Shipping</Form.Label>
+                              <Form.Label as="h6">Shipping</Form.Label>
                             </Col>
                             <Col>
                               <Form.Control
@@ -361,11 +358,11 @@ class Cart extends Component {
                         <Form.Group>
                           <Form.Row>
                             <Col md={5}>
-                              <Form.Label as="h5">Shipping Fee</Form.Label>
+                              <Form.Label as="h6">Shipping Fee</Form.Label>
                             </Col>
                             <Col md={{ span: 3, offset: 3 }}>
-                              <Form.Label as="h5">
-                                Rp.{this.state.shippingFee},-
+                              <Form.Label as="h6">
+                                {this.Rupiah(this.state.shippingFee)}
                               </Form.Label>
                             </Col>
                           </Form.Row>
@@ -374,20 +371,14 @@ class Cart extends Component {
                         <Form.Group>
                           <Form.Row>
                             <Col md={5}>
-                              <Form.Label as="h5">Total Payment</Form.Label>
+                              <Form.Label as="h6">Total Payment</Form.Label>
                             </Col>
                             <Col md={{ span: 3, offset: 3 }}>
-                              <Form.Label as="h5">
-                                Rp.
-                                {(
+                              <Form.Label as="h6">
+                                {this.Rupiah(
                                   this.countTotal() +
-                                  parseInt(this.state.shippingFee)
-                                )
-                                  .toString()
-                                  .replace(
-                                    /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                                    "."
-                                  )}
+                                    parseInt(this.state.shippingFee)
+                                )}
                               </Form.Label>
                             </Col>
                           </Form.Row>
