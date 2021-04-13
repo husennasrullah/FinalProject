@@ -39,6 +39,33 @@ class OrderService {
     );
   }
 
+  searchByIdForBuyer(userId, orderId, page, limit) {
+    return axios.get(
+      ORDER_API +
+        "buyer/findid/" +
+        orderId +
+        "/?userId=" +
+        userId +
+        "&page=" +
+        page +
+        "&limit=" +
+        limit
+    );
+  }
+  searchByStatusForBuyer(userId, status, page, limit) {
+    return axios.get(
+      ORDER_API +
+        "buyer/findStatus/?userId=" +
+        userId +
+        "&status=" +
+        status +
+        "&page=" +
+        page +
+        "&limit=" +
+        limit
+    );
+  }
+
   searchByStatus(status, page, limit) {
     return axios.get(
       ORDER_API +

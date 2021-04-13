@@ -309,7 +309,6 @@ class SalesOrderList extends Component {
                   onChange={this.onChangeSelect}
                 >
                   <option value="id">Order ID</option>
-                  {/* <option value="product">Product Name</option> */}
                   <option value="status">Status</option>
                   <option value="date">Date</option>
                 </Form.Control>

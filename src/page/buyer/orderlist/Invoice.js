@@ -23,6 +23,7 @@ class Invoice extends Component {
     this.state = {
       orderId: this.props.match.params.id,
       order: {},
+      user: {},
       detailOrder: [],
     };
   }
@@ -43,12 +44,15 @@ class Invoice extends Component {
     OrderService.getOrderById(this.state.orderId).then((res) => {
       this.setState({
         order: res.data,
+        user: res.data.user,
         detailOrder: res.data.details,
       });
     });
   }
   render() {
-    const { order, detailOrder } = this.state;
+    const { order, detailOrder, user } = this.state;
+    console.log("order :", user);
+    console.log("detailOrder :", detailOrder);
     return (
       <Container>
         <br />
@@ -74,10 +78,11 @@ class Invoice extends Component {
                 </Col>
                 <Col md={4}>
                   <Card.Title>Bill To :</Card.Title>
-                  <Card.Text>{order.userId}</Card.Text>
-                  <Card.Text>{order.shippingAddress}</Card.Text>
+                  <Card.Text>
+                    {user.userId} ({user.firstName + " " + user.lastName})
+                  </Card.Text>
                   <Card.Title>Ship To :</Card.Title>
-                  <Card.Text>{order.userId}</Card.Text>
+                  <Card.Text>{order.shippingAddress}</Card.Text>
                 </Col>
                 <Col md={4}>
                   <Card.Title>ORDER ID :</Card.Title>

@@ -21,8 +21,6 @@ class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shipping: [],
-      shippingFee: 0,
       cart: [],
       detailCart: [],
       cartId: "",
@@ -92,12 +90,12 @@ class Cart extends Component {
         userId: this.state.userid,
       },
       shippingAddress: this.state.address,
-      totalAmount: this.countTotal() + parseInt(this.state.shippingFee),
+      totalAmount: this.countTotal(),
       status: false,
       details: detail,
     };
 
-    if (this.state.shippingFee === 0 || this.state.address === "") {
+    if (this.state.address === "") {
       Swal.fire("Please complete the Form", "", "error");
     } else {
       OrderService.checkoutOrder(checkout)
@@ -179,17 +177,17 @@ class Cart extends Component {
     });
   };
 
-  getShipping = () => {
-    ShippingService.getShipping()
-      .then((res) => {
-        this.setState({
-          shipping: res.data,
-        });
-      })
-      .catch((err) => {
-        alert("Failed Fetching Data Shipper");
-      });
-  };
+  // getShipping = () => {
+  //   ShippingService.getShipping()
+  //     .then((res) => {
+  //       this.setState({
+  //         shipping: res.data,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       alert("Failed Fetching Data Shipper");
+  //     });
+  // };
 
   getNewDataUser(userId) {
     RegistrasiService.getBuyerByID(userId)
@@ -203,7 +201,6 @@ class Cart extends Component {
 
   componentDidMount() {
     this.getCart();
-    this.getShipping();
     this.getNewDataUser(this.state.userid);
   }
 
@@ -266,7 +263,7 @@ class Cart extends Component {
               {this.state.isThereCart ? (
                 <Row>
                   <Col sm={8}>
-                    <div className="overflow-auto" style={{ height: "550px" }}>
+                    <div className="overflow-auto" style={{ height: "450px" }}>
                       <Table
                         striped
                         hover
@@ -312,7 +309,7 @@ class Cart extends Component {
                                 {detailCart.length} items
                               </Form.Label>
                             </Col>
-                            <Col md={{ span: 3, offset: 3 }}>
+                            <Col md={{ span: 4, offset: 2 }}>
                               <Form.Label as="h6">
                                 {this.Rupiah(this.countTotal())}
                               </Form.Label>
@@ -330,55 +327,15 @@ class Cart extends Component {
                           />
                         </Form.Group>
                         <br />
-                        <Form.Group>
-                          <Form.Row>
-                            <Col md={3}>
-                              <Form.Label as="h6">Shipping</Form.Label>
-                            </Col>
-                            <Col>
-                              <Form.Control
-                                as="select"
-                                name="shippingFee"
-                                onChange={this.setShipping}
-                              >
-                                <option disabled selected value>
-                                  --select an option--
-                                </option>
-                                {this.state.shipping.map((ship, idx) => (
-                                  <option key={idx} value={ship.fee}>
-                                    {ship.shippingCompany}
-                                  </option>
-                                ))}
-                              </Form.Control>
-                            </Col>
-                          </Form.Row>
-                        </Form.Group>
-                        <br />
-
-                        <Form.Group>
-                          <Form.Row>
-                            <Col md={5}>
-                              <Form.Label as="h6">Shipping Fee</Form.Label>
-                            </Col>
-                            <Col md={{ span: 3, offset: 3 }}>
-                              <Form.Label as="h6">
-                                {this.Rupiah(this.state.shippingFee)}
-                              </Form.Label>
-                            </Col>
-                          </Form.Row>
-                        </Form.Group>
-                        <br />
+                        {/* disini */}
                         <Form.Group>
                           <Form.Row>
                             <Col md={5}>
                               <Form.Label as="h6">Total Payment</Form.Label>
                             </Col>
-                            <Col md={{ span: 3, offset: 3 }}>
+                            <Col md={{ span: 4, offset: 2 }}>
                               <Form.Label as="h6">
-                                {this.Rupiah(
-                                  this.countTotal() +
-                                    parseInt(this.state.shippingFee)
-                                )}
+                                {this.Rupiah(this.countTotal())}
                               </Form.Label>
                             </Col>
                           </Form.Row>
@@ -432,3 +389,44 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cart);
+
+{
+  /* <Form.Group>
+                          <Form.Row>
+                            <Col md={3}>
+                              <Form.Label as="h6">Shipping</Form.Label>
+                            </Col>
+                            <Col>
+                              <Form.Control
+                                as="select"
+                                name="shippingFee"
+                                onChange={this.setShipping}
+                              >
+                                <option disabled selected value>
+                                  --select an option--
+                                </option>
+                                {this.state.shipping.map((ship, idx) => (
+                                  <option key={idx} value={ship.fee}>
+                                    {ship.shippingCompany}
+                                  </option>
+                                ))}
+                              </Form.Control>
+                            </Col>
+                          </Form.Row>
+                        </Form.Group>
+                        <br />
+
+                        <Form.Group>
+                          <Form.Row>
+                            <Col md={5}>
+                              <Form.Label as="h6">Shipping Fee</Form.Label>
+                            </Col>
+                            <Col md={{ span: 3, offset: 3 }}>
+                              <Form.Label as="h6">
+                                {this.Rupiah(this.state.shippingFee)}
+                              </Form.Label>
+                            </Col>
+                          </Form.Row>
+                        </Form.Group>
+                        <br /> */
+}

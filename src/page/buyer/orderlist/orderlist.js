@@ -23,7 +23,7 @@ class OrderList extends Component {
       pagenow: 1,
       count: 0,
       limit: 5,
-      Search: "",
+      search: "",
       isSearch: false,
       valueSelect: "id",
     };
@@ -38,13 +38,34 @@ class OrderList extends Component {
     if (!this.state.isSearch) {
       this.getOrder(this.state.userId, value, this.state.limit);
     } else {
-      if (this.state.valueSelect === "product") {
-      } else if (this.state.valueSelect === "id") {
-        this.searchByOrderId(this.state.search, value, this.state.limit);
+      if (this.state.valueSelect === "id") {
+        this.searchByOrderId(
+          this.state.userId,
+          this.state.search,
+          value,
+          this.state.limit
+        );
       } else if (this.state.valueSelect === "status") {
-        this.searchByStatus(this.state.search, value, this.state.limit);
+        this.searchByStatus(
+          this.state.userId,
+          this.state.search,
+          value,
+          this.state.limit
+        );
       }
     }
+  };
+
+  onChangeSelect = (e) => {
+    this.setState({
+      valueSelect: e.target.value,
+    });
+  };
+
+  setValueSearch = (e) => {
+    this.setState({
+      search: e.target.value,
+    });
   };
 
   viewInvoice = (orderId) => {
@@ -59,12 +80,66 @@ class OrderList extends Component {
           orders: res.data.order,
           count: Math.ceil(page),
           isSearch: false,
+          page: 1,
         });
       })
       .catch((err) => {
         alert("failed fetching data");
       });
   }
+
+  Search = () => {
+    if (this.state.Search === "") {
+      this.getOrder(this.state.userId, this.state.page, this.state.limit);
+    } else {
+      if (this.state.valueSelect === "id") {
+        alert("Dasdasd");
+        this.searchByOrderId(
+          this.state.userId,
+          this.state.search,
+          this.state.page,
+          this.state.limit
+        );
+      } else if (this.state.valueSelect === "status") {
+        this.searchByStatus(
+          this.state.userId,
+          this.state.search,
+          this.state.page,
+          this.state.limit
+        );
+      }
+    }
+  };
+
+  searchByStatus = (userId, status, page, limit) => {
+    OrderService.searchByStatusForBuyer(userId, status, page, limit)
+      .then((res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          order: res.data.order,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      })
+      .catch((err) => {
+        alert("failed Fetch Data");
+      });
+  };
+
+  searchByOrderId = (userId, orderId, page, limit) => {
+    OrderService.searchByIdForBuyer(userId, orderId, page, limit).then(
+      (res) => {
+        let page = res.data.qty / this.state.limit;
+        this.setState({
+          order: res.data.order,
+          count: Math.ceil(page),
+          isSearch: true,
+          page: 1,
+        });
+      }
+    );
+  };
 
   Rupiah = (money) => {
     let value =
@@ -80,7 +155,7 @@ class OrderList extends Component {
   render() {
     const { orders, valueSelect } = this.state;
     let FormFilter;
-    if (valueSelect === "product" || valueSelect === "buyer") {
+    if (valueSelect === "id") {
       FormFilter = (
         <>
           <FormControl
@@ -117,17 +192,15 @@ class OrderList extends Component {
           <Row>
             <Col md={6}>
               <Form inline>
-                <Form.Control as="select" className="mr-sm-2">
+                <Form.Control
+                  as="select"
+                  className="mr-sm-2"
+                  onChange={this.onChangeSelect}
+                >
                   <option value="id"> OrderID</option>
-                  <option value="date"> Date</option>
                   <option value="status"> Status</option>
                 </Form.Control>
 
-                <FormControl
-                  type="text"
-                  placeholder="Search......"
-                  className="mr-sm-2"
-                />
                 {FormFilter}
                 <Button
                   variant="outline-success"
@@ -214,5 +287,3 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps)(OrderList);
-
-//export default OrderList;

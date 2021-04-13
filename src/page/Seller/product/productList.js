@@ -231,7 +231,6 @@ class ProductList extends Component {
   }
 
   render() {
-    console.log(this.valueSelect);
     const { valueSelect } = this.state;
     let FormFilter;
     if (valueSelect === "name" || valueSelect === "id") {
