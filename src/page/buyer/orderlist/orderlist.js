@@ -101,6 +101,7 @@ class OrderList extends Component {
           this.state.limit
         );
       } else if (this.state.valueSelect === "status") {
+        alert("Dasdasd");
         this.searchByStatus(
           this.state.userId,
           this.state.search,
@@ -111,12 +112,20 @@ class OrderList extends Component {
     }
   };
 
+  cancelSearch = (e) => {
+    this.setState({
+      search: "",
+      isSearch: false,
+    });
+    this.getOrder(this.state.userId, this.state.page, this.state.limit);
+  };
+
   searchByStatus = (userId, status, page, limit) => {
     OrderService.searchByStatusForBuyer(userId, status, page, limit)
       .then((res) => {
         let page = res.data.qty / this.state.limit;
         this.setState({
-          order: res.data.order,
+          orders: res.data.order,
           count: Math.ceil(page),
           isSearch: true,
           page: 1,
@@ -132,7 +141,7 @@ class OrderList extends Component {
       (res) => {
         let page = res.data.qty / this.state.limit;
         this.setState({
-          order: res.data.order,
+          orders: res.data.order,
           count: Math.ceil(page),
           isSearch: true,
           page: 1,
@@ -153,6 +162,7 @@ class OrderList extends Component {
     this.getOrder(this.state.userId, this.state.page, this.state.limit);
   }
   render() {
+    console.log(this.state.valueSelect);
     const { orders, valueSelect } = this.state;
     let FormFilter;
     if (valueSelect === "id") {
@@ -209,6 +219,20 @@ class OrderList extends Component {
                 >
                   Search
                 </Button>
+
+                {this.state.isSearch ? (
+                  <i
+                    class="far fa-times-circle"
+                    style={{
+                      fontSize: "4vh",
+                      color: "red",
+                      cursor: "pointer",
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                    }}
+                    onClick={this.cancelSearch}
+                  ></i>
+                ) : null}
               </Form>
             </Col>
           </Row>
