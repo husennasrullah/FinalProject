@@ -105,18 +105,12 @@ public class UserRepositoryImpl implements UserRepository {
                 user.getPhoneNumber(),
                 user.getPassword(),
                 user.getRole(),
-                0,
-                0,
-                "husen",
+                50000,
+                2,
+                idUser,
                 new Date(),
-                "husen",
+                idUser,
                 new Date()
-//                user.getCreditLimit(),
-//                user.getInvoiceLimit(),
-//                user.getCreatedBy(),
-//                user.getCreatedDate(),
-//                user.getUpdatedBy(),
-//                user.getUpdatedDate()
         );
 
     }
@@ -350,93 +344,5 @@ public class UserRepositoryImpl implements UserRepository {
         String id = java.time.LocalDate.now() + "-" + prefix;
         return id;
     }
-
-//    @Override
-//    public int findAllCount() {
-//        int itemCount;
-//        itemCount = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM user", Integer.class);
-//        return itemCount;
-//    }
-//
-//    @Override
-//    public List<User> searchId(String userId) {
-//        List<User> users;
-//        try {
-//            users = jdbcTemplate.query("select * from user where userID like ?",
-//                    new Object[]{"%" + userId + "%"},
-//                    (rs, rowNum) ->
-//                            (new User(
-//                                    rs.getString("userID"),
-//                                    rs.getString("firstname"),
-//                                    rs.getString("lastName"),
-//                                    rs.getString("userName"),
-//                                    rs.getString("email"),
-//                                    rs.getString("phoneNumber"),
-//                                    rs.getString("password"),
-//                                    rs.getString("role"),
-//                                    rs.getBigDecimal("creditLimit"),
-//                                    rs.getInt("invoiceLimit"),
-//                                    rs.getString("createdBy"),
-//                                    rs.getDate("createdDate"),
-//                                    rs.getString("updatedBy"),
-//                                    rs.getDate("updatedDate")
-//                            ))
-//            );
-//        } catch (Exception e) {
-//            users = null;
-//        }
-//        return users;
-//    }
-//
-//    @Override
-//    public List<User> searchName(String firstName) {
-//        List<User> users;
-//        try {
-//            users = jdbcTemplate.query("select * from user where firstName like ?",
-//                    new Object[]{"%" + firstName + "%"},
-//                    (rs, rowNum) ->
-//                            (new User(
-//                                    rs.getString("userID"),
-//                                    rs.getString("firstname"),
-//                                    rs.getString("lastName"),
-//                                    rs.getString("userName"),
-//                                    rs.getString("email"),
-//                                    rs.getString("phoneNumber"),
-//                                    rs.getString("password"),
-//                                    rs.getString("role"),
-//                                    rs.getBigDecimal("creditLimit"),
-//                                    rs.getInt("invoiceLimit"),
-//                                    rs.getString("createdBy"),
-//                                    rs.getDate("createdDate"),
-//                                    rs.getString("updatedBy"),
-//                                    rs.getDate("updatedDate")
-//                            ))
-//            );
-//        } catch (Exception e) {
-//            users = null;
-//        }
-//        return users;
-//    }
-//
-//    @Override
-//    public List<User> findAllBuyer() {
-//        return jdbcTemplate.query("select * from user where role='Buyer'",
-//                (rs, rowNum) ->
-//                        new User(
-//                                rs.getString("userID"),
-//                                rs.getString("firstname"),
-//                                rs.getString("lastName"),
-//                                rs.getString("userName"),
-//                                rs.getString("email"),
-//                                rs.getString("phoneNumber"),
-//                                rs.getBigDecimal("creditLimit"),
-//                                rs.getInt("invoiceLimit"),
-//                                rs.getString("createdBy"),
-//                                rs.getDate("createdDate"),
-//                                rs.getString("updatedBy"),
-//                                rs.getDate("updatedDate")
-//                        ));
-//    }
-
 
 }

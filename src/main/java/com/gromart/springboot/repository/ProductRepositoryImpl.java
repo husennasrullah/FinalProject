@@ -18,14 +18,14 @@ public class ProductRepositoryImpl implements ProductRepository {
         Map<String, Object> map = new HashMap<>();
         map.put("qty", findAllCount());
 
-        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product",
+        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product where status=true",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
         // validate page
         if (page < 1) page = 1;
         if (page > numPages) page = numPages;
         int start = (page - 1) * limit;
 
-        map.put("product", jdbcTemplate.query("SELECT * FROM product ORDER BY status DESC LIMIT " + start + "," + limit + ";",
+        map.put("product", jdbcTemplate.query("SELECT * FROM product where status=true ORDER BY status DESC LIMIT " + start + "," + limit + ";",
                 (rs, rowNum) ->
                         new Product(
                                 rs.getString("productID"),
@@ -272,122 +272,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public int findAllCount() {
         int itemCount;
-        itemCount = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product", Integer.class);
+        itemCount = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product where status = true", Integer.class);
         return itemCount;
     }
-
-
-    //==========================================
-//    @Override
-//    public List<Product> searchId(String productId) {
-//        return jdbcTemplate.query("select * from product where productID like ?",
-//                new Object[]{"%" + productId + "%"},
-//                (rs, rowNum) ->
-//                        (new Product(
-//                                rs.getString("productID"),
-//                                rs.getString("productName"),
-//                                rs.getString("category"),
-//                                rs.getBigDecimal("unitPrice"),
-//                                rs.getInt("stock"),
-//                                rs.getString("description"),
-//                                rs.getBoolean("status"),
-//                                rs.getString("createdBy"),
-//                                rs.getDate("createdDate"),
-//                                rs.getString("updatedBy"),
-//                                rs.getDate("updatedDate")
-//                        ))
-//        );
-//    }
-//
-//    @Override
-//    public List<Product> searchName(String productName) {
-//        return jdbcTemplate.query("select * from product where productName like ?",
-//                new Object[]{"%" + productName + "%"},
-//                (rs, rowNum) ->
-//                        (new Product(
-//                                rs.getString("productID"),
-//                                rs.getString("productName"),
-//                                rs.getString("category"),
-//                                rs.getBigDecimal("unitPrice"),
-//                                rs.getInt("stock"),
-//                                rs.getString("description"),
-//                                rs.getBoolean("status"),
-//                                rs.getString("createdBy"),
-//                                rs.getDate("createdDate"),
-//                                rs.getString("updatedBy"),
-//                                rs.getDate("updatedDate")
-//                        ))
-//        );
-//    }
-//
-//    @Override
-//    public void deleteAllProducts() {
-//        jdbcTemplate.update("delete from product");
-//    }
-//
-//    @Override
-//    public boolean isProductExist(Product product) {
-//        return false;
-//    }
-//
-
-//
-//    @Override
-//    public void changeStock(String productId, int stock) {
-//        jdbcTemplate.update("update product set  stock=? where productId=?",
-//                stock,
-//                productId
-//        );
-//    }
-//
-//    @Override
-//    public List<Product> findAll() {
-//        return jdbcTemplate.query("select * from product",
-//                (rs, rowNum) ->
-//                        new Product(
-//                                rs.getString("productID"),
-//                                rs.getString("productName"),
-//                                rs.getString("category"),
-//                                rs.getBigDecimal("unitPrice"),
-//                                rs.getInt("stock"),
-//                                rs.getString("description"),
-//                                rs.getBoolean("status"),
-//                                rs.getString("createdBy"),
-//                                rs.getDate("createdDate"),
-//                                rs.getString("updatedBy"),
-//                                rs.getDate("updatedDate")
-//                        )
-//        );
-//    }
-//
-//    @Override
-//    public List<Product> findAllWithPaging(int page, int limit) {
-//        int numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product",
-//                (rs, rowNum) -> rs.getInt("count")).get(0);
-//        // validate page
-//        if (page < 1) page = 1;
-//        if (page > numPages) page = numPages;
-//        int start = (page - 1) * limit;
-//        List<Product> products =
-//                jdbcTemplate.query("SELECT * FROM product ORDER BY status LIMIT " + start + "," + limit + ";",
-//                        (rs, rowNum) ->
-//                                new Product(
-//                                        rs.getString("productID"),
-//                                        rs.getString("productName"),
-//                                        rs.getString("category"),
-//                                        rs.getBigDecimal("unitPrice"),
-//                                        rs.getInt("stock"),
-//                                        rs.getString("description"),
-//                                        rs.getBoolean("status"),
-//                                        rs.getString("createdBy"),
-//                                        rs.getDate("createdDate"),
-//                                        rs.getString("updatedBy"),
-//                                        rs.getDate("updatedDate")
-//                                )
-//                );
-//        return products;
-//    }
-
 
 }
 
