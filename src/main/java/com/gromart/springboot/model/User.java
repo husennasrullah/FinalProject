@@ -5,38 +5,14 @@ import java.util.Date;
 
 public class User {
     private String userId;
-    //@NotBlank (message = "firstName Cannot be Null")
-    //@Pattern(regexp = "[A-Z][a-z]*", message = "enter valid name")
     private String firstName;
-
-    //@Pattern(regexp = "[A-Z]+([ '-][a-zA-Z]+)*", message = "enter valid name")
     private String lastName;
-
-    //@NotBlank(message = "LastName Cannot be Null")
-    //@Pattern(regexp = "/^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/", message = "Username must be 6 to 8 in alphanumeric and without any symbol")
     private String userName;
-
-    //@NotBlank (message = "email Cannot be Null")
-    //@Pattern(regexp = "/^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/", message = "email get wrong. ex (xxx.xxx@xxx.com)")
     private String email;
-
-    //@NotBlank (message = "Phone Number Cannot be Null")
-    //@Pattern(regexp = "/^(^\\+62|62|^08)(\\d{3,4}-?){2}\\d{3,4}$/", message = "Phone number must in Indonesia type (ex: 628113912109 or 08134455555)")
     private String phoneNumber;
-
-    //@NotBlank (message = "Password Cannot be Null")
-    //@Pattern(regexp = "/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$/", message = "Password must be 6 in alphanumeric and at least 1 uppercase letter")
     private String password;
-
-    //@NotBlank (message = "Role Cannot be Null")
     private String role;
-
-//    @NotNull (message = "creditLimit Cannot be Null")
-//    @PositiveOrZero
     private BigDecimal creditLimit;
-
-//    @NotNull (message = "invoiceLimit Cannot be Null")
-//    @PositiveOrZero
     private int invoiceLimit;
     private String createdBy;
     private Date createdDate;

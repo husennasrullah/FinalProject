@@ -15,7 +15,11 @@ public interface OrderRepository {
 
     Map<String, Object> findByOrderId (String orderId, int page, int limit);
 
+    Map<String, Object> findByIdForBuyer (String userId, String orderId, int page, int limit);
+
     Map<String, Object> findByStatus(Boolean status, int page, int limit);
+
+    Map<String, Object> findByStatusForBuyer (String userId, Boolean status, int page, int limit);
 
     Order findById (String orderId);
 

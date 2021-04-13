@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/gromart/")
 public class OrderController {
 
-    public static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+
 
     @Autowired
     private OrderService orderService;
@@ -37,9 +37,6 @@ public class OrderController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     //-------------------Retrieve All Order--------------------------------------------
     @RequestMapping(value = "/order/", method = RequestMethod.GET)
@@ -59,7 +56,6 @@ public class OrderController {
             @RequestParam int limit) {
         Map<String, Object> orders = orderService.findByUserId(userId, page, limit);
         if (orders == null) {
-            logger.error("Order not found.");
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
@@ -74,7 +70,21 @@ public class OrderController {
     ) {
         Map<String, Object> orders = orderService.findByOrderId(orderId, page, limit);
         if (orders == null) {
-            logger.error("Order not found.");
+            return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    //-----------------------find by orderID for buyer---------------------------
+    @RequestMapping(value = "/order/buyer/findid/{orderId}/", method = RequestMethod.GET)
+    public ResponseEntity<?> getOrderbyIdForBuyer(
+            @PathVariable("orderId") String orderId,
+            @RequestParam String userId,
+            @RequestParam int page,
+            @RequestParam int limit
+    ) {
+        Map<String, Object> orders = orderService.findByIdForBuyer(userId,orderId, page, limit);
+        if (orders == null) {
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
@@ -85,7 +95,6 @@ public class OrderController {
     public ResponseEntity<?> getOrderID(@PathVariable("orderId") String orderId) {
         Order orders = orderService.findById(orderId);
         if (orders == null) {
-            logger.error("Order not found.");
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
@@ -101,29 +110,39 @@ public class OrderController {
 
         Map<String, Object> orders = orderService.findByOrderDate(startDate, toDate, page, limit);
         if (orders == null) {
-            logger.error("Order not found.");
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    //-----------------------find by orderDate---------------------------
+    //-----------------------find by status---------------------------
     @RequestMapping(value = "/order/findStatus/", method = RequestMethod.GET)
     public ResponseEntity<?> getBuyerByStatus(@RequestParam Boolean status, @RequestParam int page, @RequestParam int limit) {
         Map<String, Object> orders = orderService.findByStatus(status, page, limit);
         if (orders == null) {
-            logger.error("Order not found.");
             return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    // -------------------Create a Order-------------------------------------------
+    //-----------------------find by status---------------------------
+    @RequestMapping(value = "/order/buyer/findStatus/", method = RequestMethod.GET)
+    public ResponseEntity<?> getBuyerByStatusForBuyer(
+            @RequestParam String userId,
+            @RequestParam Boolean status,
+            @RequestParam int page,
+            @RequestParam int limit) {
 
+        Map<String, Object> orders = orderService.findByStatusForBuyer(userId,status, page, limit);
+        if (orders == null) {
+            return new ResponseEntity<>(orders, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    // -------------------Create an Order-------------------------------------------
     @RequestMapping(value = "/order/", method = RequestMethod.POST)
     public ResponseEntity<?> createOrder(@RequestBody Order order) {
-        logger.info("Creating Order : {}", order);
-
         //------------------- stock exceed validation------------------------
         List<OrderDetail> details = order.getDetails();
         for (int i=0; i< details.size(); i++ ){

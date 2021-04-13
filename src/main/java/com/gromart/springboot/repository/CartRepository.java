@@ -27,6 +27,4 @@ public interface CartRepository {
     void updateQuantity (CartDetail cartDetail);
 
     int countDetail (String cartId);
-
-
 }

@@ -40,8 +40,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Map<String, Object> findByIdForBuyer(String userId, String orderId, int page, int limit) {
+        return orderRepository.findByIdForBuyer(userId, orderId, page, limit);
+    }
+
+    @Override
     public Map<String, Object> findByStatus(Boolean status, int page, int limit) {
         return orderRepository.findByStatus(status, page, limit);
+    }
+
+    @Override
+    public Map<String, Object> findByStatusForBuyer(String userId, Boolean status, int page, int limit) {
+        return orderRepository.findByStatusForBuyer(userId, status, page, limit);
     }
 
     @Override
