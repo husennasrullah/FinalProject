@@ -112,8 +112,7 @@ class Cart extends Component {
           this.getNewDataUser(this.state.userid);
         })
         .catch((err) => {
-          console.log(err.response);
-          alert(err.response.data.errorMessage);
+          Swal.fire(err.response.data.errorMessage, "", "error");
         });
     }
   };

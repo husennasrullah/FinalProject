@@ -370,18 +370,20 @@ class ProductList extends Component {
                       <i class="fas fa-edit" style={{ marginRight: "1em" }} />
                       Update
                     </Button>
-                    <Button
-                      style={{ marginLeft: "10px" }}
-                      variant="danger"
-                      size="sm"
-                      onClick={() => this.deleteProduct(prod.productId)}
-                    >
-                      <i
-                        class="fas fa-trash-alt"
-                        style={{ marginRight: "1em" }}
-                      />
-                      Delete
-                    </Button>
+                    {prod.status ? (
+                      <Button
+                        style={{ marginLeft: "10px" }}
+                        variant="danger"
+                        size="sm"
+                        onClick={() => this.deleteProduct(prod.productId)}
+                      >
+                        <i
+                          class="fas fa-trash-alt"
+                          style={{ marginRight: "1em" }}
+                        />
+                        Delete
+                      </Button>
+                    ) : null}
                   </td>
                 </tr>
               ))}

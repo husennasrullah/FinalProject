@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 import CartService from "../../../service/CartService";
 import DetailShop from "./DetailShop";
 import RegistrasiService from "../../../service/RegistrasiService";
+import Swal from "sweetalert2";
 
 class HomeBuyer extends Component {
   constructor(props) {
@@ -63,11 +64,16 @@ class HomeBuyer extends Component {
 
     CartService.addToCart(this.props.dataUser.userId, productId, addToCart)
       .then((res) => {
-        alert("Successfully added item to cart");
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Successfully Added item to cart",
+          showConfirmButton: false,
+          timer: 2000,
+        });
         this.getCurrentCart(this.state.userid);
       })
       .catch((err) => {
-        console.log("error :", err.response.data);
         alert(err.response.data);
       });
   };
@@ -364,7 +370,6 @@ class HomeBuyer extends Component {
               </Row>
             </center>
             <br />
-
             <Pagination
               color="primary"
               count={this.state.count}

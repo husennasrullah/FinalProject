@@ -93,7 +93,6 @@ class OrderList extends Component {
       this.getOrder(this.state.userId, this.state.page, this.state.limit);
     } else {
       if (this.state.valueSelect === "id") {
-        alert("Dasdasd");
         this.searchByOrderId(
           this.state.userId,
           this.state.search,
@@ -101,7 +100,6 @@ class OrderList extends Component {
           this.state.limit
         );
       } else if (this.state.valueSelect === "status") {
-        alert("Dasdasd");
         this.searchByStatus(
           this.state.userId,
           this.state.search,

@@ -265,7 +265,7 @@ class BuyerList extends Component {
               >
                 <option value="5">5 Data</option>
                 <option value="10">10 Data</option>
-                <option value="15">15 Data</option>
+                {/* <option value="15">15 Data</option> */}
               </Form.Control>
               <Pagination
                 count={this.state.count}
